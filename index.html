@@ -1565,8 +1565,8 @@ document.getElementById('queryForm').addEventListener('submit',async function(e)
 
 async function sendToSheet(data){
   var wh=localStorage.getItem(WH);
-  if(!wh)return;
-  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});}catch(e){}
+  if(!wh)return false;
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});return true;}catch(e){return false;}
 }
 
 // ─── LOCAL STORAGE ──────────────────────────────────────────
@@ -1576,7 +1576,7 @@ function getCustomerData(id){return JSON.parse(localStorage.getItem('cdata_'+id)
 function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(d));}
 
 // ─── SETUP ──────────────────────────────────────────────────
-function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);s.textContent='✅ Webhook saved! All forms now auto-save to your Google Sheet.';s.className='wst ok';}
+function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);s.textContent='✅ Webhook saved!';s.className='wst ok';}
 function savePwd(){var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}localStorage.setItem(PW,p);s.textContent='✅ Password updated.';s.className='wst ok';}
 window.addEventListener('load',()=>{var wh=localStorage.getItem(WH);if(wh){var el=document.getElementById('whUrl');if(el){el.value=wh;document.getElementById('whSt').textContent='✅ Webhook active.';document.getElementById('whSt').className='wst ok';}}refreshDash();});
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
@@ -1591,61 +1591,65 @@ function switchAuthTab(tab){
     loginDiv.style.display='';regDiv.style.display='none';
     loginBtn.style.background='linear-gradient(135deg,var(--sun),var(--solar))';loginBtn.style.color='var(--deep)';
     regBtn.style.background='transparent';regBtn.style.color='var(--soft)';
-  } else {
+  }else{
     loginDiv.style.display='none';regDiv.style.display='';
     regBtn.style.background='linear-gradient(135deg,#00E676,#00B0FF)';regBtn.style.color='#080F1E';
     loginBtn.style.background='transparent';loginBtn.style.color='var(--soft)';
   }
 }
 
-// ─── CUSTOMER REGISTRATION ────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// CUSTOMER REGISTRATION
+// ─────────────────────────────────────────────────────────────
 async function registerCustomer(){
-  var name=document.getElementById('regName').value.trim();
-  var phone=document.getElementById('regPhone').value.trim();
-  var email=document.getElementById('regEmail').value.trim();
-  var city=document.getElementById('regCity').value;
-  var pwd=document.getElementById('regPwd').value;
-  var pwd2=document.getElementById('regPwd2').value;
-  var okEl=document.getElementById('reg-ok');
-  var erEl=document.getElementById('reg-er');
-  okEl.classList.remove('show');erEl.classList.remove('show');
-
+  var name  = document.getElementById('regName').value.trim();
+  var phone = document.getElementById('regPhone').value.trim();
+  var email = document.getElementById('regEmail').value.trim();
+  var city  = document.getElementById('regCity').value;
+  var pwd   = document.getElementById('regPwd').value;
+  var pwd2  = document.getElementById('regPwd2').value;
+  var okEl  = document.getElementById('reg-ok');
+  var erEl  = document.getElementById('reg-er');
+  okEl.classList.remove('show'); erEl.classList.remove('show');
   if(!name||!phone||!email||!pwd){erEl.textContent='❌ Please fill in all required fields.';erEl.classList.add('show');return;}
   if(pwd.length<6){erEl.textContent='❌ Password must be at least 6 characters.';erEl.classList.add('show');return;}
   if(pwd!==pwd2){erEl.textContent='❌ Passwords do not match.';erEl.classList.add('show');return;}
-
-  var btn=document.getElementById('regBtnTxt');var loader=document.getElementById('regLoader');
-  btn.style.display='none';loader.style.display='block';
-
-  // Save to pending registrations locally + Google Sheet
+  // Duplicate check
   var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  var reg={id:'REG-'+Date.now(),name,phone,email,city,pwd,status:'pending',submittedAt:new Date().toISOString()};
+  var dup=pending.find(function(p){return (p.phone===phone||p.email===email)&&p.status!=='rejected';});
+  if(dup){
+    if(dup.status==='pending'){erEl.textContent='❌ Already registered. Waiting for admin approval.';erEl.classList.add('show');return;}
+    if(dup.status==='approved'){erEl.textContent='❌ Already approved. Please login with your phone/email + password.';erEl.classList.add('show');return;}
+  }
+  var btn=document.getElementById('regBtnTxt'); var loader=document.getElementById('regLoader');
+  btn.style.display='none'; loader.style.display='block';
+  // Save locally — THIS IS HOW ADMIN SEES IT
+  var regId='REG-'+Date.now();
+  var reg={id:regId,name,phone,email,city,pwd,status:'pending',submittedAt:new Date().toISOString()};
   pending.push(reg);
   localStorage.setItem('sf_pending',JSON.stringify(pending));
-
   // Send to Google Sheet
-  var data={formType:'register',action:'registerCustomer',name,phone,email,city,password:pwd,status:'Pending Approval',submittedAt:new Date().toISOString()};
-  await sendToSheet(data);
-  await new Promise(r=>setTimeout(r,800));
-  btn.style.display='';loader.style.display='none';
+  await sendToSheet({formType:'register',name,phone,email,city,password:pwd,status:'Pending Approval',regId,submittedAt:new Date().toISOString()});
+  await new Promise(function(r){setTimeout(r,800);});
+  btn.style.display=''; loader.style.display='none';
   okEl.classList.add('show');
-  document.getElementById('regName').value='';document.getElementById('regPhone').value='';
-  document.getElementById('regEmail').value='';document.getElementById('regPwd').value='';
-  document.getElementById('regPwd2').value='';
+  ['regName','regPhone','regEmail','regPwd','regPwd2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
 }
 
-// ─── ADMIN LOGIN (email + password) ───────────────────────
+// ─────────────────────────────────────────────────────────────
+// ADMIN LOGIN
+// ─────────────────────────────────────────────────────────────
 function adminLogin(){
-  var pwd=document.getElementById('adminPwd').value.trim();
-  var correct=localStorage.getItem(PW)||'skyflies2024';
+  var pwd     = document.getElementById('adminPwd').value.trim();
+  var correct = localStorage.getItem(PW)||'skyflies2024';
   if(pwd===correct){
     document.getElementById('adminLoginBox').style.display='none';
     document.getElementById('adminDash').classList.add('on');
-    refreshDash();renderCustList();renderPending();
+    refreshDash(); renderCustList(); renderPending();
   }else{
     var e=document.getElementById('loginErr');
     e.classList.add('show');
-    setTimeout(()=>e.classList.remove('show'),4000);
+    setTimeout(function(){e.classList.remove('show');},4000);
   }
 }
 function adminLogout(){
@@ -1654,80 +1658,107 @@ function adminLogout(){
   document.getElementById('adminPwd').value='';
 }
 
-// ─── RENDER PENDING REGISTRATIONS ─────────────────────────
+// ─────────────────────────────────────────────────────────────
+// RENDER PENDING REGISTRATIONS
+// ─────────────────────────────────────────────────────────────
 function renderPending(){
-  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]').filter(p=>p.status==='pending');
-  var pc=document.getElementById('pendCount');var pb=document.getElementById('pendBadge');
-  if(pc)pc.textContent=pending.length;
-  if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
-  var con=document.getElementById('pendingContainer');if(!con)return;
-  if(!pending.length){con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">✅ No pending registrations.</div>';return;}
-  var html='<div style="display:flex;flex-direction:column;gap:10px;">';
+  var all     = JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  var pending = all.filter(function(p){return p.status==='pending';});
+  var pc=document.getElementById('pendCount');   if(pc)pc.textContent=pending.length;
+  var pb=document.getElementById('pendBadge');   if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
+  var con=document.getElementById('pendingContainer');
+  if(!con)return;
+  if(!pending.length){
+    con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">✅ No pending registrations right now.</div>';
+    return;
+  }
+  var html='<div style="display:flex;flex-direction:column;gap:12px;">';
   pending.forEach(function(p){
-    html+=`<div style="background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.25);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-      <div>
-        <div style="font-weight:700;font-size:14px;color:#fff;">${p.name}</div>
-        <div style="font-size:12px;color:var(--soft);margin-top:3px;">📞 ${p.phone} &nbsp;|&nbsp; ✉️ ${p.email} &nbsp;|&nbsp; 📍 ${p.city||'–'}</div>
-        <div style="font-size:11px;color:var(--soft);margin-top:2px;">Registered: ${new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="approveReg('${p.id}','${p.name}','${p.phone}','${p.email}','${p.city||''}','${p.pwd}')"
-          style="padding:8px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:12px;cursor:pointer;">✅ Approve & Activate</button>
-        <button onclick="rejectReg('${p.id}')"
-          style="padding:8px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:12px;cursor:pointer;">❌ Reject</button>
-      </div>
-    </div>`;
+    var dt=p.submittedAt?new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
+    html+='<div style="background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;">'+
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">'+
+        '<div>'+
+          '<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:4px;">👤 '+p.name+'</div>'+
+          '<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📞 '+p.phone+' &nbsp;|&nbsp; ✉️ '+p.email+'</div>'+
+          '<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📍 '+(p.city||'–')+' &nbsp;|&nbsp; 🕐 '+dt+'</div>'+
+          '<div style="font-size:11px;color:rgba(168,192,224,0.5);margin-top:4px;">Registration ID: '+p.id+'</div>'+
+        '</div>'+
+        '<div style="display:flex;flex-direction:column;gap:8px;min-width:180px;">'+
+          '<button onclick="approveReg(\'\'+p.id+'\')"  style="padding:10px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;">✅ Approve & Activate</button>'+
+          '<button onclick="rejectReg(\'\'+p.id+'\')" style="padding:10px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:13px;cursor:pointer;width:100%;">❌ Reject</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
   });
   html+='</div>';
   con.innerHTML=html;
 }
 
-// ─── APPROVE REGISTRATION ─────────────────────────────────
-async function approveReg(id,name,phone,email,city,pwd){
-  // Generate Customer ID
-  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
-  var num=Object.keys(lc).length+1;
-  var custId='SKY-'+String(num).padStart(3,'0');
-
-  // Create customer account
-  var custData={
-    action:'addCustomer',customerId:custId,name,phone,email,city,
-    password:pwd,address:'',systemSize:'Pending',panels:'Pending',
-    installCost:'Pending',amountPaid:'Pending',plan:'Pending',
-    billingCycle:'Monthly',nextService:'TBD',systemStatus:'Pending Installation',
-    installDate:'',notes:'Self-registered. Awaiting installation details.',
-    subscriptions:[],timeline:[
-      {icon:'📝',title:'Account Registered',date:new Date().toLocaleDateString('en-IN'),desc:'Customer registered via portal and account approved by Skyflies Team.',status:'done'},
-      {icon:'📅',title:'Awaiting Installation',date:'TBD',desc:'Installation details to be updated by Skyflies Team.',status:'active'}
-    ],queries:[]
+// ─────────────────────────────────────────────────────────────
+// APPROVE REGISTRATION
+// ─────────────────────────────────────────────────────────────
+async function approveReg(regId){
+  var all  = JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  var reg  = null;
+  for(var i=0;i<all.length;i++){if(all[i].id===regId){reg=all[i];break;}}
+  if(!reg){alert('Registration not found.');return;}
+  // Generate next Customer ID
+  var existing = JSON.parse(localStorage.getItem('sf_customers')||'{}'');
+  var count    = Object.keys(existing).length+1;
+  var custId   = 'SKY-'+String(count).padStart(3,'0');
+  // Build customer record
+  var newCustomer={
+    pwd:reg.pwd, name:reg.name, phone:reg.phone, email:reg.email, city:reg.city,
+    address:'', systemSize:'Pending', panels:'Pending',
+    installCost:'Pending', amountPaid:'Pending',
+    plan:'Pending – Skyflies Team will contact you',
+    billingCycle:'Monthly', nextService:'TBD',
+    systemStatus:'Pending Installation',
+    installDate:'', notes:'Self-registered. Approved '+new Date().toLocaleDateString('en-IN'),
+    subscriptions:[],
+    timeline:[
+      {icon:'📝',title:'Account Registered',   date:new Date().toLocaleDateString('en-IN'),desc:'Customer registered via portal.',status:'done'},
+      {icon:'✅',title:'Account Approved',      date:new Date().toLocaleDateString('en-IN'),desc:'Account approved by Skyflies Team. Customer ID: '+custId,status:'done'},
+      {icon:'📞',title:'Site Survey Scheduled', date:'TBD',desc:'Skyflies Team will contact you to schedule a free site survey.',status:'active'},
+      {icon:'📋',title:'Quotation',             date:'TBD',desc:'Detailed quotation after site survey.',status:'pending'},
+      {icon:'🔧',title:'Installation',          date:'TBD',desc:'Solar system installation.',status:'pending'},
+      {icon:'✅',title:'System Active',         date:'TBD',desc:'System commissioned and running.',status:'pending'}
+    ],
+    queries:[]
   };
-
-  // Save locally
-  lc[custId]=custData;
-  localStorage.setItem('sf_customers',JSON.stringify(lc));
-
-  // Send to Google Sheet
-  await sendToSheet(custData);
-  await new Promise(r=>setTimeout(r,600));
-
-  // Remove from pending
-  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  pending=pending.map(p=>p.id===id?{...p,status:'approved',customerId:custId}:p);
-  localStorage.setItem('sf_pending',JSON.stringify(pending));
-
-  alert('✅ '+name+' approved!\n\nCustomer ID: '+custId+'\nPassword: (as they set during registration)\n\nShare this Customer ID with them: '+custId);
-  renderPending();renderCustList();
-  var pc=document.getElementById('pendCount');
-  if(pc)pc.textContent=pending.filter(p=>p.status==='pending').length;
+  existing[custId]=newCustomer;
+  localStorage.setItem('sf_customers',JSON.stringify(existing));
+  // Send to Google Sheet – Customer Logins tab
+  await sendToSheet({
+    action:'addCustomer', customerId:custId,
+    name:reg.name, phone:reg.phone, email:reg.email, city:reg.city,
+    password:reg.pwd, address:'', systemSize:'Pending', panels:'Pending',
+    installCost:'Pending', amountPaid:'Pending',
+    plan:'Pending – Skyflies Team will contact',
+    billingCycle:'Monthly', nextService:'TBD',
+    systemStatus:'Pending Installation',
+    installDate:new Date().toLocaleDateString('en-IN'),
+    notes:'Self-registered. Approved '+new Date().toLocaleDateString('en-IN')
+  });
+  await new Promise(function(r){setTimeout(r,600);});
+  // Mark as approved
+  all=all.map(function(p){return p.id===regId?Object.assign({},p,{status:'approved',customerId:custId}):p;});
+  localStorage.setItem('sf_pending',JSON.stringify(all));
+  alert('✅ APPROVED!\n\nCustomer Name : '+reg.name+'\nCustomer ID   : '+custId+'\nPhone         : '+reg.phone+'\n\nCustomer can now login using:\n  Phone: '+reg.phone+'\n  OR Email: '+reg.email+'\n  Password: (as set during registration)\n\nShare Customer ID '+custId+' with them for reference.');
+  refreshDash(); renderPending(); renderCustList();
 }
 
-// ─── REJECT REGISTRATION ──────────────────────────────────
-function rejectReg(id){
-  if(!confirm('Reject this registration?')) return;
-  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  pending=pending.map(p=>p.id===id?{...p,status:'rejected'}:p);
-  localStorage.setItem('sf_pending',JSON.stringify(pending));
+// ─────────────────────────────────────────────────────────────
+// REJECT REGISTRATION
+// ─────────────────────────────────────────────────────────────
+function rejectReg(regId){
+  if(!confirm('Reject this registration? The customer will not be able to login.'))return;
+  var all=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  all=all.map(function(p){return p.id===regId?Object.assign({},p,{status:'rejected'}):p;});
+  localStorage.setItem('sf_pending',JSON.stringify(all));
   renderPending();
+  var pc=document.getElementById('pendCount');
+  if(pc)pc.textContent=all.filter(function(p){return p.status==='pending';}).length;
 }
 
 // ─── CUSTOMER PORTAL LOGIN ────────────────────────────────
