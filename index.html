@@ -1429,6 +1429,7 @@ function buildEmailBody(data, sheetName) {
 
 <script>
 var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbwllOeyOe45X-aLIFLxQg4vL-kbk9ODcAP61pmfIpy3W4xIgiWRgI1uKmlASlgTKBKEDA/exec';
 
 // ─── NAV ───────────────────────────────────────────────────
 function showPage(id,btn){
@@ -1564,7 +1565,7 @@ document.getElementById('queryForm').addEventListener('submit',async function(e)
 });
 
 async function sendToSheet(data){
-  var wh=localStorage.getItem(WH);
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
   if(!wh)return false;
   try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});return true;}catch(e){return false;}
 }
@@ -1578,7 +1579,7 @@ function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(
 // ─── SETUP ──────────────────────────────────────────────────
 function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);s.textContent='✅ Webhook saved!';s.className='wst ok';}
 function savePwd(){var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}localStorage.setItem(PW,p);s.textContent='✅ Password updated.';s.className='wst ok';}
-window.addEventListener('load',()=>{var wh=localStorage.getItem(WH);if(wh){var el=document.getElementById('whUrl');if(el){el.value=wh;document.getElementById('whSt').textContent='✅ Webhook active.';document.getElementById('whSt').className='wst ok';}}refreshDash();});
+window.addEventListener('load',()=>{if(!localStorage.getItem(WH))localStorage.setItem(WH,WEBHOOK_URL);var wh=localStorage.getItem(WH);var el=document.getElementById('whUrl');if(el){el.value=wh;var st=document.getElementById('whSt');if(st){st.textContent='✅ Google Sheet connected.';st.className='wst ok';}}refreshDash();});
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
 
 // ─── AUTH TAB SWITCH ──────────────────────────────────────
