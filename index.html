@@ -1665,34 +1665,49 @@ function adminLogout(){
 function renderPending(){
   var all     = JSON.parse(localStorage.getItem('sf_pending')||'[]');
   var pending = all.filter(function(p){return p.status==='pending';});
-  var pc=document.getElementById('pendCount');   if(pc)pc.textContent=pending.length;
-  var pb=document.getElementById('pendBadge');   if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
+  var pc=document.getElementById('pendCount');
+  var pb=document.getElementById('pendBadge');
+  if(pc)pc.textContent=pending.length;
+  if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
   var con=document.getElementById('pendingContainer');
   if(!con)return;
   if(!pending.length){
-    con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">✅ No pending registrations right now.</div>';
+    con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">No pending registrations right now.</div>';
     return;
   }
   var html='<div style="display:flex;flex-direction:column;gap:12px;">';
-  pending.forEach(function(p){
+  pending.forEach(function(p,idx){
     var dt=p.submittedAt?new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
-    html+='<div style="background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;">'+
-      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">'+
-        '<div>'+
-          '<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:4px;">👤 '+p.name+'</div>'+
-          '<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📞 '+p.phone+' &nbsp;|&nbsp; ✉️ '+p.email+'</div>'+
-          '<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📍 '+(p.city||'–')+' &nbsp;|&nbsp; 🕐 '+dt+'</div>'+
-          '<div style="font-size:11px;color:rgba(168,192,224,0.5);margin-top:4px;">Registration ID: '+p.id+'</div>'+
-        '</div>'+
-        '<div style="display:flex;flex-direction:column;gap:8px;min-width:180px;">'+
-          '<button onclick="approveReg(\'\'+p.id+'\')"  style="padding:10px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;">✅ Approve & Activate</button>'+
-          '<button onclick="rejectReg(\'\'+p.id+'\')" style="padding:10px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:13px;cursor:pointer;width:100%;">❌ Reject</button>'+
-        '</div>'+
-      '</div>'+
-    '</div>';
+    html+='<div style="background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;">'
+        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">'
+          +'<div>'
+            +'<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:4px;">👤 '+p.name+'</div>'
+            +'<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📞 '+p.phone+' &nbsp;|&nbsp; ✉️ '+p.email+'</div>'
+            +'<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📍 '+(p.city||'–')+' &nbsp;|&nbsp; 🕐 '+dt+'</div>'
+          +'</div>'
+          +'<div style="display:flex;flex-direction:column;gap:8px;min-width:180px;">'
+            +'<button data-regid="'+idx+'" class="pend-approve" style="padding:10px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;">✅ Approve</button>'
+            +'<button data-regid="'+idx+'" class="pend-reject" style="padding:10px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:13px;cursor:pointer;width:100%;">❌ Reject</button>'
+          +'</div>'
+        +'</div>'
+      +'</div>';
   });
   html+='</div>';
   con.innerHTML=html;
+  // Attach click handlers using data attributes — no quote issues
+  var pendingNow=JSON.parse(localStorage.getItem('sf_pending')||'[]').filter(function(p){return p.status==='pending';});
+  con.querySelectorAll('.pend-approve').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var idx=parseInt(this.getAttribute('data-regid'));
+      approveReg(pendingNow[idx].id);
+    });
+  });
+  con.querySelectorAll('.pend-reject').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var idx=parseInt(this.getAttribute('data-regid'));
+      rejectReg(pendingNow[idx].id);
+    });
+  });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -1704,7 +1719,7 @@ async function approveReg(regId){
   for(var i=0;i<all.length;i++){if(all[i].id===regId){reg=all[i];break;}}
   if(!reg){alert('Registration not found.');return;}
   // Generate next Customer ID
-  var existing = JSON.parse(localStorage.getItem('sf_customers')||'{}'');
+  var existing = JSON.parse(localStorage.getItem('sf_customers')||'{}');
   var count    = Object.keys(existing).length+1;
   var custId   = 'SKY-'+String(count).padStart(3,'0');
   // Build customer record
@@ -1891,7 +1906,7 @@ function exportCSV(){
   if(!allData.length){alert('No data yet.');return;}
   var cols=['submittedAt','formType','name','phone','email','company','city','propertyType','plan','emi','services','installCost','amountPaid','systemSize','nextService','systemStatus','message'];
   var csv=cols.join(',')+'\n';
-  allData.forEach(d=>{csv+=cols.map(c=>'"'+(d[c]||'').replace(/"/g,'""')+'"').join(',')+'\n';});
+  allData.forEach(function(d){csv+=cols.map(function(c){return JSON.stringify(String(d[c]||''));}).join(',')+'\n';});
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='skyflies_complete_data.csv';a.click();
 }
 function clearData(){if(confirm('Clear all local submission data? (Google Sheet data is safe)')){localStorage.removeItem(DB);refreshDash();}}
