@@ -990,319 +990,193 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <p style="font-size:12px;color:var(--soft);margin-bottom:6px;">Copy and paste into Apps Script, then deploy as Web App:</p>
     <div class="cb"><button class="cpbtn" onclick="cpCode()">COPY</button>
 <pre id="gasCd">// ════════════════════════════════════════════════════
-// SKYFLIES SOLAR – GOOGLE APPS SCRIPT CRM v3
-// All forms + secure customer logins + full admin view
-// Paste this in Apps Script → Deploy as Web App
-// Execute as: Me | Access: Anyone
+// SKYFLIES SOLAR – GOOGLE APPS SCRIPT CRM v5
+// Deploy: Execute as Me | Who has access: Anyone
+// Email alerts → skyfliessolar@gmail.com
 // ════════════════════════════════════════════════════
 
-var SHEET_NAME = 'Skyflies Solar CRM'; // your spreadsheet name
+var ADMIN_EMAIL = 'skyfliessolar@gmail.com';
 
-// ── Colour scheme for sheet headers ──
 var COLORS = {
-  orange:  { bg:'#F5A623', fg:'#000000' },
-  blue:    { bg:'#1565C0', fg:'#FFFFFF' },
-  green:   { bg:'#2E7D32', fg:'#FFFFFF' },
-  purple:  { bg:'#6A1B9A', fg:'#FFFFFF' },
-  teal:    { bg:'#00695C', fg:'#FFFFFF' },
-  red:     { bg:'#B71C1C', fg:'#FFFFFF' },
-  grey:    { bg:'#37474F', fg:'#FFFFFF' }
+  orange:{ bg:'#F5A623',fg:'#000000' }, blue:{ bg:'#1565C0',fg:'#FFFFFF' },
+  green:{ bg:'#2E7D32',fg:'#FFFFFF' }, purple:{ bg:'#6A1B9A',fg:'#FFFFFF' },
+  teal:{ bg:'#00695C',fg:'#FFFFFF' }, red:{ bg:'#B71C1C',fg:'#FFFFFF' },
+  grey:{ bg:'#37474F',fg:'#FFFFFF' }, amber:{ bg:'#FF8F00',fg:'#000000' }
 };
 
-// ──────────────────────────────────────────────────────
 function doPost(e) {
   try {
-    // Handle both content types (application/json and text/plain)
-    var raw = e.postData.contents;
-    var data = JSON.parse(raw);
+    var data = JSON.parse(e.postData.contents);
     var ss   = SpreadsheetApp.getActiveSpreadsheet();
-
-    // Route by action
-    if (data.action === 'getCustomer')      return getCustomer(ss, data);
-    if (data.action === 'addCustomer')      return addCustomer(ss, data);
-    if (data.action === 'addQuery')         return addQuery(ss, data);
-    if (data.action === 'registerCustomer') return saveRegistration(ss, data);
-    if (data.action === 'loginEvent')       return saveLoginEvent(ss, data);
-
-    // Regular form submissions
-    return handleForm(ss, data);
-
+    if (data.action === 'getCustomer')      return respond(getCustomer(ss, data));
+    if (data.action === 'addCustomer')      return respond(addCustomer(ss, data));
+    if (data.action === 'addQuery')         return respond(addQuery(ss, data));
+    if (data.action === 'registerCustomer') return respond(saveRegistration(ss, data));
+    if (data.action === 'loginEvent')       return respond(saveLoginEvent(ss, data));
+    return respond(handleForm(ss, data));
   } catch(err) {
     return respond({status:'error', message:err.toString()});
   }
 }
 
-// ── SAVE LOGIN EVENT ─────────────────────────────────
-function saveLoginEvent(ss, data) {
-  var headers = ['Timestamp','Customer ID','Name','Phone','Login Time'];
-  var sh = getOrCreate(ss, 'Login History', headers, COLORS.grey);
-  sh.appendRow([timestamp(), data.customerId, data.name||'', data.phone||'', data.loginTime||timestamp()]);
-  return respond({status:'success'});
-}
-
 function doGet() {
-  return json({status:'ok', app:'Skyflies Solar CRM v3', time: new Date().toISOString()});
+  return respond({status:'ok', app:'Skyflies Solar CRM v5'});
 }
 
-// ──────────────────────────────────────────────────────
-// HANDLE FORM SUBMISSIONS (enquiry / quotation / subscribe / emi / query)
-// ──────────────────────────────────────────────────────
 function handleForm(ss, data) {
   var ts = timestamp();
-
-  var config = {
-    enquiry: {
-      sheet: 'Enquiries', color: COLORS.orange,
-      headers: ['#','Timestamp','Name','Phone','Email','City','Property Type','Source','Message'],
-      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.source,d.message]
-    },
-    quotation: {
-      sheet: 'Quotations', color: COLORS.blue,
-      headers: ['#','Timestamp','Name','Phone','Email','Company','City','Property Type','Monthly Bill','Roof Area','System Type','Budget','Services Required','Message'],
-      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.company,d.city,d.propertyType,d.bill,d.roofArea,d.systemType,d.budget,d.services,d.message]
-    },
-    subscribe: {
-      sheet: 'Subscriptions', color: COLORS.green,
-      headers: ['#','Timestamp','Name','Phone','Email','Company','City','Address','System Size (kW)','No. of Panels','Plan','Billing Cycle','Service Day','Message'],
-      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.company,d.city,d.address,d.systemSize,d.panels,d.plan,d.billing,d.serviceDay,d.message]
-    },
-    emi: {
-      sheet: 'EMI Enquiries', color: COLORS.purple,
-      headers: ['#','Timestamp','Name','Phone','Email','City','Property Type','System Size','Monthly Income','Preferred EMI','Employment Type','Existing System','Message'],
-      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.systemSize,d.income,d.emi,d.employment,d.existing,d.message]
-    },
-    query: {
-      sheet: 'Customer Queries', color: COLORS.teal,
-      headers: ['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response'],
-      row: (d,n) => [n,ts,d.customerId,d.customerName||'',d.queryType,d.priority||'Normal',d.message,'Open','']
-    },
-    register: {
-      sheet: 'Pending Registrations', color: COLORS.grey,
-      headers: ['#','Timestamp','Name','Phone','Email','City','Status','Notes'],
-      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.city,'Pending Approval','Awaiting admin review']
-    }
+  var sheets = {
+    enquiry:{name:'Enquiries',color:COLORS.orange,
+      headers:['#','Timestamp','Name','Phone','Email','City','Property Type','Source','Message'],
+      row:function(d,n){return [n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.source,d.message];}},
+    quotation:{name:'Quotations',color:COLORS.blue,
+      headers:['#','Timestamp','Name','Phone','Email','Company','City','Property Type','Monthly Bill','Roof Area','System Type','Budget','Services','Message'],
+      row:function(d,n){return [n,ts,d.name,d.phone,d.email,d.company,d.city,d.propertyType,d.bill,d.roofArea,d.systemType,d.budget,d.services,d.message];}},
+    subscribe:{name:'Subscriptions',color:COLORS.green,
+      headers:['#','Timestamp','Name','Phone','Email','Company','City','Address','System Size','Panels','Plan','Billing','Service Day','Message'],
+      row:function(d,n){return [n,ts,d.name,d.phone,d.email,d.company,d.city,d.address,d.systemSize,d.panels,d.plan,d.billing,d.serviceDay,d.message];}},
+    emi:{name:'EMI Enquiries',color:COLORS.purple,
+      headers:['#','Timestamp','Name','Phone','Email','City','Property Type','System Size','Income','EMI/mo','Employment','Existing System','Message'],
+      row:function(d,n){return [n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.systemSize,d.income,d.emi,d.employment,d.existing,d.message];}},
+    query:{name:'Customer Queries',color:COLORS.teal,
+      headers:['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response'],
+      row:function(d,n){return [n,ts,d.customerId,d.customerName||'',d.queryType,d.priority||'Normal',d.message,'Open',''];}},
+    register:{name:'Pending Registrations',color:COLORS.amber,
+      headers:['#','Timestamp','Name','Phone','Email','City','Password','Registration ID','Status','Notes'],
+      row:function(d,n){return [n,ts,d.name,d.phone,d.email,d.city,d.password,d.regId||'','Pending Approval','Awaiting admin review'];}}
   };
-
-  var cfg = config[data.formType];
-  if (!cfg) return json({status:'error', message:'Unknown form type: '+data.formType});
-
-  var sh = getOrCreate(ss, cfg.sheet, cfg.headers, cfg.color);
-  var rowNum = sh.getLastRow(); // row number for serial
-  sh.appendRow(cfg.row(data, rowNum));
-  sh.autoResizeColumns(1, sh.getLastColumn());
-
-  // Email alert
-  var subject = '🌞 New ' + cfg.sheet + ' – Skyflies Solar | ' + (data.name||data.customerId||'Unknown') + (data.city ? ' – '+data.city : '');
-  var body = buildEmailBody(data, cfg.sheet);
-  try { MailApp.sendEmail('skyfliessolar@gmail.com', subject, body); } catch(me) {}
-
-  return json({status:'success', sheet: cfg.sheet, row: rowNum});
+  var cfg=sheets[data.formType];
+  if(!cfg) return {status:'error',message:'Unknown type: '+data.formType};
+  var sh=getOrCreate(ss,cfg.name,cfg.headers,cfg.color);
+  var rowNum=sh.getLastRow();
+  sh.appendRow(cfg.row(data,rowNum));
+  sh.autoResizeColumns(1,sh.getLastColumn());
+  var subject='🌞 New '+cfg.name+' – '+(data.name||'Unknown')+(data.city?' | '+data.city:'');
+  try{MailApp.sendEmail(ADMIN_EMAIL,subject,buildEmail(data,cfg.name));}catch(me){}
+  return {status:'success',sheet:cfg.name};
 }
 
-// ──────────────────────────────────────────────────────
-// CUSTOMER LOGIN – VERIFY & RETURN FULL DATA
-// ──────────────────────────────────────────────────────
+function saveRegistration(ss, data) {
+  var headers=['#','Timestamp','Name','Phone','Email','City','Password','Registration ID','Status','Notes'];
+  var sh=getOrCreate(ss,'Pending Registrations',headers,COLORS.amber);
+  sh.appendRow([sh.getLastRow(),timestamp(),data.name,data.phone,data.email,data.city||'',data.password,data.regId||'','Pending Approval','Awaiting admin review']);
+  sh.autoResizeColumns(1,sh.getLastColumn());
+  try{MailApp.sendEmail(ADMIN_EMAIL,'⏳ New Registration – '+data.name+' | '+data.phone,
+    'Name: '+data.name+'
+Phone: '+data.phone+'
+Email: '+data.email+'
+City: '+(data.city||'–')+
+    '
+
+Approve here: https://skyfliessolar.github.io/skyflies
+
+Sheet: '+ss.getUrl());}catch(me){}
+  return {status:'success'};
+}
+
 function getCustomer(ss, data) {
-  var sh = ss.getSheetByName('Customer Logins');
-  if (!sh) return json({status:'error', message:'Customer Logins sheet not found. Please add a customer first.'});
-
-  var rows = sh.getDataRange().getValues();
-  // Row 0 = headers, start from row 1
-  for (var i = 1; i < rows.length; i++) {
-    var r = rows[i];
-    var storedId  = String(r[0]).trim();
-    var storedPwd = String(r[2]).trim(); // password in col C (index 2)
-    if (storedId === String(data.customerId).trim() &&
-        storedPwd === String(data.password).trim()) {
-
-      // Log last login time
-      try { sh.getRange(i+1, 17).setValue(timestamp()); } catch(le) {}
-
-      return json({
-        status: 'success',
-        customer: {
-          id:           r[0],  name:         r[1],  password:     r[2],
-          phone:        r[3],  email:        r[4],  city:         r[5],
-          address:      r[6],  systemSize:   r[7],  panels:       r[8],
-          installCost:  r[9],  amountPaid:   r[10], plan:         r[11],
-          billingCycle: r[12], nextService:  r[13], systemStatus: r[14],
-          installDate:  r[15], notes:        r[16]||''
-        }
-      });
+  var sh=ss.getSheetByName('Customer Logins');
+  if(!sh) return {status:'error',message:'No customer accounts found.'};
+  var rows=sh.getDataRange().getValues();
+  var inputId=String(data.customerId||'').trim();
+  var inputPwd=String(data.password||'').trim();
+  for(var i=1;i<rows.length;i++){
+    var r=rows[i];
+    var match=(String(r[0]).trim()===inputId||String(r[3]).trim()===inputId||String(r[4]).trim()===inputId);
+    if(match&&String(r[2]).trim()===inputPwd){
+      try{sh.getRange(i+1,18).setValue(timestamp());}catch(le){}
+      return {status:'success',customer:{
+        id:r[0],name:r[1],password:r[2],phone:r[3],email:r[4],
+        city:r[5],address:r[6],systemSize:r[7],panels:r[8],
+        installCost:r[9],amountPaid:r[10],plan:r[11],
+        billingCycle:r[12],nextService:r[13],systemStatus:r[14],
+        installDate:r[15],notes:r[16]||''
+      }};
     }
   }
-  return json({status:'error', message:'Invalid Customer ID or Password. Please contact Skyflies Team.'});
+  return {status:'error',message:'Wrong phone/email or password.'};
 }
 
-// ──────────────────────────────────────────────────────
-// ADD NEW CUSTOMER (Admin action)
-// ──────────────────────────────────────────────────────
 function addCustomer(ss, data) {
-  var hdrs = [
-    'Customer ID',    // A – unique login ID e.g. SKY-001
-    'Full Name',      // B
-    'Password',       // C – stored as plain text (visible to admin only)
-    'Phone',          // D
-    'Email',          // E
-    'City',           // F
-    'Address',        // G
-    'System Size (kW)',// H
-    'No. of Panels',  // I
-    'Installation Cost',// J
-    'Amount Paid',    // K
-    'Subscription Plan',// L
-    'Billing Cycle',  // M
-    'Next Service Date',// N
-    'System Status',  // O
-    'Installation Date',// P
-    'Notes',          // Q
-    'Last Login',     // R
-    'Account Created' // S
-  ];
-
-  var sh = getOrCreate(ss, 'Customer Logins', hdrs, COLORS.red);
-
-  // Check duplicate
-  var rows = sh.getDataRange().getValues();
-  for (var i = 1; i < rows.length; i++) {
-    if (String(rows[i][0]).trim() === String(data.customerId).trim()) {
-      return json({status:'error', message:'Customer ID "'+data.customerId+'" already exists. Use a different ID.'});
-    }
+  var headers=['Customer ID','Full Name','Password','Phone','Email','City','Address',
+    'System Size (kW)','No. of Panels','Installation Cost','Amount Paid',
+    'Subscription Plan','Billing Cycle','Next Service Date','System Status',
+    'Installation Date','Notes','Last Login','Account Created'];
+  var sh=getOrCreate(ss,'Customer Logins',headers,COLORS.red);
+  var rows=sh.getDataRange().getValues();
+  for(var i=1;i<rows.length;i++){
+    if(String(rows[i][0]).trim()===String(data.customerId).trim())
+      return {status:'error',message:'Customer ID already exists.'};
   }
+  var ts=timestamp();
+  sh.appendRow([data.customerId,data.name,data.password,data.phone,data.email,
+    data.city||'',data.address||'',data.systemSize||'Pending',data.panels||'Pending',
+    data.installCost||'Pending',data.amountPaid||'Pending',data.plan||'Pending',
+    data.billingCycle||'Monthly',data.nextService||'TBD',
+    data.systemStatus||'Pending Installation',data.installDate||ts,data.notes||'','',ts]);
+  sh.autoResizeColumns(1,sh.getLastColumn());
+  try{var lr=sh.getLastRow();sh.getRange(lr,15).setBackground(data.systemStatus==='Active'?'#C8E6C9':'#FFE0B2');}catch(fe){}
+  try{MailApp.sendEmail(ADMIN_EMAIL,'✅ Customer Approved – '+data.name+' ('+data.customerId+')',
+    'ID: '+data.customerId+'
+Name: '+data.name+'
+Phone: '+data.phone+'
+Status: '+(data.systemStatus||'Pending')+
+    '
 
-  sh.appendRow([
-    data.customerId,        // A
-    data.name,              // B
-    data.password,          // C
-    data.phone,             // D
-    data.email,             // E
-    data.city,              // F
-    data.address,           // G
-    data.systemSize,        // H
-    data.panels,            // I
-    data.installCost,       // J
-    data.amountPaid,        // K
-    data.plan,              // L
-    data.billingCycle||'Monthly', // M
-    data.nextService,       // N
-    data.systemStatus||'Active',  // O
-    data.installDate||timestamp(),// P
-    data.notes||'',         // Q
-    '',                     // R last login – blank initially
-    timestamp()             // S created on
-  ]);
-
-  sh.autoResizeColumns(1, sh.getLastColumn());
-
-  // Colour-code status cell green/orange
-  try {
-    var lastRow = sh.getLastRow();
-    var statusCell = sh.getRange(lastRow, 15); // col O = System Status
-    statusCell.setBackground(data.systemStatus==='Active'?'#C8E6C9':'#FFE0B2');
-  } catch(fe) {}
-
-  // Email alert
-  try {
-    MailApp.sendEmail('skyfliessolar@gmail.com',
-      '✅ New Customer Account – ' + data.name + ' (' + data.customerId + ')',
-      'New customer portal account created:\n\n'
-      +'Customer ID : ' + data.customerId + '\n'
-      +'Name        : ' + data.name + '\n'
-      +'Phone       : ' + data.phone + '\n'
-      +'Email       : ' + data.email + '\n'
-      +'City        : ' + data.city + '\n'
-      +'System Size : ' + data.systemSize + '\n'
-      +'Plan        : ' + data.plan + '\n'
-      +'Install Cost: ' + data.installCost + '\n'
-      +'Status      : ' + (data.systemStatus||'Active') + '\n\n'
-      +'View sheet  : ' + ss.getUrl()
-    );
-  } catch(me) {}
-
-  return json({status:'success', customerId: data.customerId, name: data.name});
+Sheet: '+ss.getUrl());}catch(me){}
+  return {status:'success',customerId:data.customerId};
 }
 
-// ──────────────────────────────────────────────────────
-// ADD CUSTOMER QUERY
-// ──────────────────────────────────────────────────────
 function addQuery(ss, data) {
-  var hdrs = ['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response','Responded On'];
-  var sh = getOrCreate(ss, 'Customer Queries', COLORS.teal, hdrs);
-  // fix arg order
-  sh = getOrCreate(ss, 'Customer Queries', hdrs, COLORS.teal);
-  var n = sh.getLastRow();
-  sh.appendRow([n, timestamp(), data.customerId, data.customerName||'', data.queryType, data.priority||'Normal', data.message, 'Open', '', '']);
-  sh.autoResizeColumns(1, sh.getLastColumn());
+  var headers=['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response'];
+  var sh=getOrCreate(ss,'Customer Queries',headers,COLORS.teal);
+  sh.appendRow([sh.getLastRow(),timestamp(),data.customerId,data.customerName||'',
+    data.queryType,data.priority||'Normal',data.message,'Open','']);
+  sh.autoResizeColumns(1,sh.getLastColumn());
+  try{MailApp.sendEmail(ADMIN_EMAIL,'🔔 Query – '+(data.customerName||data.customerId)+' | '+data.queryType,
+    'Customer: '+(data.customerName||'')+' ('+data.customerId+')
+Type: '+data.queryType+
+    '
+Message: '+data.message+'
 
-  try {
-    MailApp.sendEmail('skyfliessolar@gmail.com',
-      '🔔 Customer Query – ' + (data.customerName||data.customerId) + ' | ' + data.queryType,
-      'New customer query:\n\nCustomer : ' + (data.customerName||'') + ' (' + data.customerId + ')\n'
-      +'Type     : ' + data.queryType + '\n'
-      +'Priority : ' + (data.priority||'Normal') + '\n'
-      +'Message  : ' + data.message + '\n\n'
-      +'Respond in sheet: ' + ss.getUrl()
-    );
-  } catch(me) {}
-
-  return json({status:'success'});
+Sheet: '+ss.getUrl());}catch(me){}
+  return {status:'success'};
 }
 
-// ──────────────────────────────────────────────────────
-// UPDATE CUSTOMER PASSWORD (optional future use)
-// ──────────────────────────────────────────────────────
-function updateCustomerLogin(ss, data) {
-  var sh = ss.getSheetByName('Customer Logins');
-  if (!sh) return json({status:'error', message:'Sheet not found'});
-  var rows = sh.getDataRange().getValues();
-  for (var i = 1; i < rows.length; i++) {
-    if (String(rows[i][0]).trim() === String(data.customerId).trim()) {
-      sh.getRange(i+1, 3).setValue(data.newPassword); // col C
-      return json({status:'success'});
-    }
-  }
-  return json({status:'error', message:'Customer not found'});
+function saveLoginEvent(ss, data) {
+  var headers=['Timestamp','Customer ID','Name','Phone','Login Time'];
+  var sh=getOrCreate(ss,'Login History',headers,COLORS.grey);
+  sh.appendRow([timestamp(),data.customerId||'',data.name||'',data.phone||'',data.loginTime||timestamp()]);
+  return {status:'success'};
 }
 
-// ──────────────────────────────────────────────────────
-// HELPERS
-// ──────────────────────────────────────────────────────
 function getOrCreate(ss, name, headers, color) {
-  var sh = ss.getSheetByName(name);
-  if (!sh) {
-    sh = ss.insertSheet(name);
-    if (headers && headers.length) {
-      sh.appendRow(headers);
-      var hdrRange = sh.getRange(1, 1, 1, headers.length);
-      hdrRange.setBackground(color ? color.bg : '#F5A623')
-              .setFontColor(color ? color.fg : '#000000')
-              .setFontWeight('bold')
-              .setFontSize(10);
-      sh.setFrozenRows(1);
-      sh.setColumnWidth(1, 50);   // # column
-      sh.setColumnWidth(2, 140);  // timestamp
-    }
+  var sh=ss.getSheetByName(name);
+  if(!sh){
+    sh=ss.insertSheet(name);
+    sh.appendRow(headers);
+    var r=sh.getRange(1,1,1,headers.length);
+    r.setBackground(color?color.bg:'#F5A623').setFontColor(color?color.fg:'#000000').setFontWeight('bold').setFontSize(10);
+    sh.setFrozenRows(1);
+    sh.setColumnWidth(1,40);sh.setColumnWidth(2,150);
   }
   return sh;
 }
 
 function timestamp() {
-  return new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'});
+  return new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
 }
 
-function json(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+function respond(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-function buildEmailBody(data, sheetName) {
-  var lines = ['New ' + sheetName + ' submission on Skyflies Solar App', ''];
-  var fields = ['name','phone','email','city','propertyType','plan','emi','queryType','services','message'];
-  fields.forEach(function(f) {
-    if (data[f]) lines.push(f.charAt(0).toUpperCase()+f.slice(1) + ': ' + data[f]);
+function buildEmail(data, sheetName) {
+  var lines=['New '+sheetName+' on Skyflies Solar App',''];
+  ['name','phone','email','city','propertyType','plan','emi','queryType','message'].forEach(function(f){
+    if(data[f]) lines.push(f[0].toUpperCase()+f.slice(1)+': '+data[f]);
   });
-  lines.push('', 'Submitted: ' + new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}));
+  lines.push('','Time: '+new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}));
   return lines.join('\n');
 }</pre></div>
     <p id="cpOk" class="cpok">✅ Code copied!</p>
