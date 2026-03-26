@@ -1641,7 +1641,7 @@ async function registerCustomer(){
   pending.push(reg);
   localStorage.setItem('sf_pending',JSON.stringify(pending));
   // Send to Google Sheet
-  await sendToSheet({formType:'register',name,phone,email,city,password:pwd,status:'Pending Approval',regId,submittedAt:new Date().toISOString()});
+  await sendToSheet({action:'registerCustomer',formType:'register',name,phone,email,city,password:pwd,status:'Pending Approval',regId,submittedAt:new Date().toISOString()});
   await new Promise(function(r){setTimeout(r,800);});
   btn.style.display=''; loader.style.display='none';
   okEl.classList.add('show');
@@ -1839,7 +1839,7 @@ async function cLogin(){
   if(customer){
     currentCustomer=customer;
     // Save login event to Google Sheet
-    sendToSheet({formType:'loginEvent',customerId:customer.id,name:customer.name,phone:customer.phone,loginTime:new Date().toISOString()});
+    sendToSheet({action:'loginEvent',customerId:customer.id,name:customer.name,phone:customer.phone,loginTime:new Date().toISOString()});
     // Merge local queries
     var ld=JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');
     if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
@@ -1950,17 +1950,14 @@ document.getElementById('addCustForm').addEventListener('submit',async function(
   await new Promise(r=>setTimeout(r,800));
   var success=false;
   // Try sending to Google Sheet
-  var wh=localStorage.getItem(WH);
-  if(wh){
-    try{
-      var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-      var res=await r.json();
-      if(res.status==='success')success=true;
-    }catch(err){
-      // Fallback: save locally
-      success=true;
-    }
-  } else { success=true; }
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  try{
+    var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    var res=await r.json();
+    if(res.status==='success')success=true;
+  }catch(err){
+    success=true;
+  }
   // Always save locally too (as backup)
   var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
   lc[data.customerId]={
