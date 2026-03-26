@@ -1556,43 +1556,62 @@ function renderPending(){
   if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
   var con=document.getElementById('pendingContainer');
   if(!con)return;
+
   if(!pending.length){
-    con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">No pending registrations right now.</div>';
+    con.innerHTML='<div style="text-align:center;padding:24px;color:var(--soft);font-size:13px;">✅ No pending registrations.</div>';
     return;
   }
-  var html='<div style="display:flex;flex-direction:column;gap:12px;">';
-  pending.forEach(function(p,idx){
+
+  // Clear container
+  con.innerHTML='';
+  var wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;flex-direction:column;gap:12px;';
+
+  pending.forEach(function(p){
     var dt=p.submittedAt?new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
-    html+='<div style="background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;">'
-        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">'
-          +'<div>'
-            +'<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:4px;">👤 '+p.name+'</div>'
-            +'<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📞 '+p.phone+' &nbsp;|&nbsp; ✉️ '+p.email+'</div>'
-            +'<div style="font-size:12px;color:var(--soft);margin-bottom:2px;">📍 '+(p.city||'–')+' &nbsp;|&nbsp; 🕐 '+dt+'</div>'
-          +'</div>'
-          +'<div style="display:flex;flex-direction:column;gap:8px;min-width:180px;">'
-            +'<button data-regid="'+idx+'" class="pend-approve" style="padding:10px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;">✅ Approve</button>'
-            +'<button data-regid="'+idx+'" class="pend-reject" style="padding:10px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:13px;cursor:pointer;width:100%;">❌ Reject</button>'
-          +'</div>'
+
+    var card=document.createElement('div');
+    card.style.cssText='background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;';
+    card.innerHTML=
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">'
+        +'<div>'
+          +'<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:6px;">👤 '+p.name+'</div>'
+          +'<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📞 '+p.phone+'</div>'
+          +'<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">✉️ '+p.email+'</div>'
+          +'<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📍 '+(p.city||'–')+'</div>'
+          +'<div style="font-size:11px;color:rgba(168,192,224,0.4);margin-top:4px;">🕐 '+dt+'</div>'
+        +'</div>'
+        +'<div id="btns-'+p.id+'" style="display:flex;flex-direction:column;gap:8px;min-width:180px;">'
         +'</div>'
       +'</div>';
+
+    // Create approve button
+    var approveBtn=document.createElement('button');
+    approveBtn.textContent='✅ Approve & Activate';
+    approveBtn.style.cssText='padding:11px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+    approveBtn.onclick=(function(reg){
+      return function(){
+        approveBtn.disabled=true;
+        approveBtn.textContent='⏳ Processing...';
+        approveReg(reg.id);
+      };
+    })(p);
+
+    // Create reject button
+    var rejectBtn=document.createElement('button');
+    rejectBtn.textContent='❌ Reject';
+    rejectBtn.style.cssText='padding:11px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+    rejectBtn.onclick=(function(reg){
+      return function(){rejectReg(reg.id);};
+    })(p);
+
+    var btnBox=card.querySelector('#btns-'+p.id);
+    btnBox.appendChild(approveBtn);
+    btnBox.appendChild(rejectBtn);
+    wrap.appendChild(card);
   });
-  html+='</div>';
-  con.innerHTML=html;
-  // Attach click handlers using data attributes — no quote issues
-  var pendingNow=JSON.parse(localStorage.getItem('sf_pending')||'[]').filter(function(p){return p.status==='pending';});
-  con.querySelectorAll('.pend-approve').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var idx=parseInt(this.getAttribute('data-regid'));
-      approveReg(pendingNow[idx].id);
-    });
-  });
-  con.querySelectorAll('.pend-reject').forEach(function(btn){
-    btn.addEventListener('click',function(){
-      var idx=parseInt(this.getAttribute('data-regid'));
-      rejectReg(pendingNow[idx].id);
-    });
-  });
+
+  con.appendChild(wrap);
 }
 
 // ─────────────────────────────────────────────────────────────
