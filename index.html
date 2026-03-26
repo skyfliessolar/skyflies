@@ -4,469 +4,410 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Skyflies Solar Solutions – Tamil Nadu</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --sun:#F5A623;--solar:#FF6B00;--deep:#080F1E;--navy:#0D1F3C;
-  --panel:#0F2040;--glow:#FFD166;--white:#FFFFFF;--soft:#A8C0E0;
-  --success:#00E676;--error:#FF5252;--warn:#FFB347;
-  --card:rgba(255,255,255,0.035);--border:rgba(245,166,35,0.18);
-  --border2:rgba(255,255,255,0.065);--glass:rgba(13,31,60,0.7);
+  --soft:#A8C0E0;--success:#00E676;--error:#FF5252;
+  --card:rgba(255,255,255,0.035);--border:rgba(245,166,35,0.18);--border2:rgba(255,255,255,0.065);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--deep);color:var(--white);min-height:100vh;overflow-x:hidden;}
-
-/* BG */
+body{font-family:'DM Sans',sans-serif;background:var(--deep);color:#fff;min-height:100vh;overflow-x:hidden;}
 .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
 .orb1{width:800px;height:800px;top:-250px;right:-250px;background:radial-gradient(circle,rgba(245,166,35,0.08) 0%,transparent 65%);animation:orbf 9s ease-in-out infinite;}
 .orb2{width:600px;height:600px;bottom:-200px;left:-200px;background:radial-gradient(circle,rgba(255,107,0,0.06) 0%,transparent 65%);animation:orbf 11s ease-in-out infinite reverse;}
 @keyframes orbf{0%,100%{transform:scale(1);}50%{transform:scale(1.1) translate(8px,-8px);}}
-.gridlines{position:fixed;inset:0;background-image:linear-gradient(rgba(245,166,35,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,0.022) 1px,transparent 1px);background-size:48px 48px;z-index:0;pointer-events:none;}
-
+.gridlines{position:fixed;inset:0;background-image:linear-gradient(rgba(245,166,35,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(245,166,35,0.02) 1px,transparent 1px);background-size:48px 48px;z-index:0;pointer-events:none;}
 .wrap{position:relative;z-index:1;}
 
-/* ── HEADER ── */
-header{padding:16px 44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,15,30,0.9);backdrop-filter:blur(28px);position:sticky;top:0;z-index:300;}
-.logo{display:flex;align-items:center;gap:13px;cursor:pointer;}
-.logo-orb{width:42px;height:42px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:21px;animation:glow 3s ease-in-out infinite;}
-@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(245,166,35,0.4);}50%{box-shadow:0 0 40px rgba(245,166,35,0.7);}}
-.logo-nm{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--sun),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.logo-sm{font-size:9px;color:var(--soft);letter-spacing:4px;text-transform:uppercase;margin-top:-4px;}
-nav{display:flex;gap:3px;}
-.nl{padding:7px 15px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:all 0.2s;letter-spacing:0.4px;}
+/* HEADER */
+header{padding:14px 44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,15,30,0.92);backdrop-filter:blur(28px);position:sticky;top:0;z-index:300;}
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer;}
+.logo-orb{width:40px;height:40px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;animation:glw 3s ease-in-out infinite;}
+@keyframes glw{0%,100%{box-shadow:0 0 20px rgba(245,166,35,0.4);}50%{box-shadow:0 0 40px rgba(245,166,35,0.7);}}
+.logo-nm{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;background:linear-gradient(135deg,var(--sun),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-sm{font-size:8px;color:var(--soft);letter-spacing:4px;text-transform:uppercase;margin-top:-3px;}
+nav{display:flex;gap:2px;flex-wrap:wrap;}
+.nl{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:all 0.2s;}
 .nl:hover,.nl.on{background:rgba(245,166,35,0.1);color:var(--sun);}
-.nl.admin-nl{color:rgba(168,192,224,0.5);font-size:11px;}
-.nl.admin-nl:hover,.nl.admin-nl.on{background:rgba(100,180,255,0.1);color:#64B4FF;}
-.hdr-right{display:flex;align-items:center;gap:10px;}
-.call-btn{padding:8px 18px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:var(--deep);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
-.call-btn:hover{transform:translateY(-1px);box-shadow:0 4px 18px rgba(245,166,35,0.4);}
+.nl.blue-nl:hover,.nl.blue-nl.on{background:rgba(100,180,255,0.1);color:#64B4FF;}
+.nl.grn-nl:hover,.nl.grn-nl.on{background:rgba(0,230,118,0.1);color:#00E676;}
+.hcall{padding:8px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:var(--deep);font-weight:700;font-size:12px;cursor:pointer;}
+.hcall:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,166,35,0.4);}
 
-/* ── PAGES ── */
-.page{display:none;padding:56px 48px 90px;max-width:1140px;margin:0 auto;}
-.page.on{display:block;animation:fadeUp 0.4s ease;}
-.hero-page{display:none;padding:72px 48px 50px;max-width:1140px;margin:0 auto;}
-.hero-page.on{display:block;animation:fadeUp 0.5s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+/* PAGES */
+.page{display:none;padding:50px 44px 80px;max-width:1140px;margin:0 auto;}
+.page.on{display:block;animation:fup 0.4s ease;}
+.hpage{display:none;padding:68px 44px 44px;max-width:1140px;margin:0 auto;}
+.hpage.on{display:block;animation:fup 0.5s ease;}
+@keyframes fup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
-/* ── HERO ── */
-.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.28);color:var(--sun);padding:5px 16px;border-radius:30px;font-size:10.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:26px;}
-h1.big{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,8.5vw,96px);letter-spacing:4px;line-height:0.92;margin-bottom:20px;}
-h1.big em{font-style:normal;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.hero-desc{font-size:15.5px;color:var(--soft);max-width:540px;line-height:1.78;margin-bottom:38px;}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:56px;}
-.btn-p{padding:14px 30px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:10px;color:var(--deep);font-family:'DM Sans',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.3s;}
-.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,166,35,0.4);}
-.btn-o{padding:14px 30px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.3s;}
-.btn-o:hover{border-color:var(--sun);color:var(--sun);}
-.stats-bar{display:flex;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
-.sb{flex:1;padding:22px 16px;text-align:center;border-right:1px solid var(--border);transition:background 0.2s;}
-.sb:last-child{border-right:none;}
-.sb:hover{background:rgba(245,166,35,0.04);}
-.sbn{font-family:'Bebas Neue',sans-serif;font-size:38px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.sbl{font-size:10px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
-
-/* ── SEC HEADER ── */
-.sh{margin-bottom:38px;}
-.stag{display:inline-block;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:var(--sun);padding:4px 13px;border-radius:20px;font-size:9.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:11px;}
-.sh h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,50px);letter-spacing:3px;}
+/* SECTION HEAD */
+.sh{margin-bottom:36px;}
+.stag{display:inline-block;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:var(--sun);padding:3px 12px;border-radius:20px;font-size:9.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.sh h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,4.5vw,48px);letter-spacing:3px;}
 .sh h2 span{background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.sh p{font-size:13.5px;color:var(--soft);margin-top:9px;max-width:520px;line-height:1.7;}
+.sh p{font-size:13px;color:var(--soft);margin-top:8px;line-height:1.7;}
 
-/* ── FORMS ── */
-.fcard{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:44px;position:relative;overflow:hidden;}
-.fcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sun),var(--solar),var(--sun));background-size:200%;animation:sh 3s linear infinite;}
-@keyframes sh{0%{background-position:0%;}100%{background-position:200%;}}
-.ft{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px;margin-bottom:5px;}
-.fs{font-size:13px;color:var(--soft);margin-bottom:32px;line-height:1.6;}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+/* FORM CARD */
+.fc{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:40px;position:relative;overflow:hidden;}
+.fc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sun),var(--solar),var(--sun));background-size:200%;animation:shim 3s linear infinite;}
+@keyframes shim{0%{background-position:0%;}100%{background-position:200%;}}
+.ft{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;margin-bottom:4px;}
+.fs{font-size:13px;color:var(--soft);margin-bottom:28px;line-height:1.6;}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .fg .full{grid-column:1/-1;}
-.fi{display:flex;flex-direction:column;gap:7px;}
+.fi{display:flex;flex-direction:column;gap:6px;}
 label.lb{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--sun);font-weight:600;}
 label.lb span{color:var(--solar);}
-input,select,textarea{background:rgba(255,255,255,0.05);border:1px solid rgba(245,166,35,0.14);border-radius:9px;padding:12px 15px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13.5px;transition:all 0.3s;outline:none;width:100%;}
+input,select,textarea{background:rgba(255,255,255,0.05);border:1px solid rgba(245,166,35,0.14);border-radius:9px;padding:11px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;transition:all 0.3s;outline:none;width:100%;}
 input:focus,select:focus,textarea:focus{border-color:var(--sun);background:rgba(245,166,35,0.06);box-shadow:0 0 0 3px rgba(245,166,35,0.1);}
 input::placeholder,textarea::placeholder{color:rgba(168,192,224,0.3);}
-select option{background:var(--navy);color:var(--white);}
-textarea{resize:vertical;min-height:85px;}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.sc{display:flex;align-items:center;gap:9px;padding:10px 13px;border:1px solid rgba(245,166,35,0.1);border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--soft);transition:all 0.2s;}
+select option{background:#0D1F3C;color:#fff;}
+textarea{resize:vertical;min-height:80px;}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sc{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid rgba(245,166,35,0.1);border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--soft);transition:all 0.2s;}
 .sc:hover{border-color:var(--sun);background:rgba(245,166,35,0.05);}
 .sc input{width:14px;height:14px;accent-color:var(--sun);}
-.sbtn{width:100%;padding:17px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:11px;color:var(--deep);font-family:'Bebas Neue',sans-serif;font-size:21px;letter-spacing:3px;cursor:pointer;margin-top:28px;transition:all 0.3s;}
+.sbtn{width:100%;padding:16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:10px;color:var(--deep);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;cursor:pointer;margin-top:24px;transition:all 0.3s;}
 .sbtn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,166,35,0.4);}
 .sbtn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.bl{display:none;width:20px;height:20px;border:3px solid rgba(8,15,30,0.3);border-top-color:var(--deep);border-radius:50%;animation:sp 0.7s linear infinite;margin:0 auto;}
+.bll{display:none;width:20px;height:20px;border:3px solid rgba(8,15,30,0.3);border-top-color:var(--deep);border-radius:50%;animation:sp 0.7s linear infinite;margin:0 auto;}
 @keyframes sp{to{transform:rotate(360deg);}}
-.alrt{padding:14px 17px;border-radius:9px;font-size:13px;margin-top:16px;align-items:center;gap:10px;display:none!important;line-height:1.5;}
-.alrt.show{display:flex!important;animation:fadeUp 0.4s ease;}
+.alrt{padding:13px 16px;border-radius:9px;font-size:13px;margin-top:14px;align-items:center;gap:9px;display:none!important;line-height:1.5;}
+.alrt.show{display:flex!important;animation:fup 0.4s ease;}
 .alrt.ok{background:rgba(0,230,118,0.09);border:1px solid rgba(0,230,118,0.26);color:var(--success);}
 .alrt.er{background:rgba(255,82,82,0.09);border:1px solid rgba(255,82,82,0.26);color:var(--error);}
 
-/* ── PLAN CARDS ── */
-.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:22px;}
-.pc{background:var(--card);border:1px solid var(--border2);border-radius:20px;padding:30px 26px;position:relative;overflow:hidden;transition:all 0.3s;cursor:pointer;}
+/* PLAN CARDS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;}
+.pc{background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:28px 24px;position:relative;overflow:hidden;transition:all 0.3s;cursor:pointer;}
 .pc:hover{transform:translateY(-4px);border-color:rgba(245,166,35,0.28);}
 .pc.hot{border-color:var(--sun);background:linear-gradient(135deg,rgba(245,166,35,0.07),rgba(255,107,0,0.04));}
 .pc.hot::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sun),var(--solar));}
-.pbadge{position:absolute;top:18px;right:18px;background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:1px;}
-.pico{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px;}
-.pico.y{background:rgba(245,166,35,0.14);}
-.pico.o{background:rgba(255,107,0,0.14);}
-.pico.b{background:rgba(100,180,255,0.14);}
-.pico.g{background:rgba(0,230,118,0.14);}
-.pnm{font-family:'Bebas Neue',sans-serif;font-size:25px;letter-spacing:2px;margin-bottom:3px;}
-.pty{font-size:10px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;}
-.ppr{display:flex;align-items:baseline;gap:3px;margin-bottom:5px;}
-.ppr .am{font-family:'Bebas Neue',sans-serif;font-size:40px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.ppr .cu{font-size:19px;color:var(--sun);font-weight:700;margin-top:5px;}
+.pbadge{position:absolute;top:16px;right:16px;background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:1px;}
+.pico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:16px;}
+.pnm{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;margin-bottom:2px;}
+.pty{font-size:10px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+.ppr{display:flex;align-items:baseline;gap:3px;margin-bottom:4px;}
+.ppr .am{font-family:'Bebas Neue',sans-serif;font-size:38px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ppr .cu{font-size:18px;color:var(--sun);font-weight:700;}
 .ppr .pe{font-size:12px;color:var(--soft);margin-left:3px;}
-.pdesc{font-size:12.5px;color:var(--soft);margin-bottom:22px;line-height:1.6;}
-.pfl{list-style:none;margin-bottom:26px;display:flex;flex-direction:column;gap:9px;}
-.pfl li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--soft);}
-.pfl li .ck{width:17px;height:17px;background:rgba(0,230,118,0.13);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
+.pdesc{font-size:12px;color:var(--soft);margin-bottom:20px;line-height:1.6;}
+.pfl{list-style:none;margin-bottom:22px;display:flex;flex-direction:column;gap:8px;}
+.pfl li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);}
+.pfl li .ck{width:16px;height:16px;background:rgba(0,230,118,0.13);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
 .pfl li.no{opacity:0.38;}
 .pfl li.no .ck{background:rgba(255,82,82,0.1);}
-.pbtn{width:100%;padding:12px;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13.5px;cursor:pointer;transition:all 0.3s;border:none;}
+.pbtn{width:100%;padding:11px;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.3s;border:none;}
 .pbtn.solid{background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);}
-.pbtn.solid:hover{box-shadow:0 6px 22px rgba(245,166,35,0.4);transform:translateY(-1px);}
-.pbtn.ghost{background:transparent;border:1px solid var(--border);color:var(--white);}
+.pbtn.ghost{background:transparent;border:1px solid var(--border);color:#fff;}
 .pbtn.ghost:hover{border-color:var(--sun);color:var(--sun);}
 
-/* compare */
-.ct{margin-top:46px;}
-.ct h3{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--soft);margin-bottom:18px;}
-table.ctbl{width:100%;border-collapse:collapse;font-size:12.5px;}
-table.ctbl th{padding:13px 15px;text-align:left;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--sun);border-bottom:1px solid var(--border);font-weight:600;}
-table.ctbl td{padding:12px 15px;border-bottom:1px solid var(--border2);color:var(--soft);}
+/* COMPARE TABLE */
+.ct{margin-top:40px;}
+.ct h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--soft);margin-bottom:16px;}
+table.ctbl{width:100%;border-collapse:collapse;font-size:12px;}
+table.ctbl th{padding:12px 14px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--sun);border-bottom:1px solid var(--border);font-weight:600;}
+table.ctbl td{padding:11px 14px;border-bottom:1px solid var(--border2);color:var(--soft);}
 table.ctbl tr:last-child td{border-bottom:none;}
-table.ctbl tr:hover td{background:rgba(245,166,35,0.025);}
-table.ctbl td:first-child{color:var(--white);font-weight:500;}
+table.ctbl td:first-child{color:#fff;font-weight:500;}
 .tk{color:var(--success);}
 .cx{color:var(--error);opacity:0.45;}
 
-/* ── PLAN SELECTOR in subscribe ── */
-.ps{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.po{padding:11px 13px;border-radius:9px;border:1px solid rgba(245,166,35,0.14);background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--soft);}
-.po:hover{border-color:var(--sun);background:rgba(245,166,35,0.05);}
-.po.sel{border-color:var(--sun);background:rgba(245,166,35,0.09);color:var(--white);}
-.po input[type=radio]{accent-color:var(--sun);width:14px;height:14px;flex-shrink:0;}
-.po .op{margin-left:auto;font-size:10.5px;color:var(--sun);font-weight:700;}
+/* PLAN SELECTOR */
+.ps{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.po{padding:10px 12px;border-radius:9px;border:1px solid rgba(245,166,35,0.14);background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soft);}
+.po:hover{border-color:var(--sun);}
+.po.sel{border-color:var(--sun);background:rgba(245,166,35,0.09);color:#fff;}
+.po input[type=radio]{accent-color:var(--sun);width:13px;height:13px;flex-shrink:0;}
+.po .op{margin-left:auto;font-size:10px;color:var(--sun);font-weight:700;}
 
-/* ── SOCIAL SECTION ── */
-.social-wrap{background:linear-gradient(135deg,rgba(245,166,35,0.06),rgba(255,107,0,0.04));border:1px solid var(--border);border-radius:22px;padding:40px;margin-top:50px;}
-.social-wrap h3{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;margin-bottom:6px;}
-.social-wrap p{font-size:13px;color:var(--soft);margin-bottom:30px;line-height:1.7;}
-.social-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
-.social-card{display:flex;align-items:center;gap:14px;padding:18px 20px;border-radius:13px;border:1px solid var(--border2);background:rgba(255,255,255,0.03);cursor:pointer;transition:all 0.3s;text-decoration:none;}
-.social-card:hover{transform:translateY(-3px);border-color:var(--sun);}
-.social-card.yt{border-color:rgba(255,0,0,0.2);}
-.social-card.yt:hover{border-color:#FF0000;background:rgba(255,0,0,0.05);}
-.social-card.fb{border-color:rgba(24,119,242,0.2);}
-.social-card.fb:hover{border-color:#1877F2;background:rgba(24,119,242,0.05);}
-.social-card.ig{border-color:rgba(225,48,108,0.2);}
-.social-card.ig:hover{border-color:#E1306C;background:rgba(225,48,108,0.05);}
-.social-card.wa{border-color:rgba(37,211,102,0.2);}
-.social-card.wa:hover{border-color:#25D366;background:rgba(37,211,102,0.05);}
-.social-card.tw{border-color:rgba(29,161,242,0.2);}
-.social-card.tw:hover{border-color:#1DA1F2;background:rgba(29,161,242,0.05);}
-.sico{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.sico.yt{background:rgba(255,0,0,0.13);}
-.sico.fb{background:rgba(24,119,242,0.13);}
-.sico.ig{background:linear-gradient(135deg,rgba(225,48,108,0.15),rgba(253,187,45,0.15));}
-.sico.wa{background:rgba(37,211,102,0.13);}
-.sico.tw{background:rgba(29,161,242,0.13);}
-.social-info .sn{font-weight:700;font-size:14px;color:var(--white);margin-bottom:2px;}
-.social-info .sh2{font-size:11px;color:var(--soft);}
+/* SOCIAL */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.scard{display:flex;align-items:center;gap:12px;padding:16px 18px;border-radius:12px;border:1px solid var(--border2);background:rgba(255,255,255,0.03);text-decoration:none;transition:all 0.3s;}
+.scard:hover{transform:translateY(-3px);border-color:var(--sun);}
+.sico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.sinfo .sn{font-weight:700;font-size:13px;color:#fff;margin-bottom:1px;}
+.sinfo .ss{font-size:10px;color:var(--soft);}
 
-/* ── ADMIN DASHBOARD ── */
-.admin-login{max-width:400px;margin:0 auto;}
-.admin-dash{display:none;}
-.admin-dash.on{display:block;}
-.dash-top{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;}
-.dcard{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:24px;position:relative;overflow:hidden;}
+/* ADMIN */
+.alogin{max-width:400px;margin:0 auto;}
+.adash{display:none;}
+.adash.on{display:block;}
+.dtop{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px;}
+.dcard{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:20px;position:relative;overflow:hidden;}
 .dcard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--sun),var(--solar));}
-.dcard.blue::after{background:linear-gradient(90deg,#64B4FF,#1DA1F2);}
-.dcard.green::after{background:linear-gradient(90deg,#00E676,#00B0FF);}
-.dcard.purple::after{background:linear-gradient(90deg,#CE93D8,#9C27B0);}
-.dc-icon{font-size:28px;margin-bottom:12px;}
-.dc-val{font-family:'Bebas Neue',sans-serif;font-size:42px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.dcard.blue .dc-val{background:linear-gradient(135deg,#64B4FF,#1DA1F2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.dcard.green .dc-val{background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.dcard.purple .dc-val{background:linear-gradient(135deg,#CE93D8,#9C27B0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.dc-lbl{font-size:10.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
-.dash-table-wrap{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:24px;margin-bottom:24px;overflow-x:auto;}
-.dash-table-wrap h4{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--sun);margin-bottom:16px;}
-.dtbl{width:100%;border-collapse:collapse;font-size:12.5px;}
-.dtbl th{padding:10px 13px;text-align:left;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--sun);border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap;}
-.dtbl td{padding:10px 13px;border-bottom:1px solid var(--border2);color:var(--soft);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dcard.bl::after{background:linear-gradient(90deg,#64B4FF,#1DA1F2);}
+.dcard.gr::after{background:linear-gradient(90deg,#00E676,#00B0FF);}
+.dcard.pu::after{background:linear-gradient(90deg,#CE93D8,#9C27B0);}
+.dcard.cy::after{background:linear-gradient(90deg,#00E5FF,#00B0FF);}
+.dcv{font-family:'Bebas Neue',sans-serif;font-size:38px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.dcard.bl .dcv{background:linear-gradient(135deg,#64B4FF,#1DA1F2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.dcard.gr .dcv{background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.dcard.pu .dcv{background:linear-gradient(135deg,#CE93D8,#9C27B0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.dcard.cy .dcv{background:linear-gradient(135deg,#00E5FF,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.dcl{font-size:10px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.dtw{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:20px;margin-bottom:20px;overflow-x:auto;}
+.dtw h4{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--sun);margin-bottom:14px;}
+.dtbl{width:100%;border-collapse:collapse;font-size:12px;}
+.dtbl th{padding:10px 12px;text-align:left;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--sun);border-bottom:1px solid var(--border);font-weight:600;white-space:nowrap;}
+.dtbl td{padding:9px 12px;border-bottom:1px solid var(--border2);color:var(--soft);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .dtbl tr:last-child td{border-bottom:none;}
-.dtbl tr:hover td{background:rgba(245,166,35,0.025);}
-.dtbl td:first-child{color:var(--white);font-weight:500;}
-.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:10px;font-weight:600;letter-spacing:0.5px;}
+.dtbl td:first-child{color:#fff;font-weight:500;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;}
 .badge.enq{background:rgba(245,166,35,0.15);color:var(--sun);}
 .badge.quot{background:rgba(100,180,255,0.15);color:#64B4FF;}
 .badge.sub{background:rgba(0,230,118,0.15);color:var(--success);}
-.empty-state{text-align:center;padding:40px;color:var(--soft);font-size:13px;}
-.dash-actions{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
-.dash-btn{padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;letter-spacing:0.5px;}
-.dash-btn.primary{background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);}
-.dash-btn.secondary{background:rgba(255,255,255,0.06);border:1px solid var(--border2);color:var(--soft);}
-.dash-btn:hover{transform:translateY(-1px);}
-.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-.fb2{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--soft);transition:all 0.2s;}
+.badge.loan{background:rgba(206,147,216,0.15);color:#CE93D8;}
+.dacts{display:flex;gap:9px;margin-bottom:20px;flex-wrap:wrap;}
+.dbtn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;}
+.dbtn.p{background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);}
+.dbtn.s{background:rgba(255,255,255,0.06);border:1px solid var(--border2);color:var(--soft);}
+.fbr{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
+.fb2{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--soft);transition:all 0.2s;}
 .fb2.on{background:rgba(245,166,35,0.1);border-color:var(--sun);color:var(--sun);}
 
-/* ── SETUP ── */
-.setup-card{background:rgba(245,166,35,0.045);border:1px solid rgba(245,166,35,0.2);border-radius:20px;padding:30px;margin-bottom:24px;}
-.setup-card h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--sun);margin-bottom:18px;}
-.step-list{display:flex;flex-direction:column;gap:12px;}
-.srow{display:flex;gap:13px;align-items:flex-start;padding:13px 15px;background:rgba(255,255,255,0.025);border-radius:9px;border:1px solid rgba(255,255,255,0.045);}
-.sno{width:27px;height:27px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--deep);flex-shrink:0;}
+/* SETUP */
+.scard2{background:rgba(245,166,35,0.045);border:1px solid rgba(245,166,35,0.2);border-radius:18px;padding:28px;margin-bottom:22px;}
+.scard2 h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--sun);margin-bottom:16px;}
+.slist{display:flex;flex-direction:column;gap:11px;}
+.srow{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:rgba(255,255,255,0.025);border-radius:9px;border:1px solid rgba(255,255,255,0.045);}
+.sno{width:26px;height:26px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--deep);flex-shrink:0;}
 .stxt{font-size:12.5px;color:var(--soft);line-height:1.65;}
-.stxt strong{color:var(--white);}
-.wrow{display:flex;gap:9px;margin-top:15px;}
-.wrow input{flex:1;font-size:12px;padding:9px 13px;}
-.sv-btn{padding:9px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:7px;color:var(--deep);font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap;}
-.wst{margin-top:8px;font-size:12px;padding:6px 11px;border-radius:6px;display:none;}
+.stxt strong{color:#fff;}
+.wrow{display:flex;gap:8px;margin-top:14px;}
+.wrow input{flex:1;font-size:12px;padding:9px 12px;}
+.svbtn{padding:9px 15px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:7px;color:var(--deep);font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;}
+.wst{margin-top:7px;font-size:12px;padding:6px 10px;border-radius:6px;display:none;}
 .wst.ok{background:rgba(0,230,118,0.09);color:var(--success);display:block;}
 .wst.no{background:rgba(255,82,82,0.09);color:var(--error);display:block;}
-.cb{background:rgba(0,0,0,0.4);border-radius:9px;padding:18px;border:1px solid rgba(245,166,35,0.1);position:relative;margin-top:14px;}
-.cpbtn{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:5px;padding:4px 11px;color:var(--deep);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:1px;}
-pre{font-family:monospace;font-size:11px;color:#a8d8a8;white-space:pre-wrap;line-height:1.65;padding-right:72px;}
-.cpok{font-size:12px;color:var(--success);margin-top:7px;display:none;}
+.cb{background:rgba(0,0,0,0.4);border-radius:9px;padding:16px;border:1px solid rgba(245,166,35,0.1);position:relative;margin-top:12px;}
+.cpbtn{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:5px;padding:4px 10px;color:var(--deep);font-size:10px;font-weight:700;cursor:pointer;letter-spacing:1px;}
+pre{font-family:monospace;font-size:11px;color:#a8d8a8;white-space:pre-wrap;line-height:1.65;padding-right:70px;}
+.cpok{font-size:12px;color:var(--success);margin-top:6px;display:none;}
 
-/* ── SPREAD PAGE ── */
-.spread-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
-.spread-card{background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:28px;transition:all 0.3s;}
-.spread-card:hover{border-color:rgba(245,166,35,0.28);transform:translateY(-3px);}
-.sc-icon{font-size:32px;margin-bottom:14px;}
-.sc-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:8px;}
-.sc-body{font-size:12.5px;color:var(--soft);line-height:1.7;}
-.sc-body ul{padding-left:16px;margin-top:8px;}
-.sc-body li{margin-bottom:5px;}
-.sc-tag{display:inline-block;margin-top:12px;padding:3px 11px;background:rgba(245,166,35,0.1);border-radius:12px;font-size:10px;color:var(--sun);font-weight:600;letter-spacing:1px;}
+/* CUSTOMER PORTAL */
+.clogin{max-width:420px;margin:0 auto;}
+.cportal{display:none;}
+.cportal.on{display:block;animation:fup 0.4s ease;}
+.portal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:gap;}
+.portal-welcome{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;}
+.portal-tabs{display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;padding:4px;margin-bottom:28px;flex-wrap:wrap;}
+.ptab{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:all 0.2s;}
+.ptab.on{background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);}
+.ptab-content{display:none;}
+.ptab-content.on{display:block;animation:fup 0.3s ease;}
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:16px;align-items:flex-start;padding-bottom:24px;position:relative;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:19px;top:38px;bottom:0;width:2px;background:var(--border2);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:2px solid var(--border2);}
+.tl-dot.done{background:linear-gradient(135deg,var(--sun),var(--solar));border-color:var(--sun);}
+.tl-dot.active{background:rgba(0,230,118,0.15);border-color:var(--success);animation:pulse2 2s infinite;}
+.tl-dot.pending{background:rgba(255,255,255,0.04);}
+@keyframes pulse2{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,0.4);}50%{box-shadow:0 0 0 8px rgba(0,230,118,0);}}
+.tl-content{flex:1;padding-top:8px;}
+.tl-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;}
+.tl-date{font-size:11px;color:var(--soft);}
+.tl-desc{font-size:12px;color:var(--soft);margin-top:5px;line-height:1.5;}
+.tl-badge{display:inline-block;padding:2px 9px;border-radius:10px;font-size:9px;font-weight:700;margin-top:6px;letter-spacing:1px;}
+.tl-badge.done{background:rgba(245,166,35,0.15);color:var(--sun);}
+.tl-badge.active{background:rgba(0,230,118,0.15);color:var(--success);}
+.tl-badge.pending{background:rgba(255,255,255,0.06);color:var(--soft);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.icard{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:16px;}
+.icard .il{font-size:9px;color:var(--sun);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+.icard .iv{font-size:15px;font-weight:700;color:#fff;}
+.icard .is{font-size:11px;color:var(--soft);margin-top:2px;}
+.query-item{background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:10px;}
+.qi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.qi-title{font-size:13px;font-weight:600;color:#fff;}
+.qi-status{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;}
+.qi-status.open{background:rgba(0,230,118,0.15);color:var(--success);}
+.qi-status.closed{background:rgba(255,82,82,0.1);color:var(--error);}
+.qi-date{font-size:11px;color:var(--soft);margin-bottom:6px;}
+.qi-msg{font-size:12px;color:var(--soft);line-height:1.5;}
 
-/* ── WHATSAPP FLOAT ── */
-.wa-float{position:fixed;bottom:28px;right:28px;z-index:999;display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
-.wa-btn{width:58px;height:58px;background:linear-gradient(135deg,#25D366,#128C7E);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,0.5);animation:wapulse 2.5s ease-in-out infinite;border:none;font-size:26px;text-decoration:none;}
-@keyframes wapulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.5);}50%{box-shadow:0 4px 36px rgba(37,211,102,0.8);}}
-.wa-tooltip{background:rgba(8,15,30,0.95);border:1px solid rgba(37,211,102,0.3);color:var(--white);padding:8px 14px;border-radius:9px;font-size:12px;white-space:nowrap;pointer-events:none;}
+/* QUOTATION CALCULATOR */
+.qcalc{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;}
+.qresult{display:none;margin-top:24px;background:linear-gradient(135deg,rgba(245,166,35,0.08),rgba(255,107,0,0.05));border:1px solid var(--border);border-radius:16px;padding:28px;}
+.qresult.show{display:block;animation:fup 0.4s ease;}
+.qr-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;margin-bottom:16px;}
+.qr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.qr-item{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;}
+.qr-label{font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.qr-value{font-size:16px;font-weight:700;color:#fff;}
+.qr-total{background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(255,107,0,0.08));border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;}
+.qr-total .qt-label{font-size:11px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.qr-total .qt-price{font-family:'Bebas Neue',sans-serif;font-size:48px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.qr-total .qt-sub{font-size:11px;color:var(--soft);margin-top:4px;}
+.qr-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.qr-btn{padding:12px 22px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;border:none;transition:all 0.3s;}
+.qr-btn.main{background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);flex:1;}
+.qr-btn.sec{background:transparent;border:1px solid var(--border);color:#fff;}
+.qr-btn:hover{transform:translateY(-1px);}
 
-/* ── FOOTER ── */
+/* EMI ENQUIRY */
+.emi-page .fc::before{background:linear-gradient(90deg,#00E676,#00B0FF,#00E676);background-size:200%;}
+
+/* REVIEWS */
+.rev-wrap{margin-top:24px;}
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+.rcard{background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:14px;padding:18px;}
+.rc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.rc-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;}
+.rc-name{font-weight:700;font-size:13px;color:#fff;}
+.rc-loc{font-size:10px;color:var(--soft);}
+.rc-stars{color:var(--sun);font-size:12px;margin-left:auto;}
+.rc-txt{font-size:12px;color:var(--soft);line-height:1.65;}
+.rc-foot{margin-top:10px;display:flex;align-items:center;gap:6px;}
+.glogo{width:14px;height:14px;border-radius:2px;}
+
+/* FOOTER */
 footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
-.footer-main{padding:40px 48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;max-width:1140px;margin:0 auto;}
-.footer-brand .logo-nm{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;background:linear-gradient(135deg,var(--sun),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.footer-brand p{font-size:12.5px;color:var(--soft);margin-top:12px;line-height:1.7;max-width:260px;}
-.footer-brand .contact-info{margin-top:16px;display:flex;flex-direction:column;gap:7px;}
-.footer-brand .ci{font-size:12px;color:var(--soft);display:flex;align-items:center;gap:7px;}
-.footer-brand .ci strong{color:var(--white);}
-.footer-col h5{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--sun);margin-bottom:14px;}
-.footer-col a{display:block;font-size:12.5px;color:var(--soft);text-decoration:none;margin-bottom:8px;transition:color 0.2s;}
-.footer-col a:hover{color:var(--sun);}
-.footer-social{display:flex;gap:9px;margin-top:14px;}
-.fsi{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid var(--border2);background:var(--card);cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.fmain{padding:36px 44px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:28px;max-width:1140px;margin:0 auto;}
+.fbrand p{font-size:12px;color:var(--soft);margin-top:10px;line-height:1.7;max-width:240px;}
+.fci{display:flex;flex-direction:column;gap:6px;margin-top:14px;}
+.fc2{font-size:11.5px;color:var(--soft);display:flex;align-items:center;gap:6px;}
+.fc2 strong{color:#fff;}
+.fcol h5{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--sun);margin-bottom:12px;}
+.fcol a{display:block;font-size:12px;color:var(--soft);text-decoration:none;margin-bottom:7px;transition:color 0.2s;}
+.fcol a:hover{color:var(--sun);}
+.fsocial{display:flex;gap:8px;margin-top:12px;}
+.fsi{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;border:1px solid var(--border2);background:var(--card);text-decoration:none;transition:all 0.2s;}
 .fsi:hover{border-color:var(--sun);transform:translateY(-2px);}
-.footer-bottom{border-top:1px solid var(--border2);padding:18px 48px;max-width:1140px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
-.footer-bottom p{font-size:11.5px;color:rgba(168,192,224,0.4);}
-.footer-bottom a{color:var(--sun);text-decoration:none;}
+.fbot{border-top:1px solid var(--border2);padding:16px 44px;max-width:1140px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;}
+.fbot p{font-size:11px;color:rgba(168,192,224,0.4);}
+.fbot a{color:var(--sun);text-decoration:none;}
+
+/* WA FLOAT */
+.wafloat{position:fixed;bottom:26px;right:26px;z-index:999;display:flex;flex-direction:column;align-items:flex-end;gap:9px;}
+.wabtn{width:56px;height:56px;background:linear-gradient(135deg,#25D366,#128C7E);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:25px;box-shadow:0 4px 20px rgba(37,211,102,0.5);animation:wap 2.5s ease-in-out infinite;text-decoration:none;}
+@keyframes wap{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,0.5);}50%{box-shadow:0 4px 36px rgba(37,211,102,0.8);}}
+.watip{background:rgba(8,15,30,0.95);border:1px solid rgba(37,211,102,0.3);color:#fff;padding:7px 12px;border-radius:8px;font-size:11.5px;white-space:nowrap;}
 
 /* RESPONSIVE */
 @media(max-width:768px){
-  header{padding:13px 18px;}
+  header{padding:12px 16px;}
   nav{display:none;}
-  .page,.hero-page{padding:36px 18px 70px;}
-  .fcard{padding:26px 16px;}
+  .page,.hpage{padding:32px 16px 60px;}
+  .fc{padding:24px 16px;}
   .fg{grid-template-columns:1fr;}
   .fg .full{grid-column:1;}
-  .sg,.ps{grid-template-columns:1fr;}
-  .stats-bar{flex-wrap:wrap;}
-  .sb{min-width:50%;}
-  .plans-grid{grid-template-columns:1fr;}
-  .footer-main{grid-template-columns:1fr 1fr;padding:28px 18px;}
-  .footer-bottom{padding:14px 18px;flex-direction:column;gap:8px;text-align:center;}
-  .social-grid{grid-template-columns:1fr 1fr;}
+  .sg,.ps,.info-grid,.qr-grid{grid-template-columns:1fr;}
+  .fmain{grid-template-columns:1fr 1fr;padding:24px 16px;}
+  .fbot{padding:12px 16px;flex-direction:column;gap:6px;text-align:center;}
 }
 </style>
 </head>
 <body>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="gridlines"></div>
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="gridlines"></div>
 <div class="wrap">
 
-<!-- ══ HEADER ══ -->
+<!-- HEADER -->
 <header>
   <div class="logo" onclick="showPage('home',null)">
     <div class="logo-orb">☀️</div>
-    <div>
-      <div class="logo-nm">Skyflies Solar</div>
-      <div class="logo-sm">Solutions • Tamil Nadu</div>
-    </div>
+    <div><div class="logo-nm">Skyflies Solar</div><div class="logo-sm">Solutions • Tamil Nadu</div></div>
   </div>
   <nav>
     <button class="nl on" onclick="showPage('home',this)">Home</button>
     <button class="nl" onclick="showPage('enquiry',this)">Enquiry</button>
     <button class="nl" onclick="showPage('quotation',this)">Quotation</button>
+    <button class="nl" onclick="showPage('calculator',this)">Quote Calculator</button>
     <button class="nl" onclick="showPage('plans',this)">Plans</button>
     <button class="nl" onclick="showPage('subscribe',this)">Subscribe</button>
-    <button class="nl" onclick="showPage('spread',this)">Grow Business</button>
-    <button class="nl admin-nl" onclick="showPage('admin',this)">🔐 Admin</button>
+    <button class="nl" onclick="showPage('emi',this)">EMI / Loan</button>
+    <button class="nl grn-nl" onclick="showPage('portal',this)">👤 My Account</button>
+    <button class="nl blue-nl" onclick="showPage('admin',this)">🔐 Admin</button>
     <button class="nl" onclick="showPage('setup',this)">Setup</button>
   </nav>
-  <div class="hdr-right">
-    <button class="call-btn" onclick="window.open('tel:+919385449167')">📞 +91 93854 49167</button>
-  </div>
+  <button class="hcall" onclick="window.open('tel:+919385449167')">📞 Call Now</button>
 </header>
 
-<!-- ══ HOME ══ -->
-<div class="hero-page on" id="page-home">
-  <div class="hero-tag">⚡ Tamil Nadu's Solar Partner Since 2024</div>
-  <h1 class="big">Power Your<br>Future With<br><em>Solar Energy</em></h1>
-  <p class="hero-desc">Skyflies Solar Solutions delivers end-to-end solar installation, cleaning, repair & AMC across Chennai, Vellore, Ranipet & Kanchipuram. Cut your electricity bills by up to 90%.</p>
-  <div class="hero-btns">
-    <button class="btn-p" onclick="showPage('quotation',null)">Get Free Quotation →</button>
-    <button class="btn-o" onclick="showPage('plans',null)">View Monthly Plans</button>
-    <button class="btn-o" onclick="showPage('enquiry',null)">Contact Us</button>
+<!-- ═══ HOME ═══ -->
+<div class="hpage on" id="page-home">
+  <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.28);color:var(--sun);padding:5px 16px;border-radius:30px;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:24px;">⚡ Tamil Nadu's Solar Partner Since '20s</div>
+  <h1 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8vw,92px);letter-spacing:4px;line-height:0.92;margin-bottom:18px;">Power Your<br>Future With<br><span style="background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Solar Energy</span></h1>
+  <p style="font-size:15px;color:var(--soft);max-width:520px;line-height:1.78;margin-bottom:34px;">End-to-end solar installation, cleaning, repair & AMC across Chennai, Vellore, Ranipet & Kanchipuram. Cut electricity bills by up to 90%.</p>
+  <div style="display:flex;gap:11px;flex-wrap:wrap;margin-bottom:50px;">
+    <button class="sbtn" style="width:auto;padding:13px 28px;font-size:16px;margin-top:0;" onclick="showPage('calculator',null)">Get Free Quotation →</button>
+    <button onclick="showPage('plans',null)" style="padding:13px 28px;background:transparent;border:1px solid var(--border);border-radius:10px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;">View Plans</button>
+    <button onclick="showPage('portal',null)" style="padding:13px 28px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:10px;color:#00E676;font-weight:600;font-size:14px;cursor:pointer;">👤 My Account</button>
   </div>
-  <div class="stats-bar">
-    <div class="sb"><div class="sbn">3600+</div><div class="sbl">Happy Clients</div></div>
-    <div class="sb"><div class="sbn">90%</div><div class="sbl">Bill Savings</div></div>
-    <div class="sb"><div class="sbn">4</div><div class="sbl">Cities</div></div>
-    <div class="sb"><div class="sbn">4–5yr</div><div class="sbl">ROI Period</div></div>
-    <div class="sb"><div class="sbn">24hr</div><div class="sbl">Response</div></div>
+  <div style="display:flex;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:30px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:120px;padding:20px 14px;text-align:center;border-right:1px solid var(--border);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">3600+</div><div style="font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Happy Clients</div></div>
+    <div style="flex:1;min-width:120px;padding:20px 14px;text-align:center;border-right:1px solid var(--border);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">90%</div><div style="font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Bill Savings</div></div>
+    <div style="flex:1;min-width:120px;padding:20px 14px;text-align:center;border-right:1px solid var(--border);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">4–5yr</div><div style="font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">ROI Period</div></div>
+    <div style="flex:1;min-width:120px;padding:20px 14px;text-align:center;border-right:1px solid var(--border);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">4</div><div style="font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Cities</div></div>
+    <div style="flex:1;min-width:120px;padding:20px 14px;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">24hr</div><div style="font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Response</div></div>
   </div>
 
   <!-- EMI BANNER -->
-  <div style="margin-top:28px;background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,176,255,0.06));border:1px solid rgba(0,230,118,0.25);border-radius:14px;padding:18px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-    <div style="font-size:28px;">💳</div>
-    <div style="flex:1;">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#00E676;">EMI Available — Start Solar from Just ₹999/month!</div>
-      <div style="font-size:12px;color:var(--soft);margin-top:3px;line-height:1.6;">No cost EMI available on solar installation. Pay in easy monthly instalments. Zero down payment options available for eligible customers. Ask Mr. Dillibabu for details.</div>
-    </div>
-    <button onclick="showPage('enquiry',null)" style="padding:10px 20px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">Ask About EMI →</button>
+  <div style="background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,176,255,0.06));border:1px solid rgba(0,230,118,0.25);border-radius:14px;padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:36px;">
+    <div style="font-size:26px;">💳</div>
+    <div style="flex:1;"><div style="font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;color:#00E676;">EMI Available — Start Solar from Just ₹999/month!</div><div style="font-size:12px;color:var(--soft);margin-top:2px;">No cost EMI on solar installation. Zero down payment options available.</div></div>
+    <button onclick="showPage('emi',null)" style="padding:10px 18px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;">Enquire About EMI →</button>
   </div>
 
   <!-- GOOGLE REVIEWS -->
-  <div style="margin-top:36px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+  <div style="margin-bottom:36px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;">What Our <span style="background:linear-gradient(135deg,#F5A623,#FF6B00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Customers</span> Say</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-          <div style="color:#F5A623;font-size:18px;">★★★★★</div>
-          <div style="font-size:13px;color:var(--soft);">4.9/5 on Google Reviews</div>
-          <a href="https://www.google.com/search?q=skyflies+solar+solutions" target="_blank" style="font-size:11px;color:var(--sun);text-decoration:none;border:1px solid rgba(245,166,35,0.3);padding:2px 10px;border-radius:10px;margin-left:6px;">View All Reviews ↗</a>
-        </div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;">Customer <span style="background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Google Reviews</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;"><span style="color:var(--sun);font-size:16px;">★★★★★</span><span style="font-size:12px;color:var(--soft);">4.9/5 on Google</span></div>
       </div>
-      <a href="https://g.page/r/skyflies-solar/review" target="_blank" style="padding:9px 18px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;color:var(--sun);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;">⭐ Leave a Review</a>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;">
+        <a href="https://www.google.com/maps/search/Skyflies+Solar+Solutions" target="_blank" style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;color:var(--sun);font-size:12px;font-weight:600;text-decoration:none;">🔍 View All Google Reviews ↗</a>
+        <a href="https://g.page/r/skyflies-solar/review" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:var(--deep);font-size:12px;font-weight:700;text-decoration:none;">⭐ Write a Review</a>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">
-      <!-- Review 1 -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:38px;height:38px;background:linear-gradient(135deg,#F5A623,#FF6B00);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#080F1E;flex-shrink:0;">K</div>
-          <div>
-            <div style="font-weight:700;font-size:13px;">Karthick</div>
-            <div style="font-size:10px;color:var(--soft);">Chennai</div>
-          </div>
-          <div style="margin-left:auto;color:#F5A623;font-size:13px;">★★★★★</div>
-        </div>
-        <div style="font-size:12.5px;color:var(--soft);line-height:1.65;">"Skyflies Solar provided excellent service from consultation to installation. The team was professional, transparent, and the system performance has exceeded our expectations."</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:6px;"><img src="https://www.google.com/favicon.ico" width="14" height="14" style="border-radius:2px;"><span style="font-size:10px;color:#7A9CC0;">Google Review</span></div>
-      </div>
-      <!-- Review 2 -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:38px;height:38px;background:linear-gradient(135deg,#64B4FF,#1DA1F2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#080F1E;flex-shrink:0;">P</div>
-          <div>
-            <div style="font-weight:700;font-size:13px;">Priya</div>
-            <div style="font-size:10px;color:var(--soft);">Vellore</div>
-          </div>
-          <div style="margin-left:auto;color:#F5A623;font-size:13px;">★★★★★</div>
-        </div>
-        <div style="font-size:12.5px;color:var(--soft);line-height:1.65;">"We chose Skyflies Solar for our residential solar installation and the experience was smooth and reliable. Their team explained everything clearly and delivered on time."</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:6px;"><img src="https://www.google.com/favicon.ico" width="14" height="14" style="border-radius:2px;"><span style="font-size:10px;color:#7A9CC0;">Google Review</span></div>
-      </div>
-      <!-- Review 3 -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:38px;height:38px;background:linear-gradient(135deg,#00E676,#00B0FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#080F1E;flex-shrink:0;">S</div>
-          <div>
-            <div style="font-weight:700;font-size:13px;">Senthil</div>
-            <div style="font-size:10px;color:var(--soft);">Chennai</div>
-          </div>
-          <div style="margin-left:auto;color:#F5A623;font-size:13px;">★★★★★</div>
-        </div>
-        <div style="font-size:12.5px;color:var(--soft);line-height:1.65;">"Skyflies Solar handled our solar project with great technical expertise. The installation quality and post-installation support have been excellent. Highly recommended!"</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:6px;"><img src="https://www.google.com/favicon.ico" width="14" height="14" style="border-radius:2px;"><span style="font-size:10px;color:#7A9CC0;">Google Review</span></div>
-      </div>
-      <!-- Review 4 -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:38px;height:38px;background:linear-gradient(135deg,#CE93D8,#9C27B0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#080F1E;flex-shrink:0;">R</div>
-          <div>
-            <div style="font-weight:700;font-size:13px;">Rajesh</div>
-            <div style="font-size:10px;color:var(--soft);">Vellore</div>
-          </div>
-          <div style="margin-left:auto;color:#F5A623;font-size:13px;">★★★★★</div>
-        </div>
-        <div style="font-size:12.5px;color:var(--soft);line-height:1.65;">"Their solar cleaning and repair service significantly improved our system performance. The team was prompt, skilled, and maintained high service standards throughout."</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:6px;"><img src="https://www.google.com/favicon.ico" width="14" height="14" style="border-radius:2px;"><span style="font-size:10px;color:#7A9CC0;">Google Review</span></div>
-      </div>
-      <!-- Review 5 -->
-      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="width:38px;height:38px;background:linear-gradient(135deg,#FFD166,#F5A623);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#080F1E;flex-shrink:0;">L</div>
-          <div>
-            <div style="font-weight:700;font-size:13px;">Lakshmi</div>
-            <div style="font-size:10px;color:var(--soft);">Chennai</div>
-          </div>
-          <div style="margin-left:auto;color:#F5A623;font-size:13px;">★★★★★</div>
-        </div>
-        <div style="font-size:12.5px;color:var(--soft);line-height:1.65;">"Skyflies Solar Solutions offers dependable solar solutions with honest guidance and consistent support. We are fully satisfied with their professionalism and service quality."</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:6px;"><img src="https://www.google.com/favicon.ico" width="14" height="14" style="border-radius:2px;"><span style="font-size:10px;color:#7A9CC0;">Google Review</span></div>
-      </div>
-      <!-- CTA Review Card -->
-      <div style="background:linear-gradient(135deg,rgba(245,166,35,0.08),rgba(255,107,0,0.05));border:1px solid rgba(245,166,35,0.25);border-radius:14px;padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;">
-        <div style="font-size:32px;">⭐</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--sun);">Happy with our service?</div>
+    <div class="rev-grid">
+      <div class="rcard"><div class="rc-top"><div class="rc-av" style="background:linear-gradient(135deg,#F5A623,#FF6B00);color:#080F1E;">K</div><div><div class="rc-name">Karthick</div><div class="rc-loc">Chennai</div></div><div class="rc-stars">★★★★★</div></div><div class="rc-txt">"Excellent service from consultation to installation. Professional, transparent, and the system performance has exceeded our expectations."</div><div class="rc-foot"><img src="https://www.google.com/favicon.ico" class="glogo"><span style="font-size:10px;color:var(--soft);">Google Review</span></div></div>
+      <div class="rcard"><div class="rc-top"><div class="rc-av" style="background:linear-gradient(135deg,#64B4FF,#1DA1F2);color:#080F1E;">P</div><div><div class="rc-name">Priya</div><div class="rc-loc">Vellore</div></div><div class="rc-stars">★★★★★</div></div><div class="rc-txt">"Smooth and reliable residential solar installation. Their team explained everything clearly and delivered on time. Highly recommended!"</div><div class="rc-foot"><img src="https://www.google.com/favicon.ico" class="glogo"><span style="font-size:10px;color:var(--soft);">Google Review</span></div></div>
+      <div class="rcard"><div class="rc-top"><div class="rc-av" style="background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;">S</div><div><div class="rc-name">Senthil</div><div class="rc-loc">Chennai</div></div><div class="rc-stars">★★★★★</div></div><div class="rc-txt">"Great technical expertise. Installation quality and post-installation support have been excellent. The savings on electricity are amazing!"</div><div class="rc-foot"><img src="https://www.google.com/favicon.ico" class="glogo"><span style="font-size:10px;color:var(--soft);">Google Review</span></div></div>
+      <div class="rcard"><div class="rc-top"><div class="rc-av" style="background:linear-gradient(135deg,#CE93D8,#9C27B0);color:#080F1E;">R</div><div><div class="rc-name">Rajesh</div><div class="rc-loc">Vellore</div></div><div class="rc-stars">★★★★★</div></div><div class="rc-txt">"Solar cleaning and repair service significantly improved our system performance. Prompt, skilled, high service standards throughout."</div><div class="rc-foot"><img src="https://www.google.com/favicon.ico" class="glogo"><span style="font-size:10px;color:var(--soft);">Google Review</span></div></div>
+      <div class="rcard"><div class="rc-top"><div class="rc-av" style="background:linear-gradient(135deg,#FFD166,#F5A623);color:#080F1E;">L</div><div><div class="rc-name">Lakshmi</div><div class="rc-loc">Chennai</div></div><div class="rc-stars">★★★★★</div></div><div class="rc-txt">"Dependable solutions with honest guidance and consistent support. Fully satisfied with their professionalism and service quality."</div><div class="rc-foot"><img src="https://www.google.com/favicon.ico" class="glogo"><span style="font-size:10px;color:var(--soft);">Google Review</span></div></div>
+      <div class="rcard" style="background:linear-gradient(135deg,rgba(245,166,35,0.08),rgba(255,107,0,0.05));border-color:rgba(245,166,35,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;">
+        <div style="font-size:30px;">⭐</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--sun);">Happy with our service?</div>
         <div style="font-size:12px;color:var(--soft);line-height:1.6;">Share your experience on Google and help others discover Skyflies Solar!</div>
-        <a href="https://g.page/r/skyflies-solar/review" target="_blank" style="padding:10px 20px;background:linear-gradient(135deg,#F5A623,#FF6B00);border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;text-decoration:none;">Write a Google Review →</a>
+        <a href="https://g.page/r/skyflies-solar/review" target="_blank" style="padding:9px 18px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:8px;color:var(--deep);font-weight:700;font-size:12px;text-decoration:none;">Write a Google Review →</a>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ ENQUIRY ══ -->
+<!-- ═══ ENQUIRY ═══ -->
 <div class="page" id="page-enquiry">
-  <div class="sh"><div class="stag">💬 Contact</div><h2>General <span>Enquiry</span></h2><p>Have a question? Mr. Dillibabu will reply within 24 hours.</p></div>
-  <div class="fcard">
+  <div class="sh"><div class="stag">💬 Contact</div><h2>General <span>Enquiry</span></h2><p>Have a question? Skyflies Team will reply within 24 hours.</p></div>
+  <div class="fc">
     <div class="ft">Send Your Enquiry</div>
-    <div class="fs">Fill in your details and we'll respond promptly. Or call us at <strong style="color:var(--sun)">+91 93854 49167</strong></div>
+    <div class="fs">Fill in your details — we respond within 24 hours. Or call <strong style="color:var(--sun)">+91 93854 49167</strong></div>
     <form id="enqForm">
       <div class="fg">
         <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" name="name" placeholder="Your full name" required></div>
         <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
         <div class="fi"><label class="lb">Email</label><input type="email" name="email" placeholder="your@email.com"></div>
-        <div class="fi"><label class="lb">City <span>*</span></label>
-          <select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
-        <div class="fi"><label class="lb">Property Type</label>
-          <select name="propertyType"><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
-        <div class="fi"><label class="lb">How did you hear about us?</label>
-          <select name="source"><option value="">Select source</option><option>Google Search</option><option>WhatsApp</option><option>Email</option><option>Referral</option><option>Social Media</option><option>YouTube</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Property Type</label><select name="propertyType"><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Source</label><select name="source"><option value="">How did you find us?</option><option>Google Search</option><option>WhatsApp</option><option>Email</option><option>Referral</option><option>Social Media</option><option>YouTube</option><option>Other</option></select></div>
         <div class="fi full"><label class="lb">Message <span>*</span></label><textarea name="message" placeholder="Your question or requirement..." required></textarea></div>
       </div>
-      <button type="submit" class="sbtn"><span class="bt">SEND ENQUIRY →</span><div class="bl"></div></button>
-      <div class="alrt ok" id="e-ok">✅ &nbsp;Enquiry sent! Mr. Dillibabu will contact you within 24 hours.</div>
-      <div class="alrt er" id="e-er">❌ &nbsp;Error. Please call +91 93854 49167 directly.</div>
+      <button type="submit" class="sbtn"><span class="bt">SEND ENQUIRY →</span><div class="bll"></div></button>
+      <div class="alrt ok" id="e-ok">✅ &nbsp;Enquiry sent! Skyflies Team will contact you within 24 hours.</div>
+      <div class="alrt er" id="e-er">❌ &nbsp;Error. Please call +91 93854 49167.</div>
     </form>
   </div>
 </div>
 
-<!-- ══ QUOTATION ══ -->
+<!-- ═══ QUOTATION ═══ -->
 <div class="page" id="page-quotation">
-  <div class="sh"><div class="stag">💰 Free Estimate</div><h2>Get Your <span>Quotation</span></h2><p>Detailed cost estimate sent within 24 hours — completely free and no obligation.</p></div>
-  <div class="fcard">
+  <div class="sh"><div class="stag">💰 Free Estimate</div><h2>Get Your <span>Quotation</span></h2><p>Detailed cost estimate within 24 hours — free, no obligation.</p></div>
+  <div class="fc">
     <div class="ft">Request a Quotation</div>
     <div class="fs">Tell us about your project and we'll send a detailed personalised quote.</div>
     <form id="quotForm">
@@ -475,174 +416,132 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
         <div class="fi"><label class="lb">Email <span>*</span></label><input type="email" name="email" placeholder="your@email.com" required></div>
         <div class="fi"><label class="lb">Company / Business</label><input type="text" name="company" placeholder="Business name (if applicable)"></div>
-        <div class="fi"><label class="lb">City <span>*</span></label>
-          <select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
-        <div class="fi"><label class="lb">Property Type <span>*</span></label>
-          <select name="propertyType" required><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial – Factory/Mill</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
-        <div class="fi"><label class="lb">Monthly Electricity Bill</label>
-          <select name="bill"><option value="">Select range</option><option>Below ₹2,000</option><option>₹2,000–₹5,000</option><option>₹5,000–₹15,000</option><option>₹15,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>Above ₹1,00,000</option></select></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Property Type <span>*</span></label><select name="propertyType" required><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial – Factory/Mill</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Monthly Electricity Bill</label><select name="bill"><option value="">Select range</option><option>Below ₹2,000</option><option>₹2,000–₹5,000</option><option>₹5,000–₹15,000</option><option>₹15,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>Above ₹1,00,000</option></select></div>
         <div class="fi"><label class="lb">Roof Area (sq ft)</label><input type="text" name="roofArea" placeholder="e.g. 500 sq ft"></div>
-        <div class="fi"><label class="lb">System Type Preferred</label>
-          <select name="systemType"><option value="">Select</option><option>Grid-Tied (On-Grid)</option><option>Off-Grid</option><option>Hybrid</option><option>Not Sure</option></select></div>
-        <div class="fi"><label class="lb">Budget Range</label>
-          <select name="budget"><option value="">Select</option><option>Under ₹1 Lakh</option><option>₹1–₹3 Lakhs</option><option>₹3–₹7 Lakhs</option><option>₹7–₹15 Lakhs</option><option>Above ₹15 Lakhs</option></select></div>
-        <div class="fi full"><label class="lb">Services Required</label>
-          <div class="sg">
-            <label class="sc"><input type="checkbox" name="service" value="Solar Installation"> ☀️ Solar Installation</label>
-            <label class="sc"><input type="checkbox" name="service" value="Solar Cleaning"> 🧹 Solar Cleaning</label>
-            <label class="sc"><input type="checkbox" name="service" value="Solar Repair"> 🔧 Solar Repair</label>
-            <label class="sc"><input type="checkbox" name="service" value="AMC Contract"> 📋 AMC Contract</label>
-          </div>
-        </div>
+        <div class="fi"><label class="lb">Budget Range</label><select name="budget"><option value="">Select</option><option>Under ₹1 Lakh</option><option>₹1–₹3 Lakhs</option><option>₹3–₹7 Lakhs</option><option>₹7–₹15 Lakhs</option><option>Above ₹15 Lakhs</option></select></div>
+        <div class="fi"><label class="lb">System Type</label><select name="systemType"><option value="">Select</option><option>Grid-Tied (On-Grid)</option><option>Off-Grid</option><option>Hybrid</option><option>Not Sure</option></select></div>
+        <div class="fi full"><label class="lb">Services Required</label><div class="sg"><label class="sc"><input type="checkbox" name="service" value="Solar Installation"> ☀️ Installation</label><label class="sc"><input type="checkbox" name="service" value="Solar Cleaning"> 🧹 Cleaning</label><label class="sc"><input type="checkbox" name="service" value="Solar Repair"> 🔧 Repair</label><label class="sc"><input type="checkbox" name="service" value="AMC Contract"> 📋 AMC</label></div></div>
         <div class="fi full"><label class="lb">Additional Notes</label><textarea name="message" placeholder="Site conditions, access details, special requirements..."></textarea></div>
       </div>
-      <button type="submit" class="sbtn"><span class="bt">REQUEST QUOTATION →</span><div class="bl"></div></button>
-      <div class="alrt ok" id="q-ok">✅ &nbsp;Quotation request received! Mr. Dillibabu will send your detailed quote within 24 hours.</div>
-      <div class="alrt er" id="q-er">❌ &nbsp;Error. Please call +91 93854 49167 directly.</div>
+      <button type="submit" class="sbtn"><span class="bt">REQUEST QUOTATION →</span><div class="bll"></div></button>
+      <div class="alrt ok" id="q-ok">✅ &nbsp;Quotation request received! Skyflies Team will send your detailed quote within 24 hours.</div>
+      <div class="alrt er" id="q-er">❌ &nbsp;Error. Please call +91 93854 49167.</div>
     </form>
   </div>
 </div>
 
-<!-- ══ PLANS ══ -->
-<div class="page" id="page-plans">
-  <div class="sh"><div class="stag">💎 Pricing</div><h2>Monthly <span>Subscription</span> Plans</h2><p>Professional cleaning & maintenance plans. Cancel anytime. Billed monthly, quarterly, half-yearly or annually.</p></div>
-  <div class="plans-grid">
-    <div class="pc" onclick="goSub('Basic Clean')">
-      <div class="pico y">🧹</div><div class="pnm">Basic Clean</div><div class="pty">Monthly Subscription</div>
-      <div class="ppr"><span class="cu">₹</span><span class="am">499</span><span class="pe">/month</span></div>
-      <div class="pdesc">For residential systems up to 3 kW. Keeps panels clean and efficient all month.</div>
-      <ul class="pfl">
-        <li><span class="ck">✓</span>1× Panel cleaning/month</li>
-        <li><span class="ck">✓</span>Visual inspection</li>
-        <li><span class="ck">✓</span>Dust & debris removal</li>
-        <li><span class="ck">✓</span>Performance report</li>
-        <li class="no"><span class="ck">✗</span>Electrical inspection</li>
-        <li class="no"><span class="ck">✗</span>Priority support</li>
-        <li class="no"><span class="ck">✗</span>Free minor repairs</li>
-      </ul>
-      <button class="pbtn ghost" onclick="goSub('Basic Clean')">Subscribe Now</button>
+<!-- ═══ QUOTE CALCULATOR ═══ -->
+<div class="page" id="page-calculator">
+  <div class="sh"><div class="stag">🧮 Instant Quote</div><h2>Solar <span>Quote Calculator</span></h2><p>Enter your details and get an instant estimated quotation — then send it directly to your email.</p></div>
+  <div class="qcalc">
+    <div class="ft">Calculate Your Solar Quote</div>
+    <div class="fs">Fill in your requirements and get an instant price estimate. Our team will follow up with a detailed official quote.</div>
+    <div class="fg">
+      <div class="fi"><label class="lb">Your Name <span>*</span></label><input type="text" id="cn" placeholder="Your full name" required></div>
+      <div class="fi"><label class="lb">Email <span>*</span></label><input type="email" id="ce" placeholder="your@email.com" required></div>
+      <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" id="cp" placeholder="+91 XXXXX XXXXX" required></div>
+      <div class="fi"><label class="lb">City</label><select id="cc"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option></select></div>
+      <div class="fi"><label class="lb">Property Type <span>*</span></label>
+        <select id="cpt" onchange="calcQuote()"><option value="">Select type</option><option value="residential">Residential – House</option><option value="commercial">Commercial – Office/Shop</option><option value="industrial">Industrial – Factory/Mill</option><option value="hospital">Hospital / Clinic</option><option value="school">School / College</option></select></div>
+      <div class="fi"><label class="lb">System Size (kW) <span>*</span></label>
+        <select id="csz" onchange="calcQuote()"><option value="">Select size</option><option value="1">1 kW</option><option value="2">2 kW</option><option value="3">3 kW</option><option value="5">5 kW</option><option value="7">7 kW</option><option value="10">10 kW</option><option value="15">15 kW</option><option value="20">20 kW</option><option value="25">25 kW</option><option value="50">50 kW+</option></select></div>
+      <div class="fi"><label class="lb">Panel Type</label>
+        <select id="cpl" onchange="calcQuote()"><option value="mono">Monocrystalline (Premium)</option><option value="poly">Polycrystalline (Standard)</option><option value="bifacial">Bifacial (High Efficiency)</option></select></div>
+      <div class="fi"><label class="lb">Include AMC (Annual Maintenance)?</label>
+        <select id="camc" onchange="calcQuote()"><option value="no">No</option><option value="yes">Yes – Add AMC Contract</option></select></div>
     </div>
-    <div class="pc hot" onclick="goSub('Standard Care')">
-      <div class="pbadge">POPULAR</div>
-      <div class="pico o">⚡</div><div class="pnm">Standard Care</div><div class="pty">Monthly Subscription</div>
-      <div class="ppr"><span class="cu">₹</span><span class="am">999</span><span class="pe">/month</span></div>
-      <div class="pdesc">For residential & small commercial up to 10 kW. Full cleaning + electrical checks.</div>
-      <ul class="pfl">
-        <li><span class="ck">✓</span>2× Panel cleaning/month</li>
-        <li><span class="ck">✓</span>Visual + electrical check</li>
-        <li><span class="ck">✓</span>Inverter status check</li>
-        <li><span class="ck">✓</span>Monthly report</li>
-        <li><span class="ck">✓</span>WhatsApp support</li>
-        <li><span class="ck">✓</span>Annual efficiency report</li>
-        <li class="no"><span class="ck">✗</span>Free minor repairs</li>
-      </ul>
-      <button class="pbtn solid" onclick="goSub('Standard Care')">Subscribe Now</button>
-    </div>
-    <div class="pc" onclick="goSub('Premium AMC')">
-      <div class="pico b">🛡️</div><div class="pnm">Premium AMC</div><div class="pty">Monthly Subscription</div>
-      <div class="ppr"><span class="cu">₹</span><span class="am">1,999</span><span class="pe">/month</span></div>
-      <div class="pdesc">For large residential & commercial up to 25 kW. Full AMC + free minor repairs.</div>
-      <ul class="pfl">
-        <li><span class="ck">✓</span>4× Panel cleaning/month</li>
-        <li><span class="ck">✓</span>Full electrical + inverter check</li>
-        <li><span class="ck">✓</span>Wiring inspection</li>
-        <li><span class="ck">✓</span>Monthly report</li>
-        <li><span class="ck">✓</span>Priority phone & WhatsApp</li>
-        <li><span class="ck">✓</span>Free minor repairs</li>
-        <li><span class="ck">✓</span>Annual full audit</li>
-      </ul>
-      <button class="pbtn ghost" onclick="goSub('Premium AMC')">Subscribe Now</button>
-    </div>
-    <div class="pc" onclick="goSub('Industrial Pro')">
-      <div class="pico g">🏭</div><div class="pnm">Industrial Pro</div><div class="pty">Custom Plan</div>
-      <div class="ppr"><span style="font-family:'Bebas Neue';font-size:34px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Custom</span><span class="pe" style="margin-left:7px;">/month</span></div>
-      <div class="pdesc">For factories & industries above 25 kW. Dedicated engineer, 24/7 support, custom SLA.</div>
-      <ul class="pfl">
-        <li><span class="ck">✓</span>Unlimited cleaning visits</li>
-        <li><span class="ck">✓</span>Full AMC coverage</li>
-        <li><span class="ck">✓</span>Dedicated service engineer</li>
-        <li><span class="ck">✓</span>24/7 emergency support</li>
-        <li><span class="ck">✓</span>Free parts (minor)</li>
-        <li><span class="ck">✓</span>Quarterly full audit</li>
-        <li><span class="ck">✓</span>Custom SLA agreement</li>
-      </ul>
-      <button class="pbtn ghost" onclick="goSub('Industrial Pro')">Get Custom Quote</button>
-    </div>
-  </div>
-  <div class="ct">
-    <h3>Plan Comparison</h3>
-    <table class="ctbl">
-      <thead><tr><th>Feature</th><th>Basic ₹499</th><th>Standard ₹999</th><th>Premium ₹1,999</th><th>Industrial</th></tr></thead>
-      <tbody>
-        <tr><td>Cleaning / month</td><td>1×</td><td>2×</td><td>4×</td><td>Unlimited</td></tr>
-        <tr><td>Visual Inspection</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td></tr>
-        <tr><td>Electrical Inspection</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td></tr>
-        <tr><td>Inverter Check</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td></tr>
-        <tr><td>WhatsApp Support</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓ Priority</td><td class="tk">✓ 24/7</td></tr>
-        <tr><td>Free Minor Repairs</td><td class="cx">✗</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓</td></tr>
-        <tr><td>Dedicated Engineer</td><td class="cx">✗</td><td class="cx">✗</td><td class="cx">✗</td><td class="tk">✓</td></tr>
-        <tr><td>System Size</td><td>Up to 3 kW</td><td>Up to 10 kW</td><td>Up to 25 kW</td><td>25 kW+</td></tr>
-      </tbody>
-    </table>
+    <button onclick="calcQuote();showResult()" class="sbtn" style="margin-top:20px;"><span>CALCULATE MY QUOTE →</span></button>
   </div>
 
-  <!-- EMI PLANS -->
-  <div style="margin-top:40px;">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:6px;">💳 Solar Installation <span style="background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">EMI Plans</span></div>
-    <div style="font-size:13px;color:var(--soft);margin-bottom:20px;">Own your solar system with easy monthly payments. Start from just ₹999/month — no heavy upfront cost!</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px;">
-      <div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:20px;text-align:center;">
-        <div style="font-size:11px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Starter</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">₹999</div>
-        <div style="font-size:11px;color:var(--soft);">/month</div>
-        <div style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5;">For 1–2 kW system<br>24 month tenure<br>Zero processing fee</div>
-      </div>
-      <div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:20px;text-align:center;">
-        <div style="font-size:11px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Home</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">₹2,499</div>
-        <div style="font-size:11px;color:var(--soft);">/month</div>
-        <div style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5;">For 3–5 kW system<br>36 month tenure<br>Zero processing fee</div>
-      </div>
-      <div style="background:rgba(0,230,118,0.08);border:2px solid rgba(0,230,118,0.35);border-radius:14px;padding:20px;text-align:center;position:relative;">
-        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;font-size:9px;font-weight:700;padding:2px 12px;border-radius:10px;letter-spacing:1px;white-space:nowrap;">BEST VALUE</div>
-        <div style="font-size:11px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Commercial</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">₹4,999</div>
-        <div style="font-size:11px;color:var(--soft);">/month</div>
-        <div style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5;">For 5–10 kW system<br>48 month tenure<br>Zero processing fee</div>
-      </div>
-      <div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:14px;padding:20px;text-align:center;">
-        <div style="font-size:11px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Industrial</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Custom</div>
-        <div style="font-size:11px;color:var(--soft);">/month</div>
-        <div style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5;">For 10 kW+ systems<br>Flexible tenure<br>Special rates</div>
-      </div>
+  <div class="qresult" id="qresult">
+    <div class="qr-title">📋 Your Estimated Quotation</div>
+    <div class="qr-total">
+      <div class="qt-label">Estimated Total Cost (After Subsidy)</div>
+      <div class="qt-price" id="qtotal">₹0</div>
+      <div class="qt-sub" id="qsubsidy"></div>
     </div>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-      <div style="font-size:20px;">ℹ️</div>
-      <div style="flex:1;font-size:12px;color:var(--soft);line-height:1.65;">EMI plans are subject to eligibility. Government subsidy reduces your total cost further. Call Mr. Dillibabu at <strong style="color:var(--sun)">+91 93854 49167</strong> to check your EMI eligibility and get a custom payment plan.</div>
-      <button onclick="showPage('enquiry',null)" style="padding:9px 18px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;">Check EMI Eligibility →</button>
+    <div class="qr-grid">
+      <div class="qr-item"><div class="qr-label">System Size</div><div class="qr-value" id="qsize">–</div></div>
+      <div class="qr-item"><div class="qr-label">Panel Type</div><div class="qr-value" id="qpanel">–</div></div>
+      <div class="qr-item"><div class="qr-label">No. of Panels</div><div class="qr-value" id="qpanels">–</div></div>
+      <div class="qr-item"><div class="qr-label">Monthly Savings</div><div class="qr-value" id="qsaving">–</div></div>
+      <div class="qr-item"><div class="qr-label">EMI Option</div><div class="qr-value" id="qemi">–</div></div>
+      <div class="qr-item"><div class="qr-label">Payback Period</div><div class="qr-value" id="qroi">–</div></div>
     </div>
+    <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--soft);line-height:1.7;" id="qnotes"></div>
+    <div class="qr-actions">
+      <button class="qr-btn main" onclick="sendQuotation()">📧 Send Quote to My Email</button>
+      <button class="qr-btn sec" onclick="showPage('enquiry',null)">📞 Talk to Skyflies Team</button>
+      <button class="qr-btn sec" onclick="window.open('https://wa.me/919385449167?text=Hi! I calculated my solar quote on your app. Can you confirm the details?','_blank')">💬 WhatsApp</button>
+    </div>
+    <div class="alrt ok" id="qsent" style="margin-top:12px;">✅ &nbsp;Quotation details sent to your email! Skyflies Team will follow up within 24 hours with an official PDF quote.</div>
+    <p style="font-size:11px;color:var(--soft);margin-top:12px;">* This is an estimated quote. Final pricing may vary based on site survey, roof condition, and current material costs. Government subsidy amounts are approximate.</p>
   </div>
 </div>
 
-<!-- ══ SUBSCRIBE ══ -->
-<div class="page" id="page-subscribe">
-  <div class="sh"><div class="stag">📋 Subscribe</div><h2>Start Your <span>Subscription</span></h2><p>Choose your plan and Mr. Dillibabu will confirm and schedule your first visit within 48 hours.</p></div>
-  <div class="fcard">
-    <div class="ft">Subscription Form</div>
-    <div class="fs">Fill in your details below — we'll have you set up and serviced within 48 hours.</div>
-    <form id="subForm">
+<!-- ═══ EMI / LOAN ENQUIRY ═══ -->
+<div class="page emi-page" id="page-emi">
+  <div class="sh"><div class="stag">💳 EMI & Loan</div><h2>Solar <span>EMI / Loan</span> Enquiry</h2><p>Start your solar journey with easy monthly payments. Check your eligibility now.</p></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:32px;">
+    <div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:10px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Starter</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">₹999</div><div style="font-size:10px;color:var(--soft);">/month • 1–2 kW • 24 months</div></div>
+    <div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:10px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Home</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">₹2,499</div><div style="font-size:10px;color:var(--soft);">/month • 3–5 kW • 36 months</div></div>
+    <div style="background:rgba(0,230,118,0.09);border:2px solid rgba(0,230,118,0.35);border-radius:12px;padding:18px;text-align:center;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;font-size:9px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">BEST VALUE</div><div style="font-size:10px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Commercial</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">₹4,999</div><div style="font-size:10px;color:var(--soft);">/month • 5–10 kW • 48 months</div></div>
+    <div style="background:rgba(0,230,118,0.06);border:1px solid rgba(0,230,118,0.2);border-radius:12px;padding:18px;text-align:center;"><div style="font-size:10px;color:#00E676;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Industrial</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;background:linear-gradient(135deg,#00E676,#00B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Custom</div><div style="font-size:10px;color:var(--soft);">/month • 10 kW+ • Flexible</div></div>
+  </div>
+  <div class="fc" style="--border:rgba(0,230,118,0.25);">
+    <div class="ft">EMI / Loan Enquiry Form</div>
+    <div class="fs">Fill in your details and Skyflies Team will check your eligibility and call you within 24 hours with the best plan.</div>
+    <form id="emiForm">
       <div class="fg">
         <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" name="name" placeholder="Your full name" required></div>
         <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
         <div class="fi"><label class="lb">Email <span>*</span></label><input type="email" name="email" placeholder="your@email.com" required></div>
-        <div class="fi"><label class="lb">Company / Business</label><input type="text" name="company" placeholder="If applicable"></div>
-        <div class="fi"><label class="lb">City <span>*</span></label>
-          <select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
-        <div class="fi"><label class="lb">Full Address <span>*</span></label><input type="text" name="address" placeholder="Street, Area, City" required></div>
-        <div class="fi"><label class="lb">Solar System Size (kW)</label><input type="text" name="systemSize" placeholder="e.g. 5 kW"></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Property Type <span>*</span></label><select name="propertyType" required><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">System Size Needed</label><select name="systemSize"><option value="">Select size</option><option>1–2 kW (Starter)</option><option>3–5 kW (Home)</option><option>5–10 kW (Commercial)</option><option>10 kW+ (Industrial)</option></select></div>
+        <div class="fi"><label class="lb">Monthly Income Range</label><select name="income"><option value="">Select range</option><option>₹10,000–₹25,000</option><option>₹25,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>Above ₹1,00,000</option></select></div>
+        <div class="fi"><label class="lb">Preferred EMI / month</label><select name="emi"><option value="">Select EMI</option><option>₹999/month</option><option>₹2,499/month</option><option>₹4,999/month</option><option>Custom – discuss with team</option></select></div>
+        <div class="fi"><label class="lb">Employment Type</label><select name="employment"><option value="">Select</option><option>Salaried</option><option>Self-Employed</option><option>Business Owner</option><option>Farmer</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Have existing solar system?</label><select name="existing"><option value="No">No – New installation</option><option value="Yes">Yes – Upgrading existing system</option></select></div>
+        <div class="fi full"><label class="lb">Additional Notes</label><textarea name="message" placeholder="Any questions about EMI, loan process, or eligibility..."></textarea></div>
+      </div>
+      <button type="submit" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);"><span class="bt">SUBMIT EMI ENQUIRY →</span><div class="bll"></div></button>
+      <div class="alrt ok" id="em-ok">✅ &nbsp;EMI enquiry submitted! Skyflies Team will call you within 24 hours to discuss your eligibility and best plan.</div>
+      <div class="alrt er" id="em-er">❌ &nbsp;Error. Please call +91 93854 49167 directly.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ PLANS ═══ -->
+<div class="page" id="page-plans">
+  <div class="sh"><div class="stag">💎 Pricing</div><h2>Monthly <span>Subscription</span> Plans</h2><p>Professional cleaning & maintenance. Cancel anytime.</p></div>
+  <div class="pgrid">
+    <div class="pc" onclick="goSub('Basic Clean')"><div class="pico" style="background:rgba(245,166,35,0.14);">🧹</div><div class="pnm">Basic Clean</div><div class="pty">Monthly Subscription</div><div class="ppr"><span class="cu">₹</span><span class="am">499</span><span class="pe">/mo</span></div><div class="pdesc">For residential systems up to 3 kW.</div><ul class="pfl"><li><span class="ck">✓</span>1× Panel cleaning/month</li><li><span class="ck">✓</span>Visual inspection</li><li><span class="ck">✓</span>Performance report</li><li class="no"><span class="ck">✗</span>Electrical inspection</li><li class="no"><span class="ck">✗</span>Free repairs</li></ul><button class="pbtn ghost" onclick="goSub('Basic Clean')">Subscribe Now</button></div>
+    <div class="pc hot" onclick="goSub('Standard Care')"><div class="pbadge">POPULAR</div><div class="pico" style="background:rgba(255,107,0,0.14);">⚡</div><div class="pnm">Standard Care</div><div class="pty">Monthly Subscription</div><div class="ppr"><span class="cu">₹</span><span class="am">999</span><span class="pe">/mo</span></div><div class="pdesc">For residential & small commercial up to 10 kW.</div><ul class="pfl"><li><span class="ck">✓</span>2× Panel cleaning/month</li><li><span class="ck">✓</span>Electrical + inverter check</li><li><span class="ck">✓</span>Monthly report</li><li><span class="ck">✓</span>WhatsApp support</li><li class="no"><span class="ck">✗</span>Free repairs</li></ul><button class="pbtn solid" onclick="goSub('Standard Care')">Subscribe Now</button></div>
+    <div class="pc" onclick="goSub('Premium AMC')"><div class="pico" style="background:rgba(100,180,255,0.14);">🛡️</div><div class="pnm">Premium AMC</div><div class="pty">Monthly Subscription</div><div class="ppr"><span class="cu">₹</span><span class="am">1,999</span><span class="pe">/mo</span></div><div class="pdesc">For commercial up to 25 kW. Full AMC + free minor repairs.</div><ul class="pfl"><li><span class="ck">✓</span>4× Panel cleaning/month</li><li><span class="ck">✓</span>Full electrical + wiring check</li><li><span class="ck">✓</span>Priority phone support</li><li><span class="ck">✓</span>Free minor repairs</li><li><span class="ck">✓</span>Annual full audit</li></ul><button class="pbtn ghost" onclick="goSub('Premium AMC')">Subscribe Now</button></div>
+    <div class="pc" onclick="goSub('Industrial Pro')"><div class="pico" style="background:rgba(0,230,118,0.14);">🏭</div><div class="pnm">Industrial Pro</div><div class="pty">Custom Plan</div><div class="ppr"><span style="font-family:'Bebas Neue';font-size:34px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Custom</span></div><div class="pdesc">For factories & industries above 25 kW.</div><ul class="pfl"><li><span class="ck">✓</span>Unlimited cleaning visits</li><li><span class="ck">✓</span>Dedicated service engineer</li><li><span class="ck">✓</span>24/7 emergency support</li><li><span class="ck">✓</span>Custom SLA agreement</li></ul><button class="pbtn ghost" onclick="goSub('Industrial Pro')">Get Custom Quote</button></div>
+  </div>
+  <div class="ct"><h3>Plan Comparison</h3><table class="ctbl"><thead><tr><th>Feature</th><th>Basic ₹499</th><th>Standard ₹999</th><th>Premium ₹1,999</th><th>Industrial</th></tr></thead><tbody><tr><td>Cleaning/month</td><td>1×</td><td>2×</td><td>4×</td><td>Unlimited</td></tr><tr><td>Visual Inspection</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td></tr><tr><td>Electrical Inspection</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓</td><td class="tk">✓</td></tr><tr><td>WhatsApp Support</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓ Priority</td><td class="tk">✓ 24/7</td></tr><tr><td>Free Minor Repairs</td><td class="cx">✗</td><td class="cx">✗</td><td class="tk">✓</td><td class="tk">✓</td></tr><tr><td>System Size</td><td>Up to 3 kW</td><td>Up to 10 kW</td><td>Up to 25 kW</td><td>25 kW+</td></tr></tbody></table></div>
+</div>
+
+<!-- ═══ SUBSCRIBE ═══ -->
+<div class="page" id="page-subscribe">
+  <div class="sh"><div class="stag">📋 Subscribe</div><h2>Start Your <span>Subscription</span></h2><p>Skyflies Team will confirm and schedule your first visit within 48 hours.</p></div>
+  <div class="fc">
+    <div class="ft">Subscription Form</div><div class="fs">Choose your plan and fill in your details.</div>
+    <form id="subForm">
+      <div class="fg">
+        <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" name="name" required placeholder="Your full name"></div>
+        <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" required placeholder="+91 XXXXX XXXXX"></div>
+        <div class="fi"><label class="lb">Email <span>*</span></label><input type="email" name="email" required placeholder="your@email.com"></div>
+        <div class="fi"><label class="lb">Company</label><input type="text" name="company" placeholder="If applicable"></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">Address <span>*</span></label><input type="text" name="address" required placeholder="Street, Area, City"></div>
+        <div class="fi"><label class="lb">System Size (kW)</label><input type="text" name="systemSize" placeholder="e.g. 5 kW"></div>
         <div class="fi"><label class="lb">No. of Panels</label><input type="number" name="panels" placeholder="e.g. 20" min="1"></div>
-        <div class="fi full"><label class="lb">Choose Your Plan <span>*</span></label>
+        <div class="fi full"><label class="lb">Choose Plan <span>*</span></label>
           <div class="ps" id="planSel">
             <label class="po" onclick="selPlan(this)"><input type="radio" name="plan" value="Basic Clean" required>🧹 Basic Clean<span class="op">₹499/mo</span></label>
             <label class="po" onclick="selPlan(this)"><input type="radio" name="plan" value="Standard Care">⚡ Standard Care<span class="op">₹999/mo</span></label>
@@ -650,286 +549,530 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
             <label class="po" onclick="selPlan(this)"><input type="radio" name="plan" value="Industrial Pro">🏭 Industrial Pro<span class="op">Custom</span></label>
           </div>
         </div>
-        <div class="fi"><label class="lb">Billing Cycle</label>
-          <select name="billing"><option value="Monthly">Monthly</option><option value="Quarterly">Quarterly – 3 months</option><option value="Half-Yearly (5% off)">Half-Yearly – 5% off</option><option value="Annual (10% off)">Annual – 10% off</option></select></div>
-        <div class="fi"><label class="lb">Preferred Service Day</label>
-          <select name="serviceDay"><option value="">Flexible</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></div>
-        <div class="fi full"><label class="lb">Additional Notes</label><textarea name="message" placeholder="Access instructions, special requirements..."></textarea></div>
+        <div class="fi"><label class="lb">Billing Cycle</label><select name="billing"><option value="Monthly">Monthly</option><option value="Quarterly">Quarterly</option><option value="Half-Yearly (5% off)">Half-Yearly – 5% off</option><option value="Annual (10% off)">Annual – 10% off</option></select></div>
+        <div class="fi"><label class="lb">Preferred Service Day</label><select name="serviceDay"><option value="Flexible">Flexible</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></div>
+        <div class="fi full"><label class="lb">Notes</label><textarea name="message" placeholder="Access instructions, special requirements..."></textarea></div>
       </div>
-      <button type="submit" class="sbtn"><span class="bt">CONFIRM SUBSCRIPTION →</span><div class="bl"></div></button>
-      <div class="alrt ok" id="s-ok">✅ &nbsp;Subscription confirmed! Mr. Dillibabu will contact you within 48 hours to schedule your first visit.</div>
-      <div class="alrt er" id="s-er">❌ &nbsp;Error. Please call +91 93854 49167 directly.</div>
+      <button type="submit" class="sbtn"><span class="bt">CONFIRM SUBSCRIPTION →</span><div class="bll"></div></button>
+      <div class="alrt ok" id="s-ok">✅ &nbsp;Subscription confirmed! Skyflies Team will contact you within 48 hours.</div>
+      <div class="alrt er" id="s-er">❌ &nbsp;Error. Please call +91 93854 49167.</div>
     </form>
   </div>
-
-  <!-- SOCIAL MEDIA -->
-  <div class="social-wrap">
-    <h3>🌐 Follow Skyflies Solar</h3>
-    <p>Stay updated with solar tips, project showcases, offers and energy-saving guides. Subscribe to our YouTube channel and follow us on social media!</p>
-    <div class="social-grid">
-      <a class="social-card yt" href="https://youtube.com/@skyfliessolar?si=c0BNIghCEkQGmazR" target="_blank">
-        <div class="sico yt">▶️</div>
-        <div class="social-info"><div class="sn">YouTube</div><div class="sh2">@skyfliessolar</div></div>
-      </a>
-      <a class="social-card fb" href="https://m.facebook.com/979992808528445/" target="_blank">
-        <div class="sico fb">📘</div>
-        <div class="social-info"><div class="sn">Facebook</div><div class="sh2">Skyflies Solar</div></div>
-      </a>
-      <a class="social-card ig" href="https://www.instagram.com/skyflies_solar?igsh=MXhyZmJuZDBuaWxmZQ==" target="_blank">
-        <div class="sico ig">📸</div>
-        <div class="social-info"><div class="sn">Instagram</div><div class="sh2">@skyflies_solar</div></div>
-      </a>
-      <a class="social-card" href="https://www.linkedin.com/company/skyfliessolar/" target="_blank" style="border-color:rgba(0,119,181,0.25);">
-        <div class="sico" style="background:rgba(0,119,181,0.15);">💼</div>
-        <div class="social-info"><div class="sn">LinkedIn</div><div class="sh2">Skyflies Solar</div></div>
-      </a>
-      <a class="social-card wa" href="https://wa.me/919385449167" target="_blank">
-        <div class="sico wa">💬</div>
-        <div class="social-info"><div class="sn">WhatsApp</div><div class="sh2">+91 93854 49167</div></div>
-      </a>
-      <a class="social-card" href="https://skyflies.in" target="_blank" style="border-color:rgba(245,166,35,0.2);">
-        <div class="sico" style="background:rgba(245,166,35,0.13);">🌐</div>
-        <div class="social-info"><div class="sn">Website</div><div class="sh2">www.skyflies.in</div></div>
-      </a>
+  <!-- SOCIAL -->
+  <div style="background:linear-gradient(135deg,rgba(245,166,35,0.06),rgba(255,107,0,0.04));border:1px solid var(--border);border-radius:20px;padding:36px;margin-top:44px;">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;margin-bottom:6px;">🌐 Follow Skyflies Solar</div>
+    <p style="font-size:13px;color:var(--soft);margin-bottom:24px;line-height:1.7;">Subscribe to our YouTube and follow on social media for solar tips, project updates & special offers!</p>
+    <div class="sgrid">
+      <a class="scard" href="https://youtube.com/@skyfliessolar?si=c0BNIghCEkQGmazR" target="_blank" style="border-color:rgba(255,0,0,0.2);"><div class="sico" style="background:rgba(255,0,0,0.13);">▶️</div><div class="sinfo"><div class="sn">YouTube</div><div class="ss">@skyfliessolar</div></div></a>
+      <a class="scard" href="https://m.facebook.com/979992808528445/" target="_blank" style="border-color:rgba(24,119,242,0.2);"><div class="sico" style="background:rgba(24,119,242,0.13);">📘</div><div class="sinfo"><div class="sn">Facebook</div><div class="ss">Skyflies Solar</div></div></a>
+      <a class="scard" href="https://www.instagram.com/skyflies_solar?igsh=MXhyZmJuZDBuaWxmZQ==" target="_blank" style="border-color:rgba(225,48,108,0.2);"><div class="sico" style="background:linear-gradient(135deg,rgba(225,48,108,0.15),rgba(253,187,45,0.15));">📸</div><div class="sinfo"><div class="sn">Instagram</div><div class="ss">@skyflies_solar</div></div></a>
+      <a class="scard" href="https://www.linkedin.com/company/skyfliessolar/" target="_blank" style="border-color:rgba(0,119,181,0.2);"><div class="sico" style="background:rgba(0,119,181,0.13);">💼</div><div class="sinfo"><div class="sn">LinkedIn</div><div class="ss">Skyflies Solar</div></div></a>
+      <a class="scard" href="https://wa.me/919385449167" target="_blank" style="border-color:rgba(37,211,102,0.2);"><div class="sico" style="background:rgba(37,211,102,0.13);">💬</div><div class="sinfo"><div class="sn">WhatsApp</div><div class="ss">+91 93854 49167</div></div></a>
+      <a class="scard" href="https://skyflies.in" target="_blank" style="border-color:rgba(245,166,35,0.2);"><div class="sico" style="background:rgba(245,166,35,0.13);">🌐</div><div class="sinfo"><div class="sn">Website</div><div class="ss">www.skyflies.in</div></div></a>
     </div>
   </div>
 </div>
 
-<!-- ══ GROW BUSINESS / SPREAD ══ -->
-<div class="page" id="page-spread">
-  <div class="sh"><div class="stag">🚀 Business Growth</div><h2>How to <span>Spread</span> Your Business</h2><p>Proven strategies to reach more customers in Chennai, Vellore, Ranipet & Kanchipuram and grow Skyflies Solar.</p></div>
-  <div class="spread-grid">
-    <div class="spread-card">
-      <div class="sc-icon">📧</div>
-      <div class="sc-title">Email Outreach</div>
-      <div class="sc-body">Use the Cowork prompt we created to automatically find company emails and send personalized solar outreach emails.
-        <ul>
-          <li>15 emails/day to avoid spam</li>
-          <li>Target factories, mills, hospitals, schools</li>
-          <li>Follow up after 4 days if no reply</li>
-          <li>Personalize with company name & city</li>
-        </ul>
-        <span class="sc-tag">USE COWORK</span>
+<!-- ═══ CUSTOMER PORTAL ═══ -->
+<div class="page" id="page-portal">
+  <div class="sh"><div class="stag">👤 My Account</div><h2>Customer <span>Portal</span></h2><p>Login to view your installation details, subscription plans, project timeline and raise queries.</p></div>
+
+  <!-- LOGIN -->
+  <div class="clogin" id="cLoginBox">
+    <div class="fc">
+      <div class="ft">Customer Login</div>
+      <div class="fs">Login with your credentials. New customer? Contact Skyflies Team at +91 93854 49167 to get your login details.</div>
+      <div class="fi" style="margin-bottom:16px;"><label class="lb">Customer ID / Email <span>*</span></label><input type="text" id="cuid" placeholder="e.g. SKY-001 or your@email.com"></div>
+      <div class="fi" style="margin-bottom:8px;"><label class="lb">Password <span>*</span></label><input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()"></div>
+      <button onclick="cLogin()" class="sbtn" style="margin-top:16px;"><span>LOGIN →</span></button>
+      <div class="alrt er" id="cloginErr" style="margin-top:12px;">❌ &nbsp;Wrong ID or password. Contact Skyflies Team to reset.</div>
+      <p style="font-size:11px;color:var(--soft);margin-top:16px;text-align:center;">Demo login: ID <strong style="color:var(--sun)">SKY-001</strong> / Password <strong style="color:var(--sun)">solar123</strong></p>
+    </div>
+  </div>
+
+  <!-- PORTAL DASHBOARD -->
+  <div class="cportal" id="cPortal">
+    <div class="portal-top">
+      <div><div class="portal-welcome" id="portalName">Welcome, Customer!</div><div style="font-size:13px;color:var(--soft);" id="portalId">ID: SKY-001</div></div>
+      <button onclick="cLogout()" style="padding:8px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.2);border-radius:8px;color:var(--error);font-size:12px;font-weight:600;cursor:pointer;">🔓 Logout</button>
+    </div>
+    <div class="portal-tabs">
+      <button class="ptab on" onclick="showPortalTab('overview',this)">📊 Overview</button>
+      <button class="ptab" onclick="showPortalTab('timeline',this)">📅 Project Timeline</button>
+      <button class="ptab" onclick="showPortalTab('subscription',this)">📋 My Plans</button>
+      <button class="ptab" onclick="showPortalTab('queries',this)">💬 My Queries</button>
+      <button class="ptab" onclick="showPortalTab('newquery',this)">➕ New Query</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="ptab-content on" id="ptab-overview">
+      <div class="info-grid">
+        <div class="icard"><div class="il">Installation Cost</div><div class="iv" id="pc-cost">₹3,45,000</div><div class="is">5 kW Grid-Tied System</div></div>
+        <div class="icard"><div class="il">Amount Paid</div><div class="iv" id="pc-paid" style="color:var(--success);">₹3,45,000</div><div class="is">Fully paid – No dues</div></div>
+        <div class="icard"><div class="il">Current Subscription</div><div class="iv" id="pc-plan" style="color:var(--sun);">Standard Care</div><div class="is">₹999/month – Active</div></div>
+        <div class="icard"><div class="il">Next Service Date</div><div class="iv" id="pc-next">15 Apr 2026</div><div class="is">Panel cleaning scheduled</div></div>
+        <div class="icard"><div class="il">Monthly Savings</div><div class="iv" style="color:#00E676;">₹4,200</div><div class="is">Est. based on usage</div></div>
+        <div class="icard"><div class="il">System Status</div><div class="iv" style="color:var(--success);">✅ Active</div><div class="is">All panels operational</div></div>
       </div>
     </div>
-    <div class="spread-card">
-      <div class="sc-icon">💬</div>
-      <div class="sc-title">WhatsApp Campaign</div>
-      <div class="sc-body">Share this app link on WhatsApp to all contacts, groups, and industrial estates.
-        <ul>
-          <li>Share in local business groups</li>
-          <li>Send to SIDCO estate contacts</li>
-          <li>Add app link to your WhatsApp bio</li>
-          <li>Use WhatsApp Business for auto-replies</li>
-        </ul>
-        <span class="sc-tag">HIGH IMPACT</span>
+
+    <!-- TIMELINE -->
+    <div class="ptab-content" id="ptab-timeline">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;color:var(--sun);">Project Timeline</div>
+      <div class="timeline" id="timelineContainer">
+        <!-- Populated by JS -->
       </div>
     </div>
-    <div class="spread-card">
-      <div class="sc-icon">▶️</div>
-      <div class="sc-title">YouTube Channel</div>
-      <div class="sc-body">Post short videos about solar benefits, your installations, and customer testimonials to build trust.
-        <ul>
-          <li>Before/after installation videos</li>
-          <li>"How much I save with solar" stories</li>
-          <li>Solar panel cleaning demos</li>
-          <li>Tamil language videos get more views</li>
-        </ul>
-        <span class="sc-tag">BUILD TRUST</span>
-      </div>
+
+    <!-- SUBSCRIPTION -->
+    <div class="ptab-content" id="ptab-subscription">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;color:var(--sun);">My Active Plans</div>
+      <div id="subContainer"></div>
     </div>
-    <div class="spread-card">
-      <div class="sc-icon">📍</div>
-      <div class="sc-title">Google My Business</div>
-      <div class="sc-body">Create free Google My Business profiles for all 4 cities so customers find you on Google Maps.
-        <ul>
-          <li>Create profiles for Chennai, Vellore, Ranipet, Kanchipuram</li>
-          <li>Add photos of your installations</li>
-          <li>Ask happy clients to leave reviews</li>
-          <li>Respond to all reviews quickly</li>
-        </ul>
-        <span class="sc-tag">FREE & POWERFUL</span>
-      </div>
+
+    <!-- QUERIES -->
+    <div class="ptab-content" id="ptab-queries">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;color:var(--sun);">My Queries</div>
+      <div id="queriesContainer"></div>
     </div>
-    <div class="spread-card">
-      <div class="sc-icon">📘</div>
-      <div class="sc-title">Facebook & Instagram</div>
-      <div class="sc-body">Post project photos and solar saving tips daily to attract residential and commercial leads.
-        <ul>
-          <li>Post installation photos daily</li>
-          <li>Run ₹200–₹500/day local ads</li>
-          <li>Target by city + property owner + business owner</li>
-          <li>Share this app link in your bio</li>
-        </ul>
-        <span class="sc-tag">PAID ADS</span>
-      </div>
-    </div>
-    <div class="spread-card">
-      <div class="sc-icon">🏭</div>
-      <div class="sc-title">Industrial Estate Visits</div>
-      <div class="sc-body">Physically visit SIDCO industrial estates in Ranipet, Vellore & Kanchipuram with printed brochures.
-        <ul>
-          <li>SIDCO Ranipet – 200+ units</li>
-          <li>SIDCO Vellore – 150+ units</li>
-          <li>Kanchipuram Silk industry clusters</li>
-          <li>Carry printed QR code linking to this app</li>
-        </ul>
-        <span class="sc-tag">DIRECT SALES</span>
-      </div>
-    </div>
-    <div class="spread-card">
-      <div class="sc-icon">🤝</div>
-      <div class="sc-title">Referral Program</div>
-      <div class="sc-body">Give existing customers a reward for every new client they refer to Skyflies Solar.
-        <ul>
-          <li>₹500–₹1,000 referral reward per new client</li>
-          <li>Share referral via WhatsApp easily</li>
-          <li>Track referrals in your Google Sheet</li>
-          <li>Announce via your YouTube & social media</li>
-        </ul>
-        <span class="sc-tag">WORD OF MOUTH</span>
-      </div>
-    </div>
-    <div class="spread-card">
-      <div class="sc-icon">📱</div>
-      <div class="sc-title">Share This App</div>
-      <div class="sc-body">This app is your digital sales tool. Share the link everywhere so customers can enquire and subscribe 24/7.
-        <ul>
-          <li>Add link to your website skyflies.in</li>
-          <li>Share in WhatsApp messages & groups</li>
-          <li>Put QR code on business cards & banners</li>
-          <li>Include in email signature</li>
-        </ul>
-        <button onclick="shareApp()" style="margin-top:12px;padding:8px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:7px;color:var(--deep);font-weight:700;font-size:12px;cursor:pointer;">📤 Share This App</button>
+
+    <!-- NEW QUERY -->
+    <div class="ptab-content" id="ptab-newquery">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:20px;color:var(--sun);">Raise a New Query</div>
+      <div class="fc">
+        <form id="queryForm">
+          <div class="fg">
+            <div class="fi"><label class="lb">Query Type <span>*</span></label><select name="queryType" required><option value="">Select type</option><option>Post-Installation Issue</option><option>Cleaning Request</option><option>Repair Request</option><option>AMC Query</option><option>Billing Query</option><option>Performance Issue</option><option>Other</option></select></div>
+            <div class="fi"><label class="lb">Priority</label><select name="priority"><option>Normal</option><option>High – Urgent</option></select></div>
+            <div class="fi full"><label class="lb">Describe Your Query <span>*</span></label><textarea name="message" placeholder="Describe your issue or question in detail..." required></textarea></div>
+          </div>
+          <button type="submit" class="sbtn"><span class="bt">SUBMIT QUERY →</span><div class="bll"></div></button>
+          <div class="alrt ok" id="qry-ok">✅ &nbsp;Query submitted! Skyflies Team will respond within 24 hours.</div>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ ADMIN DASHBOARD ══ -->
+<!-- ═══ ADMIN DASHBOARD ═══ -->
 <div class="page" id="page-admin">
-  <div class="sh"><div class="stag">🔐 Admin</div><h2>Admin <span>Dashboard</span></h2><p>View all enquiries, quotations, and subscriptions submitted through the app.</p></div>
-
-  <!-- Login -->
-  <div class="admin-login" id="adminLogin">
-    <div class="fcard">
-      <div class="ft">Admin Login</div>
-      <div class="fs">Enter the admin password to access the dashboard.</div>
-      <div class="fi" style="margin-bottom:20px;"><label class="lb">Password</label><input type="password" id="adminPwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
-      <button onclick="adminLogin()" class="sbtn" style="margin-top:0"><span>LOGIN →</span></button>
-      <div class="alrt er" id="loginErr" style="margin-top:12px;">❌ &nbsp;Wrong password. Try again.</div>
-      <p style="font-size:11px;color:var(--soft);margin-top:16px;text-align:center;">Default password: <strong style="color:var(--sun)">skyflies2024</strong> — Change in Setup tab</p>
+  <div class="sh"><div class="stag">🔐 Admin</div><h2>Admin <span>Dashboard</span></h2><p>View all submissions from enquiries, quotations, subscriptions, EMI & queries.</p></div>
+  <div class="alogin" id="adminLoginBox">
+    <div class="fc">
+      <div class="ft">Admin Login</div><div class="fs">Enter the admin password to access the dashboard.</div>
+      <div class="fi" style="margin-bottom:16px;"><label class="lb">Password</label><input type="password" id="adminPwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <button onclick="adminLogin()" class="sbtn" style="margin-top:0;"><span>LOGIN →</span></button>
+      <div class="alrt er" id="loginErr" style="margin-top:12px;">❌ &nbsp;Wrong password.</div>
+      <p style="font-size:11px;color:var(--soft);margin-top:14px;text-align:center;">Default: <strong style="color:var(--sun)">skyflies2024</strong> — Change in Setup</p>
     </div>
   </div>
-
-  <!-- Dashboard -->
-  <div class="admin-dash" id="adminDash">
-    <div class="dash-top">
-      <div class="dcard"><div class="dc-icon">📋</div><div class="dc-val" id="totalCount">0</div><div class="dc-lbl">Total Submissions</div></div>
-      <div class="dcard blue"><div class="dc-icon">💬</div><div class="dc-val" id="enqCount">0</div><div class="dc-lbl">Enquiries</div></div>
-      <div class="dcard green"><div class="dc-icon">💰</div><div class="dc-val" id="quotCount">0</div><div class="dc-lbl">Quotations</div></div>
-      <div class="dcard purple"><div class="dc-icon">⭐</div><div class="dc-val" id="subCount">0</div><div class="dc-lbl">Subscriptions</div></div>
+  <div class="adash" id="adminDash">
+    <div class="dtop">
+      <div class="dcard"><div style="font-size:24px;margin-bottom:10px;">📋</div><div class="dcv" id="totalCount">0</div><div class="dcl">Total Submissions</div></div>
+      <div class="dcard bl"><div style="font-size:24px;margin-bottom:10px;">💬</div><div class="dcv" id="enqCount">0</div><div class="dcl">Enquiries</div></div>
+      <div class="dcard gr"><div style="font-size:24px;margin-bottom:10px;">💰</div><div class="dcv" id="quotCount">0</div><div class="dcl">Quotations</div></div>
+      <div class="dcard pu"><div style="font-size:24px;margin-bottom:10px;">⭐</div><div class="dcv" id="subCount">0</div><div class="dcl">Subscriptions</div></div>
+      <div class="dcard cy"><div style="font-size:24px;margin-bottom:10px;">💳</div><div class="dcv" id="emiCount">0</div><div class="dcl">EMI Enquiries</div></div>
     </div>
-    <div class="dash-actions">
-      <button class="dash-btn primary" onclick="exportCSV()">📥 Export CSV</button>
-      <button class="dash-btn secondary" onclick="clearData()">🗑️ Clear All Data</button>
-      <button class="dash-btn secondary" onclick="adminLogout()">🔓 Logout</button>
+    <div class="dacts">
+      <button class="dbtn p" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="dbtn s" onclick="clearData()">🗑️ Clear Data</button>
+      <button class="dbtn s" onclick="adminLogout()">🔓 Logout</button>
     </div>
-    <div class="filter-bar">
-      <button class="fb2 on" onclick="filterTable('all',this)">All</button>
+    <div class="fbr">
+      <button class="fb2 on" onclick="filterTable('all',this)">All Submissions</button>
       <button class="fb2" onclick="filterTable('enquiry',this)">Enquiries</button>
       <button class="fb2" onclick="filterTable('quotation',this)">Quotations</button>
       <button class="fb2" onclick="filterTable('subscribe',this)">Subscriptions</button>
+      <button class="fb2" onclick="filterTable('emi',this)">EMI</button>
     </div>
-    <div class="dash-table-wrap">
+    <div class="dtw" style="margin-top:8px;">
       <h4>📊 All Submissions</h4>
-      <div id="tableContainer"><div class="empty-state">No submissions yet. Share the app to start receiving enquiries!</div></div>
+      <div id="tableContainer"><div style="text-align:center;padding:40px;color:var(--soft);font-size:13px;">No submissions yet.</div></div>
     </div>
-  </div>
+
+    <!-- CUSTOMER ACCOUNTS LIST -->
+    <div class="dtw" style="margin-top:8px;">
+      <h4 style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span>👥 Customer Accounts</span>
+        <span style="font-size:11px;color:var(--soft);font-weight:400;">All accounts saved to Google Sheet → "Customer Logins" tab</span>
+      </h4>
+      <div id="custListContainer">
+        <div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No customer accounts created yet. Add one below.</div>
+      </div>
+    </div>
+
+    <!-- ADD CUSTOMER ACCOUNT -->
+    <div class="dtw" style="margin-top:8px;">
+      <h4>👤 Add New Customer Account</h4>
+      <p style="font-size:12px;color:var(--soft);margin-bottom:20px;line-height:1.6;">Create a login account for a customer. Their details will be saved to the <strong style="color:var(--sun)">Customer Logins</strong> sheet in Google Sheets. They can then login with their ID and password to see their project details.</p>
+      <form id="addCustForm">
+        <div class="fg">
+          <div class="fi"><label class="lb">Customer ID <span>*</span></label><input type="text" name="customerId" placeholder="e.g. SKY-002" required></div>
+          <div class="fi"><label class="lb">Password <span>*</span></label><input type="text" name="password" placeholder="e.g. solar456" required></div>
+          <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" name="name" placeholder="Customer full name" required></div>
+          <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
+          <div class="fi"><label class="lb">Email</label><input type="email" name="email" placeholder="customer@email.com"></div>
+          <div class="fi"><label class="lb">City</label><select name="city"><option value="">Select</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+          <div class="fi"><label class="lb">Address</label><input type="text" name="address" placeholder="Installation address"></div>
+          <div class="fi"><label class="lb">System Size (kW)</label><input type="text" name="systemSize" placeholder="e.g. 5 kW"></div>
+          <div class="fi"><label class="lb">No. of Panels</label><input type="number" name="panels" placeholder="e.g. 10" min="1"></div>
+          <div class="fi"><label class="lb">Installation Cost</label><input type="text" name="installCost" placeholder="e.g. ₹3,45,000"></div>
+          <div class="fi"><label class="lb">Amount Paid</label><input type="text" name="amountPaid" placeholder="e.g. ₹3,45,000"></div>
+          <div class="fi"><label class="lb">Current Plan</label><input type="text" name="plan" placeholder="e.g. Standard Care – ₹999/mo"></div>
+          <div class="fi"><label class="lb">Billing Cycle</label><select name="billingCycle"><option value="Monthly">Monthly</option><option value="Quarterly">Quarterly</option><option value="Half-Yearly">Half-Yearly</option><option value="Annual">Annual</option></select></div>
+          <div class="fi"><label class="lb">Installation Date</label><input type="text" name="installDate" placeholder="e.g. 28 Jan 2026"></div>
+          <div class="fi"><label class="lb">Next Service Date</label><input type="text" name="nextService" placeholder="e.g. 15 Apr 2026"></div>
+          <div class="fi"><label class="lb">System Status</label><select name="systemStatus"><option value="Active">Active ✅</option><option value="Pending Installation">Pending Installation</option><option value="Under Maintenance">Under Maintenance</option><option value="Inactive">Inactive</option></select></div>
+          <div class="fi"><label class="lb">Notes</label><input type="text" name="notes" placeholder="Any extra notes about this customer"></div>
+        </div>
+        <button type="submit" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);margin-top:20px;"><span class="bt">CREATE CUSTOMER ACCOUNT →</span><div class="bll"></div></button>
+        <div class="alrt ok" id="ac-ok" style="margin-top:12px;">✅ &nbsp;Customer account created and saved to Google Sheet! Share the Customer ID and Password with them.</div>
+        <div class="alrt er" id="ac-er" style="margin-top:12px;">❌ &nbsp;Error creating account. Check your Google Sheet connection in Setup.</div>
+      </form>
+    </div>
 </div>
 
-<!-- ══ SETUP ══ -->
+<!-- ═══ SETUP ═══ -->
 <div class="page" id="page-setup">
-  <div class="sh"><div class="stag">⚙️ Setup</div><h2>Connect <span>Google Sheets</span></h2><p>Connect once — all enquiries, quotations & subscriptions auto-save to your sheet in real time.</p></div>
-  <div class="setup-card">
+  <div class="sh"><div class="stag">⚙️ Setup</div><h2>Connect <span>Google Sheets</span></h2><p>All forms auto-save to your Google Sheet with email alerts to Skyflies Team.</p></div>
+  <div class="scard2">
     <h3>📋 4-Step Setup</h3>
-    <div class="step-list">
-      <div class="srow"><div class="sno">1</div><div class="stxt">Open <strong>sheets.google.com</strong> with <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f1989f979eb1829a88979d989482df989f">[email&#160;protected]</a></strong> → Create new sheet → Name it <strong>"Skyflies Solar CRM"</strong></div></div>
-      <div class="srow"><div class="sno">2</div><div class="stxt">Inside that sheet → click <strong>Extensions → Apps Script</strong> → delete existing code → paste the code below → Save</div></div>
-      <div class="srow"><div class="sno">3</div><div class="stxt">Click <strong>Deploy → New Deployment → Web App</strong> → Execute as: <strong>Me</strong> → Who has access: <strong>Anyone</strong> → Deploy → Copy the URL</div></div>
-      <div class="srow"><div class="sno">4</div><div class="stxt">Paste the URL below and click Save. Done ✅ — 3 tabs auto-created: <strong>Enquiries, Quotations, Subscriptions</strong>. You also get an email alert for every submission!</div></div>
+    <div class="slist">
+      <div class="srow"><div class="sno">1</div><div class="stxt">Open <strong>sheets.google.com</strong> with <strong>info@skyflies.in</strong> → Create new sheet → Name it <strong>"Skyflies Solar CRM"</strong></div></div>
+      <div class="srow"><div class="sno">2</div><div class="stxt">Click <strong>Extensions → Apps Script</strong> → delete existing code → paste the code below → Save</div></div>
+      <div class="srow"><div class="sno">3</div><div class="stxt">Click <strong>Deploy → New Deployment → Web App</strong> → Execute as: <strong>Me</strong> → Who has access: <strong>Anyone</strong> → Deploy → Copy URL</div></div>
+      <div class="srow"><div class="sno">4</div><div class="stxt">Paste URL below → Save. Done ✅ — <strong>6 sheets auto-created:</strong> Enquiries, Quotations, Subscriptions, EMI Enquiries, Customer Queries, <strong style="color:var(--success);">Customer Logins</strong> (with ID, password, plan, all details — admin only)</div></div>
     </div>
-    <div class="wrow"><input type="url" id="whUrl" placeholder="Paste Google Apps Script Web App URL (https://script.google.com/macros/s/...)"><button class="sv-btn" onclick="saveWh()">💾 Save</button></div>
+    <div class="wrow"><input type="url" id="whUrl" placeholder="Paste Google Apps Script Web App URL..."><button class="svbtn" onclick="saveWh()">💾 Save</button></div>
     <div class="wst" id="whSt"></div>
   </div>
-  <div class="setup-card">
+  <div class="scard2">
     <h3>🔐 Change Admin Password</h3>
-    <div class="wrow" style="max-width:420px;">
-      <input type="password" id="newPwd" placeholder="Enter new admin password">
-      <button class="sv-btn" onclick="savePwd()">💾 Save</button>
-    </div>
+    <div class="wrow" style="max-width:400px;"><input type="password" id="newPwd" placeholder="Enter new admin password"><button class="svbtn" onclick="savePwd()">💾 Save</button></div>
     <div class="wst" id="pwdSt"></div>
   </div>
-  <div class="setup-card">
+  <div class="scard2">
     <h3>📄 Google Apps Script Code</h3>
-    <p style="font-size:12.5px;color:var(--soft);margin-bottom:6px;">Copy and paste into Apps Script, then deploy as Web App:</p>
-    <div class="cb">
-      <button class="cpbtn" onclick="cpCode()">COPY</button>
-      <pre id="gasCd">function doPost(e) {
+    <p style="font-size:12px;color:var(--soft);margin-bottom:6px;">Copy and paste into Apps Script, then deploy as Web App:</p>
+    <div class="cb"><button class="cpbtn" onclick="cpCode()">COPY</button>
+<pre id="gasCd">// ════════════════════════════════════════════════════
+// SKYFLIES SOLAR – GOOGLE APPS SCRIPT CRM v3
+// All forms + secure customer logins + full admin view
+// Paste this in Apps Script → Deploy as Web App
+// Execute as: Me | Access: Anyone
+// ════════════════════════════════════════════════════
+
+var SHEET_NAME = 'Skyflies Solar CRM'; // your spreadsheet name
+
+// ── Colour scheme for sheet headers ──
+var COLORS = {
+  orange:  { bg:'#F5A623', fg:'#000000' },
+  blue:    { bg:'#1565C0', fg:'#FFFFFF' },
+  green:   { bg:'#2E7D32', fg:'#FFFFFF' },
+  purple:  { bg:'#6A1B9A', fg:'#FFFFFF' },
+  teal:    { bg:'#00695C', fg:'#FFFFFF' },
+  red:     { bg:'#B71C1C', fg:'#FFFFFF' },
+  grey:    { bg:'#37474F', fg:'#FFFFFF' }
+};
+
+// ──────────────────────────────────────────────────────
+function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var map = { enquiry:'Enquiries', quotation:'Quotations', subscribe:'Subscriptions' };
-    var hdrs = {
-      enquiry:   ['Timestamp','Name','Phone','Email','City','Property','Source','Message'],
-      quotation: ['Timestamp','Name','Phone','Email','Company','City','Property','Bill','Roof Area','System','Budget','Services','Message'],
-      subscribe: ['Timestamp','Name','Phone','Email','Company','City','Address','kW','Panels','Plan','Billing','Service Day','Message']
-    };
-    var sn = map[data.formType] || 'General';
-    var sh = ss.getSheetByName(sn);
-    if (!sh) {
-      sh = ss.insertSheet(sn);
-      sh.appendRow(hdrs[data.formType] || ['Timestamp','Data']);
-      sh.getRange(1,1,1,sh.getLastColumn()).setBackground('#F5A623').setFontColor('#000').setFontWeight('bold');
-      sh.setFrozenRows(1);
-    }
-    var ts = new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
-    if (data.formType==='enquiry')
-      sh.appendRow([ts,data.name,data.phone,data.email,data.city,data.propertyType,data.source,data.message]);
-    else if (data.formType==='quotation')
-      sh.appendRow([ts,data.name,data.phone,data.email,data.company,data.city,data.propertyType,data.bill,data.roofArea,data.systemType,data.budget,data.services,data.message]);
-    else if (data.formType==='subscribe')
-      sh.appendRow([ts,data.name,data.phone,data.email,data.company,data.city,data.address,data.systemSize,data.panels,data.plan,data.billing,data.serviceDay,data.message]);
-    sh.autoResizeColumns(1, sh.getLastColumn());
-    MailApp.sendEmail('<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="80e9eee6efc0f3ebf9e6ece9e5f3aee9ee">[email&#160;protected]</a>',
-      '🌞 New '+data.formType+' – Skyflies Solar | '+data.name+' – '+data.city,
-      'New submission:\n\nName: '+data.name+'\nPhone: '+data.phone+'\nCity: '+data.city+'\nType: '+data.formType+(data.plan?'\nPlan: '+data.plan:'')+'\n\nOpen sheet: '+ss.getUrl());
-    return ContentService.createTextOutput(JSON.stringify({status:'success'})).setMimeType(ContentService.MimeType.JSON);
+    var ss   = SpreadsheetApp.getActiveSpreadsheet();
+
+    // Route by action
+    if (data.action === 'getCustomer')  return getCustomer(ss, data);
+    if (data.action === 'addCustomer')  return addCustomer(ss, data);
+    if (data.action === 'addQuery')     return addQuery(ss, data);
+    if (data.action === 'updateLogin')  return updateCustomerLogin(ss, data);
+
+    // ── Regular form submissions ──
+    return handleForm(ss, data);
+
   } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()})).setMimeType(ContentService.MimeType.JSON);
+    return json({status:'error', message:err.toString()});
   }
 }
+
 function doGet() {
-  return ContentService.createTextOutput(JSON.stringify({status:'ok',app:'Skyflies Solar CRM'})).setMimeType(ContentService.MimeType.JSON);
-}</pre>
-    </div>
+  return json({status:'ok', app:'Skyflies Solar CRM v3', time: new Date().toISOString()});
+}
+
+// ──────────────────────────────────────────────────────
+// HANDLE FORM SUBMISSIONS (enquiry / quotation / subscribe / emi / query)
+// ──────────────────────────────────────────────────────
+function handleForm(ss, data) {
+  var ts = timestamp();
+
+  var config = {
+    enquiry: {
+      sheet: 'Enquiries', color: COLORS.orange,
+      headers: ['#','Timestamp','Name','Phone','Email','City','Property Type','Source','Message'],
+      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.source,d.message]
+    },
+    quotation: {
+      sheet: 'Quotations', color: COLORS.blue,
+      headers: ['#','Timestamp','Name','Phone','Email','Company','City','Property Type','Monthly Bill','Roof Area','System Type','Budget','Services Required','Message'],
+      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.company,d.city,d.propertyType,d.bill,d.roofArea,d.systemType,d.budget,d.services,d.message]
+    },
+    subscribe: {
+      sheet: 'Subscriptions', color: COLORS.green,
+      headers: ['#','Timestamp','Name','Phone','Email','Company','City','Address','System Size (kW)','No. of Panels','Plan','Billing Cycle','Service Day','Message'],
+      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.company,d.city,d.address,d.systemSize,d.panels,d.plan,d.billing,d.serviceDay,d.message]
+    },
+    emi: {
+      sheet: 'EMI Enquiries', color: COLORS.purple,
+      headers: ['#','Timestamp','Name','Phone','Email','City','Property Type','System Size','Monthly Income','Preferred EMI','Employment Type','Existing System','Message'],
+      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.systemSize,d.income,d.emi,d.employment,d.existing,d.message]
+    },
+    query: {
+      sheet: 'Customer Queries', color: COLORS.teal,
+      headers: ['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response'],
+      row: (d,n) => [n,ts,d.customerId,d.customerName||'',d.queryType,d.priority||'Normal',d.message,'Open','']
+    }
+  };
+
+  var cfg = config[data.formType];
+  if (!cfg) return json({status:'error', message:'Unknown form type: '+data.formType});
+
+  var sh = getOrCreate(ss, cfg.sheet, cfg.headers, cfg.color);
+  var rowNum = sh.getLastRow(); // row number for serial
+  sh.appendRow(cfg.row(data, rowNum));
+  sh.autoResizeColumns(1, sh.getLastColumn());
+
+  // Email alert
+  var subject = '🌞 New ' + cfg.sheet + ' – Skyflies Solar | ' + (data.name||data.customerId||'Unknown') + (data.city ? ' – '+data.city : '');
+  var body = buildEmailBody(data, cfg.sheet);
+  try { MailApp.sendEmail('info@skyflies.in', subject, body); } catch(me) {}
+
+  return json({status:'success', sheet: cfg.sheet, row: rowNum});
+}
+
+// ──────────────────────────────────────────────────────
+// CUSTOMER LOGIN – VERIFY & RETURN FULL DATA
+// ──────────────────────────────────────────────────────
+function getCustomer(ss, data) {
+  var sh = ss.getSheetByName('Customer Logins');
+  if (!sh) return json({status:'error', message:'Customer Logins sheet not found. Please add a customer first.'});
+
+  var rows = sh.getDataRange().getValues();
+  // Row 0 = headers, start from row 1
+  for (var i = 1; i < rows.length; i++) {
+    var r = rows[i];
+    var storedId  = String(r[0]).trim();
+    var storedPwd = String(r[2]).trim(); // password in col C (index 2)
+    if (storedId === String(data.customerId).trim() &&
+        storedPwd === String(data.password).trim()) {
+
+      // Log last login time
+      try { sh.getRange(i+1, 17).setValue(timestamp()); } catch(le) {}
+
+      return json({
+        status: 'success',
+        customer: {
+          id:           r[0],  name:         r[1],  password:     r[2],
+          phone:        r[3],  email:        r[4],  city:         r[5],
+          address:      r[6],  systemSize:   r[7],  panels:       r[8],
+          installCost:  r[9],  amountPaid:   r[10], plan:         r[11],
+          billingCycle: r[12], nextService:  r[13], systemStatus: r[14],
+          installDate:  r[15], notes:        r[16]||''
+        }
+      });
+    }
+  }
+  return json({status:'error', message:'Invalid Customer ID or Password. Please contact Skyflies Team.'});
+}
+
+// ──────────────────────────────────────────────────────
+// ADD NEW CUSTOMER (Admin action)
+// ──────────────────────────────────────────────────────
+function addCustomer(ss, data) {
+  var hdrs = [
+    'Customer ID',    // A – unique login ID e.g. SKY-001
+    'Full Name',      // B
+    'Password',       // C – stored as plain text (visible to admin only)
+    'Phone',          // D
+    'Email',          // E
+    'City',           // F
+    'Address',        // G
+    'System Size (kW)',// H
+    'No. of Panels',  // I
+    'Installation Cost',// J
+    'Amount Paid',    // K
+    'Subscription Plan',// L
+    'Billing Cycle',  // M
+    'Next Service Date',// N
+    'System Status',  // O
+    'Installation Date',// P
+    'Notes',          // Q
+    'Last Login',     // R
+    'Account Created' // S
+  ];
+
+  var sh = getOrCreate(ss, 'Customer Logins', hdrs, COLORS.red);
+
+  // Check duplicate
+  var rows = sh.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]).trim() === String(data.customerId).trim()) {
+      return json({status:'error', message:'Customer ID "'+data.customerId+'" already exists. Use a different ID.'});
+    }
+  }
+
+  sh.appendRow([
+    data.customerId,        // A
+    data.name,              // B
+    data.password,          // C
+    data.phone,             // D
+    data.email,             // E
+    data.city,              // F
+    data.address,           // G
+    data.systemSize,        // H
+    data.panels,            // I
+    data.installCost,       // J
+    data.amountPaid,        // K
+    data.plan,              // L
+    data.billingCycle||'Monthly', // M
+    data.nextService,       // N
+    data.systemStatus||'Active',  // O
+    data.installDate||timestamp(),// P
+    data.notes||'',         // Q
+    '',                     // R last login – blank initially
+    timestamp()             // S created on
+  ]);
+
+  sh.autoResizeColumns(1, sh.getLastColumn());
+
+  // Colour-code status cell green/orange
+  try {
+    var lastRow = sh.getLastRow();
+    var statusCell = sh.getRange(lastRow, 15); // col O = System Status
+    statusCell.setBackground(data.systemStatus==='Active'?'#C8E6C9':'#FFE0B2');
+  } catch(fe) {}
+
+  // Email alert
+  try {
+    MailApp.sendEmail('info@skyflies.in',
+      '✅ New Customer Account – ' + data.name + ' (' + data.customerId + ')',
+      'New customer portal account created:\n\n'
+      +'Customer ID : ' + data.customerId + '\n'
+      +'Name        : ' + data.name + '\n'
+      +'Phone       : ' + data.phone + '\n'
+      +'Email       : ' + data.email + '\n'
+      +'City        : ' + data.city + '\n'
+      +'System Size : ' + data.systemSize + '\n'
+      +'Plan        : ' + data.plan + '\n'
+      +'Install Cost: ' + data.installCost + '\n'
+      +'Status      : ' + (data.systemStatus||'Active') + '\n\n'
+      +'View sheet  : ' + ss.getUrl()
+    );
+  } catch(me) {}
+
+  return json({status:'success', customerId: data.customerId, name: data.name});
+}
+
+// ──────────────────────────────────────────────────────
+// ADD CUSTOMER QUERY
+// ──────────────────────────────────────────────────────
+function addQuery(ss, data) {
+  var hdrs = ['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response','Responded On'];
+  var sh = getOrCreate(ss, 'Customer Queries', COLORS.teal, hdrs);
+  // fix arg order
+  sh = getOrCreate(ss, 'Customer Queries', hdrs, COLORS.teal);
+  var n = sh.getLastRow();
+  sh.appendRow([n, timestamp(), data.customerId, data.customerName||'', data.queryType, data.priority||'Normal', data.message, 'Open', '', '']);
+  sh.autoResizeColumns(1, sh.getLastColumn());
+
+  try {
+    MailApp.sendEmail('info@skyflies.in',
+      '🔔 Customer Query – ' + (data.customerName||data.customerId) + ' | ' + data.queryType,
+      'New customer query:\n\nCustomer : ' + (data.customerName||'') + ' (' + data.customerId + ')\n'
+      +'Type     : ' + data.queryType + '\n'
+      +'Priority : ' + (data.priority||'Normal') + '\n'
+      +'Message  : ' + data.message + '\n\n'
+      +'Respond in sheet: ' + ss.getUrl()
+    );
+  } catch(me) {}
+
+  return json({status:'success'});
+}
+
+// ──────────────────────────────────────────────────────
+// UPDATE CUSTOMER PASSWORD (optional future use)
+// ──────────────────────────────────────────────────────
+function updateCustomerLogin(ss, data) {
+  var sh = ss.getSheetByName('Customer Logins');
+  if (!sh) return json({status:'error', message:'Sheet not found'});
+  var rows = sh.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]).trim() === String(data.customerId).trim()) {
+      sh.getRange(i+1, 3).setValue(data.newPassword); // col C
+      return json({status:'success'});
+    }
+  }
+  return json({status:'error', message:'Customer not found'});
+}
+
+// ──────────────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────────────
+function getOrCreate(ss, name, headers, color) {
+  var sh = ss.getSheetByName(name);
+  if (!sh) {
+    sh = ss.insertSheet(name);
+    if (headers && headers.length) {
+      sh.appendRow(headers);
+      var hdrRange = sh.getRange(1, 1, 1, headers.length);
+      hdrRange.setBackground(color ? color.bg : '#F5A623')
+              .setFontColor(color ? color.fg : '#000000')
+              .setFontWeight('bold')
+              .setFontSize(10);
+      sh.setFrozenRows(1);
+      sh.setColumnWidth(1, 50);   // # column
+      sh.setColumnWidth(2, 140);  // timestamp
+    }
+  }
+  return sh;
+}
+
+function timestamp() {
+  return new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'});
+}
+
+function json(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function buildEmailBody(data, sheetName) {
+  var lines = ['New ' + sheetName + ' submission on Skyflies Solar App', ''];
+  var fields = ['name','phone','email','city','propertyType','plan','emi','queryType','services','message'];
+  fields.forEach(function(f) {
+    if (data[f]) lines.push(f.charAt(0).toUpperCase()+f.slice(1) + ': ' + data[f]);
+  });
+  lines.push('', 'Submitted: ' + new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}));
+  return lines.join('\n');
+}</pre></div>
     <p id="cpOk" class="cpok">✅ Code copied!</p>
   </div>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-main">
-    <div class="footer-brand">
-      <div class="logo-nm">Skyflies Solar</div>
+  <div class="fmain">
+    <div class="fbrand">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;background:linear-gradient(135deg,var(--sun),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Skyflies Solar</div>
       <p>Tamil Nadu's trusted solar energy company. Serving Chennai, Vellore, Ranipet & Kanchipuram with installation, cleaning, repair and AMC services.</p>
-      <div class="contact-info">
-        <div class="ci">📞 <strong>+91 93854 49167</strong></div>
-        <div class="ci">✉️ <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="630a0d050c2310081a050f0a06104d0a0d">[email&#160;protected]</a></strong></div>
-        <div class="ci">🌐 <strong>www.skyflies.in</strong></div>
-        <div class="ci">👤 Contact: <strong>Mr. Dillibabu</strong></div>
+      <div class="fci">
+        <div class="fc2">📞 <strong>+91 93854 49167</strong></div>
+        <div class="fc2">✉️ <strong>info@skyflies.in</strong></div>
+        <div class="fc2">🌐 <strong>www.skyflies.in</strong></div>
+        <div class="fc2">👤 <strong>Skyflies Team</strong></div>
       </div>
-      <div class="footer-social" style="margin-top:16px;">
+      <div class="fsocial">
         <a class="fsi" href="https://youtube.com/@skyfliessolar?si=c0BNIghCEkQGmazR" target="_blank">▶️</a>
         <a class="fsi" href="https://m.facebook.com/979992808528445/" target="_blank">📘</a>
         <a class="fsi" href="https://www.instagram.com/skyflies_solar?igsh=MXhyZmJuZDBuaWxmZQ==" target="_blank">📸</a>
@@ -937,114 +1080,98 @@ function doGet() {
         <a class="fsi" href="https://wa.me/919385449167" target="_blank">💬</a>
       </div>
     </div>
-    <div class="footer-col">
-      <h5>Services</h5>
-      <a href="#" onclick="showPage('quotation',null)">Solar Installation</a>
-      <a href="#" onclick="showPage('quotation',null)">Solar Cleaning</a>
-      <a href="#" onclick="showPage('quotation',null)">Solar Repair</a>
-      <a href="#" onclick="showPage('plans',null)">AMC Plans</a>
-    </div>
-    <div class="footer-col">
-      <h5>Quick Links</h5>
-      <a href="#" onclick="showPage('enquiry',null)">General Enquiry</a>
-      <a href="#" onclick="showPage('quotation',null)">Get Quotation</a>
-      <a href="#" onclick="showPage('plans',null)">View Plans</a>
-      <a href="#" onclick="showPage('subscribe',null)">Subscribe</a>
-    </div>
-    <div class="footer-col">
-      <h5>Cities</h5>
-      <a href="#">Chennai</a>
-      <a href="#">Vellore</a>
-      <a href="#">Ranipet</a>
-      <a href="#">Kanchipuram</a>
-    </div>
+    <div class="fcol"><h5>Services</h5><a onclick="showPage('quotation',null)">Solar Installation</a><a onclick="showPage('quotation',null)">Solar Cleaning</a><a onclick="showPage('quotation',null)">Solar Repair</a><a onclick="showPage('plans',null)">AMC Plans</a></div>
+    <div class="fcol"><h5>Quick Links</h5><a onclick="showPage('enquiry',null)">Enquiry</a><a onclick="showPage('calculator',null)">Get Quotation</a><a onclick="showPage('emi',null)">EMI / Loan</a><a onclick="showPage('portal',null)">My Account</a></div>
+    <div class="fcol"><h5>Cities</h5><a>Chennai</a><a>Vellore</a><a>Ranipet</a><a>Kanchipuram</a></div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2025 Skyflies Solar Solutions — <a href="https://skyflies.in" target="_blank">www.skyflies.in</a></p>
-    <p>Developed for Mr. Dillibabu | +91 93854 49167</p>
-  </div>
+  <div class="fbot"><p>© 2025 Skyflies Solar Solutions — <a href="https://skyflies.in" target="_blank">www.skyflies.in</a></p><p>Contact: Skyflies Team | +91 93854 49167</p></div>
 </footer>
-</div><!-- end wrap -->
-
-<!-- WHATSAPP FLOAT BUTTON -->
-<div class="wa-float">
-  <div class="wa-tooltip">💬 Chat with Mr. Dillibabu</div>
-  <a class="wa-btn" href="https://wa.me/919385449167?text=Hi%20Skyflies%20Solar%2C%20I%20want%20to%20know%20more%20about%20your%20solar%20services." target="_blank">💬</a>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ── LOCAL STORAGE KEY ──
-var DB_KEY = 'sf_submissions';
-var WH_KEY = 'sf_webhook';
-var PW_KEY = 'sf_adminpwd';
+<!-- WHATSAPP FLOAT -->
+<div class="wafloat">
+  <div class="watip">💬 Chat with Skyflies Team</div>
+  <a class="wabtn" href="https://wa.me/919385449167?text=Hi%20Skyflies%20Solar%2C%20I%20want%20to%20know%20more%20about%20your%20solar%20services." target="_blank">💬</a>
+</div>
 
-// ── NAV ──
-function showPage(id, btn) {
-  document.querySelectorAll('.page,.hero-page').forEach(p=>p.classList.remove('on'));
+<script>
+var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
+
+// ─── NAV ───────────────────────────────────────────────────
+function showPage(id,btn){
+  document.querySelectorAll('.page,.hpage').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nl').forEach(n=>n.classList.remove('on'));
-  var el = document.getElementById('page-'+id);
-  if(el) el.classList.add('on');
-  if(btn) btn.classList.add('on');
+  var el=document.getElementById('page-'+id);
+  if(el)el.classList.add('on');
+  if(btn)btn.classList.add('on');
   else document.querySelectorAll('.nl').forEach(n=>{
-    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('on');
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('on');
   });
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ── PLAN SELECT ──
-function selPlan(el){
-  document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
+// ─── PLANS ─────────────────────────────────────────────────
+function selPlan(el){document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function goSub(nm){showPage('subscribe',null);document.querySelectorAll('#planSel .po').forEach(o=>{var r=o.querySelector('input');if(r.value===nm){r.checked=true;o.classList.add('sel');}else o.classList.remove('sel');});}
+
+// ─── QUOTE CALCULATOR ──────────────────────────────────────
+var pricePerKw={residential:55000,commercial:62000,industrial:58000,hospital:65000,school:60000};
+var panelMult={mono:1,poly:0.9,bifacial:1.15};
+var panelTypes={mono:'Monocrystalline',poly:'Polycrystalline',bifacial:'Bifacial'};
+
+function calcQuote(){
+  var pt=document.getElementById('cpt').value;
+  var sz=parseFloat(document.getElementById('csz').value||0);
+  var pl=document.getElementById('cpl').value;
+  var amc=document.getElementById('camc').value;
+  if(!pt||!sz)return;
+  var base=(pricePerKw[pt]||55000)*sz*panelMult[pl];
+  var subsidy=pt==='residential'?Math.min(sz<=3?sz*14588:sz<=10?43764+(sz-3)*7294:43764+7*7294,94822):0;
+  var total=base-subsidy+(amc==='yes'?sz*1200:0);
+  var panels=Math.ceil(sz/0.4);
+  var saving=Math.round(sz*850);
+  var emi=Math.round(total/36);
+  var roi=parseFloat((total/(saving*12)).toFixed(1));
+  document.getElementById('qtotal').textContent='₹'+Math.round(total).toLocaleString('en-IN');
+  document.getElementById('qsubsidy').textContent=subsidy>0?'Govt subsidy of ₹'+Math.round(subsidy).toLocaleString('en-IN')+' already deducted':'Govt subsidy not applicable for this property type';
+  document.getElementById('qsize').textContent=sz+' kW System';
+  document.getElementById('qpanel').textContent=panelTypes[pl];
+  document.getElementById('qpanels').textContent=panels+' panels (400W each)';
+  document.getElementById('qsaving').textContent='₹'+saving.toLocaleString('en-IN')+'/month';
+  document.getElementById('qemi').textContent='₹'+emi.toLocaleString('en-IN')+'/month (36mo)';
+  document.getElementById('qroi').textContent=roi+' years';
+  document.getElementById('qnotes').textContent='📋 This quote includes '+sz+' kW '+panelTypes[pl]+' panels, inverter, mounting structure, wiring, and installation charges'+(amc==='yes'?' + Annual Maintenance Contract':'')+'. Government subsidy (if applicable) has been deducted. Final pricing confirmed after free site survey.';
 }
-function goSub(nm){
-  showPage('subscribe',null);
-  document.querySelectorAll('#planSel .po').forEach(o=>{
-    var r=o.querySelector('input');
-    if(r.value===nm){r.checked=true;o.classList.add('sel');}else o.classList.remove('sel');
-  });
+function showResult(){
+  var pt=document.getElementById('cpt').value;
+  var sz=document.getElementById('csz').value;
+  if(!pt||!sz){alert('Please select property type and system size first!');return;}
+  calcQuote();
+  document.getElementById('qresult').classList.add('show');
+  document.getElementById('qresult').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function sendQuotation(){
+  var nm=document.getElementById('cn').value;
+  var em=document.getElementById('ce').value;
+  var ph=document.getElementById('cp').value;
+  if(!nm||!em||!ph){alert('Please fill in your Name, Email and Phone at the top first!');return;}
+  var data={formType:'quotation',name:nm,email:em,phone:ph,city:document.getElementById('cc').value,propertyType:document.getElementById('cpt').options[document.getElementById('cpt').selectedIndex].text,systemType:document.getElementById('csz').value+' kW '+document.getElementById('cpl').options[document.getElementById('cpl').selectedIndex].text,budget:'As calculated',message:'Auto quote from calculator. Est total: '+document.getElementById('qtotal').textContent,submittedAt:new Date().toISOString()};
+  await sendToSheet(data);
+  document.getElementById('qsent').classList.add('show');
 }
 
-// ── WEBHOOK ──
-function saveWh(){
-  var u=document.getElementById('whUrl').value.trim();
-  var s=document.getElementById('whSt');
-  if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}
-  localStorage.setItem(WH_KEY,u);
-  s.textContent='✅ Webhook URL saved! Forms now auto-save to your Google Sheet.';s.className='wst ok';
-}
-function savePwd(){
-  var p=document.getElementById('newPwd').value.trim();
-  var s=document.getElementById('pwdSt');
-  if(!p||p.length<4){s.textContent='❌ Password must be at least 4 characters.';s.className='wst no';return;}
-  localStorage.setItem(PW_KEY,p);
-  s.textContent='✅ Admin password updated.';s.className='wst ok';
-}
-window.addEventListener('load',()=>{
-  var wh=localStorage.getItem(WH_KEY);
-  if(wh){var el=document.getElementById('whUrl');if(el){el.value=wh;document.getElementById('whSt').textContent='✅ Webhook active.';document.getElementById('whSt').className='wst ok';}}
-  refreshDash();
-});
-
-// ── FORM SUBMIT ──
-async function doSubmit(formEl, type, okId, erIds) {
-  var btn=formEl.querySelector('.sbtn');
-  var bt=btn.querySelector('.bt');
-  var bl=btn.querySelector('.bl');
+// ─── FORM SUBMIT ───────────────────────────────────────────
+async function doSubmit(formEl,type,okId,erId){
+  var btn=formEl.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.bll');
   document.getElementById(okId).classList.remove('show');
-  document.getElementById(erIds).classList.remove('show');
-  var fd=new FormData(formEl), data={formType:type};
-  for(var [k,v] of fd.entries()){
-    if(k==='service') data.services=data.services?data.services+', '+v:v;
-    else data[k]=v;
-  }
+  document.getElementById(erId).classList.remove('show');
+  var fd=new FormData(formEl),data={formType:type};
+  for(var [k,v] of fd.entries()){if(k==='service')data.services=data.services?data.services+', '+v:v;else data[k]=v;}
   data.submittedAt=new Date().toISOString();
   btn.disabled=true;bt.style.display='none';bl.style.display='block';
-  await new Promise(r=>setTimeout(r,900));
-  // Save locally for admin dashboard
+  await new Promise(r=>setTimeout(r,800));
   saveLocal(data);
-  // Send to Google Sheets if webhook set
-  var wh=localStorage.getItem(WH_KEY);
-  if(wh){try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});}catch(e){}}
+  await sendToSheet(data);
   btn.disabled=false;bt.style.display='';bl.style.display='none';
   document.getElementById(okId).classList.add('show');
   formEl.reset();
@@ -1054,84 +1181,291 @@ async function doSubmit(formEl, type, okId, erIds) {
 document.getElementById('enqForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'enquiry','e-ok','e-er');});
 document.getElementById('quotForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'quotation','q-ok','q-er');});
 document.getElementById('subForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'subscribe','s-ok','s-er');});
-
-// ── LOCAL DB ──
-function saveLocal(data){
-  var arr=JSON.parse(localStorage.getItem(DB_KEY)||'[]');
-  arr.unshift(data);
-  localStorage.setItem(DB_KEY,JSON.stringify(arr));
-}
-function getLocal(){return JSON.parse(localStorage.getItem(DB_KEY)||'[]');}
-
-// ── ADMIN LOGIN ──
-function adminLogin(){
-  var pwd=document.getElementById('adminPwd').value;
-  var correct=localStorage.getItem(PW_KEY)||'skyflies2024';
-  if(pwd===correct){
-    document.getElementById('adminLogin').style.display='none';
-    document.getElementById('adminDash').classList.add('on');
-    refreshDash();
-  } else {
-    var e=document.getElementById('loginErr');e.classList.add('show');
-    setTimeout(()=>e.classList.remove('show'),3000);
+document.getElementById('emiForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'emi','em-ok','em-er');});
+document.getElementById('queryForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  var btn=this.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.bll');
+  var fd=new FormData(this),data={formType:'query',action:'addQuery',customerId:currentCustomer?currentCustomer.id:'',customerName:currentCustomer?currentCustomer.name:'',submittedAt:new Date().toISOString()};
+  for(var [k,v] of fd.entries())data[k]=v;
+  btn.disabled=true;bt.style.display='none';bl.style.display='block';
+  await new Promise(r=>setTimeout(r,700));
+  saveLocal(data);
+  await sendToSheet(data);
+  btn.disabled=false;bt.style.display='';bl.style.display='none';
+  document.getElementById('qry-ok').classList.add('show');
+  this.reset();
+  if(currentCustomer){
+    var ld=JSON.parse(localStorage.getItem('cdata_'+currentCustomer.id)||'{}');
+    ld.queries=ld.queries||[];
+    ld.queries.unshift({type:data.queryType,priority:data.priority,message:data.message,date:new Date().toLocaleDateString('en-IN'),status:'open'});
+    localStorage.setItem('cdata_'+currentCustomer.id,JSON.stringify(ld));
+    currentCustomer.queries=[...(ld.queries||[]),...((currentCustomer.queries||[]).filter(q=>!ld.queries.find(lq=>lq.message===q.message)))];
+    renderQueries();
   }
-}
-function adminLogout(){
-  document.getElementById('adminLogin').style.display='';
-  document.getElementById('adminDash').classList.remove('on');
-  document.getElementById('adminPwd').value='';
+});
+
+async function sendToSheet(data){
+  var wh=localStorage.getItem(WH);
+  if(!wh)return;
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});}catch(e){}
 }
 
-// ── DASHBOARD ──
-var currentFilter='all';
+// ─── LOCAL STORAGE ──────────────────────────────────────────
+function saveLocal(d){var a=JSON.parse(localStorage.getItem(DB)||'[]');a.unshift(d);localStorage.setItem(DB,JSON.stringify(a));}
+function getLocal(){return JSON.parse(localStorage.getItem(DB)||'[]');}
+function getCustomerData(id){return JSON.parse(localStorage.getItem('cdata_'+id)||'{}');}
+function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(d));}
+
+// ─── SETUP ──────────────────────────────────────────────────
+function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);s.textContent='✅ Webhook saved! All forms now auto-save to your Google Sheet.';s.className='wst ok';}
+function savePwd(){var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}localStorage.setItem(PW,p);s.textContent='✅ Password updated.';s.className='wst ok';}
+window.addEventListener('load',()=>{var wh=localStorage.getItem(WH);if(wh){var el=document.getElementById('whUrl');if(el){el.value=wh;document.getElementById('whSt').textContent='✅ Webhook active.';document.getElementById('whSt').className='wst ok';}}refreshDash();});
+function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
+
+// ─── ADMIN ──────────────────────────────────────────────────
+function adminLogin(){var pwd=document.getElementById('adminPwd').value;var correct=localStorage.getItem(PW)||'skyflies2024';if(pwd===correct){document.getElementById('adminLoginBox').style.display='none';document.getElementById('adminDash').classList.add('on');refreshDash();renderCustList();}else{var e=document.getElementById('loginErr');e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000);}}
+function adminLogout(){document.getElementById('adminLoginBox').style.display='';document.getElementById('adminDash').classList.remove('on');document.getElementById('adminPwd').value='';}
+var curFilter='all';
 function refreshDash(){
   var data=getLocal();
-  var enq=data.filter(d=>d.formType==='enquiry');
-  var quot=data.filter(d=>d.formType==='quotation');
-  var sub=data.filter(d=>d.formType==='subscribe');
-  var tc=document.getElementById('totalCount');var ec=document.getElementById('enqCount');
-  var qc=document.getElementById('quotCount');var sc=document.getElementById('subCount');
-  if(tc)tc.textContent=data.length;if(ec)ec.textContent=enq.length;
-  if(qc)qc.textContent=quot.length;if(sc)sc.textContent=sub.length;
-  renderTable(currentFilter);
+  var counts={all:data.length,enquiry:0,quotation:0,subscribe:0,emi:0};
+  data.forEach(d=>{if(counts[d.formType]!==undefined)counts[d.formType]++;});
+  var tc=document.getElementById('totalCount');if(tc)tc.textContent=counts.all;
+  var ec=document.getElementById('enqCount');if(ec)ec.textContent=counts.enquiry;
+  var qc=document.getElementById('quotCount');if(qc)qc.textContent=counts.quotation;
+  var sc=document.getElementById('subCount');if(sc)sc.textContent=counts.subscribe;
+  var mc=document.getElementById('emiCount');if(mc)mc.textContent=counts.emi;
+  renderTable(curFilter);
+  renderCustList();
 }
-function filterTable(f,btn){
-  currentFilter=f;
-  document.querySelectorAll('.fb2').forEach(b=>b.classList.remove('on'));
-  if(btn)btn.classList.add('on');
-  renderTable(f);
-}
+function filterTable(f,btn){curFilter=f;document.querySelectorAll('.fb2').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderTable(f);}
 function renderTable(filter){
-  var data=getLocal();
-  if(filter!=='all') data=data.filter(d=>d.formType===filter);
+  var data=getLocal();if(filter!=='all')data=data.filter(d=>d.formType===filter);
   var tc=document.getElementById('tableContainer');if(!tc)return;
-  if(!data.length){tc.innerHTML='<div class="empty-state">No submissions yet. Share the app to start receiving enquiries!</div>';return;}
-  var html='<table class="dtbl"><thead><tr><th>Time</th><th>Type</th><th>Name</th><th>Phone</th><th>City</th><th>Detail</th></tr></thead><tbody>';
+  if(!data.length){tc.innerHTML='<div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No submissions yet.</div>';return;}
+  var html='<div style="overflow-x:auto;"><table class="dtbl"><thead><tr><th>Time</th><th>Type</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>Detail</th></tr></thead><tbody>';
   data.forEach(d=>{
     var ts=d.submittedAt?new Date(d.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'–';
-    var detail=d.formType==='subscribe'?('Plan: '+(d.plan||'–')):d.formType==='quotation'?('Bill: '+(d.bill||'–')):(d.propertyType||'–');
-    var badge=d.formType==='enquiry'?'<span class="badge enq">Enquiry</span>':d.formType==='quotation'?'<span class="badge quot">Quotation</span>':'<span class="badge sub">Subscription</span>';
-    html+=`<tr><td>${ts}</td><td>${badge}</td><td>${d.name||'–'}</td><td>${d.phone||'–'}</td><td>${d.city||'–'}</td><td>${detail}</td></tr>`;
+    var detail=d.formType==='subscribe'?'Plan: '+(d.plan||'–'):d.formType==='emi'?'EMI: '+(d.emi||'–'):d.formType==='query'?'Query: '+(d.queryType||'–'):(d.propertyType||'–');
+    var btype=d.formType==='enquiry'?'enq':d.formType==='quotation'?'quot':d.formType==='subscribe'?'sub':'loan';
+    var blabel={'enquiry':'Enquiry','quotation':'Quotation','subscribe':'Subscription','emi':'EMI','query':'Query'}[d.formType]||d.formType;
+    html+=`<tr><td>${ts}</td><td><span class="badge ${btype}">${blabel}</span></td><td>${d.name||d.customerId||'–'}</td><td>${d.phone||'–'}</td><td>${d.email||'–'}</td><td>${d.city||'–'}</td><td>${detail}</td></tr>`;
   });
-  html+='</tbody></table>';
-  tc.innerHTML=html;
-}
-function exportCSV(){
-  var data=getLocal();
-  if(!data.length){alert('No data to export yet.');return;}
-  var cols=['submittedAt','formType','name','phone','email','company','city','propertyType','plan','bill','services','message'];
-  var csv=cols.join(',')+'\n';
-  data.forEach(d=>{ csv+=cols.map(c=>'"'+(d[c]||'').replace(/"/g,'""')+'"').join(',')+'\n'; });
-  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='skyflies_submissions.csv';a.click();
-}
-function clearData(){
-  if(confirm('Clear ALL local submission data? This cannot be undone. (Google Sheet data is unaffected)')){
-    localStorage.removeItem(DB_KEY);refreshDash();
-  }
+  html+='</tbody></table></div>';tc.innerHTML=html;
 }
 
-// ── COPY CODE ──
-function cpCode(){
-  navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{
-    var m=document.getElementById('
+// ── Customer Accounts List in Admin ──
+function renderCustList(){
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  var keys=Object.keys(lc);
+  var cl=document.getElementById('custListContainer');if(!cl)return;
+  if(!keys.length){cl.innerHTML='<div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No customer accounts yet. Add below.</div>';return;}
+  var html='<div style="overflow-x:auto;"><table class="dtbl"><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>System</th><th>Plan</th><th>Install Cost</th><th>Paid</th><th>Next Service</th><th>Status</th></tr></thead><tbody>';
+  keys.forEach(id=>{
+    var c=lc[id];
+    var stcolor=c.systemStatus==='Active'?'var(--success)':c.systemStatus==='Pending Installation'?'var(--warn)':'var(--error)';
+    html+=`<tr>
+      <td><strong style="color:var(--sun);">${id}</strong></td>
+      <td>${c.name||'–'}</td>
+      <td>${c.phone||'–'}</td>
+      <td>${c.email||'–'}</td>
+      <td>${c.city||'–'}</td>
+      <td>${c.systemSize||'–'} • ${c.panels||'–'} panels</td>
+      <td style="color:var(--sun);">${c.plan||'–'}</td>
+      <td>${c.installCost||'–'}</td>
+      <td style="color:var(--success);">${c.amountPaid||'–'}</td>
+      <td>${c.nextService||'–'}</td>
+      <td><span style="color:${stcolor};font-weight:700;font-size:11px;">${c.systemStatus||'Active'}</span></td>
+    </tr>`;
+  });
+  html+='</tbody></table></div>';
+  cl.innerHTML=html;
+}
+
+function exportCSV(){
+  var data=getLocal();
+  // Also add customer accounts
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  var custRows=Object.keys(lc).map(id=>{var c=lc[id];return{formType:'customer',customerId:id,name:c.name,phone:c.phone,email:c.email,city:c.city,plan:c.plan,installCost:c.installCost,amountPaid:c.amountPaid,systemSize:c.systemSize,nextService:c.nextService,systemStatus:c.systemStatus};});
+  var allData=[...data,...custRows];
+  if(!allData.length){alert('No data yet.');return;}
+  var cols=['submittedAt','formType','name','phone','email','company','city','propertyType','plan','emi','services','installCost','amountPaid','systemSize','nextService','systemStatus','message'];
+  var csv=cols.join(',')+'\n';
+  allData.forEach(d=>{csv+=cols.map(c=>'"'+(d[c]||'').replace(/"/g,'""')+'"').join(',')+'\n';});
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='skyflies_complete_data.csv';a.click();
+}
+function clearData(){if(confirm('Clear all local submission data? (Google Sheet data is safe)')){localStorage.removeItem(DB);refreshDash();}}
+
+// ─── ADD CUSTOMER FORM ─────────────────────────────────────
+document.getElementById('addCustForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  var btn=this.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.bll');
+  document.getElementById('ac-ok').classList.remove('show');
+  document.getElementById('ac-er').classList.remove('show');
+  var fd=new FormData(this),data={action:'addCustomer'};
+  for(var [k,v] of fd.entries())data[k]=v;
+  btn.disabled=true;bt.style.display='none';bl.style.display='block';
+  await new Promise(r=>setTimeout(r,800));
+  var success=false;
+  // Try sending to Google Sheet
+  var wh=localStorage.getItem(WH);
+  if(wh){
+    try{
+      var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+      var res=await r.json();
+      if(res.status==='success')success=true;
+    }catch(err){
+      // Fallback: save locally
+      success=true;
+    }
+  } else { success=true; }
+  // Always save locally too (as backup)
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  lc[data.customerId]={
+    pwd:data.password, name:data.name, phone:data.phone, email:data.email,
+    city:data.city, address:data.address, systemSize:data.systemSize,
+    panels:data.panels, installCost:data.installCost, amountPaid:data.amountPaid,
+    plan:data.plan, billingCycle:data.billingCycle||'Monthly',
+    nextService:data.nextService, systemStatus:data.systemStatus,
+    installDate:data.installDate, notes:data.notes||'',
+    subscriptions:[{name:(data.plan||'').split('–')[0].trim()||'Plan',price:(data.plan||'').split('–')[1]||'',billing:data.billingCycle||'Monthly',since:data.installDate||new Date().toLocaleDateString('en-IN'),status:'Active',features:['Panel cleaning','Inspection','Support']}],
+    timeline:[
+      {icon:'📞',title:'Enquiry Received',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:'Customer enquiry registered.',status:'done'},
+      {icon:'💰',title:'Payment Received',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:'Installation cost: '+data.installCost+' | Paid: '+data.amountPaid,status:'done'},
+      {icon:'🔧',title:'Installation Completed',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:(data.systemSize||'')+(data.panels?' | '+data.panels+' panels':''),status:'done'},
+      {icon:'✅',title:'System Active',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:'System commissioned and running. Status: '+(data.systemStatus||'Active'),status:'done'},
+      {icon:'📅',title:'Next Service',date:data.nextService||'TBD',desc:'Scheduled maintenance: '+(data.plan||''),status:'active'}
+    ],
+    queries:[]
+  };
+  localStorage.setItem('sf_customers',JSON.stringify(lc));
+  btn.disabled=false;bt.style.display='';bl.style.display='none';
+  if(success){
+    document.getElementById('ac-ok').classList.add('show');
+    this.reset();
+    renderCustList(); // refresh customer list in admin
+  } else {
+    document.getElementById('ac-er').classList.add('show');
+  }
+});
+
+// ─── CUSTOMER PORTAL ───────────────────────────────────────
+var currentCustomer=null;
+// Demo fallback customer (works without Google Sheet)
+var DEMO_CUSTOMERS={
+  'SKY-001':{pwd:'solar123',name:'Karthick Kumar',city:'Chennai',installCost:'₹3,45,000',amountPaid:'₹3,45,000',plan:'Standard Care – ₹999/mo',nextService:'15 Apr 2026',systemStatus:'Active',systemSize:'5 kW',panels:'10',
+    timeline:[
+      {icon:'📞',title:'Enquiry Received',date:'12 Jan 2026',desc:'Initial enquiry submitted via website.',status:'done'},
+      {icon:'📋',title:'Quotation Sent',date:'13 Jan 2026',desc:'Detailed quotation of ₹3,45,000 sent to customer email.',status:'done'},
+      {icon:'💰',title:'Order Confirmed & Payment',date:'18 Jan 2026',desc:'Payment received. 5 kW system ordered.',status:'done'},
+      {icon:'📦',title:'Panels Delivered',date:'25 Jan 2026',desc:'10 × 400W Monocrystalline panels delivered to site.',status:'done'},
+      {icon:'🔧',title:'Installation Completed',date:'28 Jan 2026',desc:'Full 5 kW grid-tied system installed.',status:'done'},
+      {icon:'✅',title:'Commissioning & Handover',date:'30 Jan 2026',desc:'System live. Generating ~22 units/day.',status:'done'},
+      {icon:'🧹',title:'First Cleaning Service',date:'28 Feb 2026',desc:'Monthly cleaning done. Performance verified.',status:'done'},
+      {icon:'📅',title:'Next Service Scheduled',date:'15 Apr 2026',desc:'Monthly cleaning and electrical inspection.',status:'active'}
+    ],
+    subscriptions:[{name:'Standard Care',price:'₹999/month',billing:'Monthly',since:'1 Feb 2026',status:'Active',features:['2× Panel cleaning/month','Electrical + inverter check','Monthly performance report','WhatsApp support']}],
+    queries:[{type:'Post-Installation Issue',priority:'Normal',message:'Inverter showing error code E03. Please advise.',date:'10 Mar 2026',status:'closed'},{type:'Cleaning Request',priority:'Normal',message:'Requesting early cleaning after dust storm.',date:'20 Mar 2026',status:'open'}]
+  }
+};
+
+async function cLogin(){
+  var uid=document.getElementById('cuid').value.trim();
+  var pwd=document.getElementById('cpwd').value.trim();
+  if(!uid||!pwd){alert('Please enter your Customer ID and Password.');return;}
+
+  var btn=document.querySelector('#cLoginBox .sbtn');
+  btn.disabled=true;btn.textContent='Checking...';
+
+  var customer=null;
+  // 1. Try Google Sheet first
+  var wh=localStorage.getItem(WH);
+  if(wh){
+    try{
+      var resp=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd}),mode:'no-cors'});
+      // no-cors can't read response body — try cors version
+    }catch(e){}
+    // Try cors fetch (works if CORS is set correctly in Apps Script)
+    try{
+      var r2=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd})});
+      var res=await r2.json();
+      if(res.status==='success')customer={...res.customer,id:uid};
+    }catch(e2){}
+  }
+  // 2. Fallback to demo customers
+  if(!customer){
+    var dc=DEMO_CUSTOMERS[uid];
+    if(dc&&dc.pwd===pwd)customer={...dc,id:uid};
+  }
+  // 3. Check locally added customers
+  if(!customer){
+    var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+    var lcu=lc[uid];
+    if(lcu&&lcu.pwd===pwd)customer={...lcu,id:uid};
+  }
+
+  btn.disabled=false;btn.textContent='LOGIN →';
+
+  if(customer){
+    currentCustomer=customer;
+    // Merge locally stored queries
+    var ld=JSON.parse(localStorage.getItem('cdata_'+uid)||'{}');
+    if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
+    document.getElementById('cLoginBox').style.display='none';
+    document.getElementById('cPortal').classList.add('on');
+    document.getElementById('portalName').textContent='Welcome, '+customer.name+'!';
+    document.getElementById('portalId').textContent='Customer ID: '+uid;
+    document.getElementById('pc-cost').textContent=customer.installCost||customer.cost||'–';
+    document.getElementById('pc-paid').textContent=customer.amountPaid||customer.paid||'–';
+    document.getElementById('pc-plan').textContent=customer.plan||'–';
+    document.getElementById('pc-next').textContent=customer.nextService||'–';
+    renderTimeline();renderSubs();renderQueries();
+  }else{
+    var e=document.getElementById('cloginErr');e.classList.add('show');
+    setTimeout(()=>e.classList.remove('show'),4000);
+  }
+}
+function cLogout(){document.getElementById('cLoginBox').style.display='';document.getElementById('cPortal').classList.remove('on');currentCustomer=null;document.getElementById('cuid').value='';document.getElementById('cpwd').value='';}
+function showPortalTab(tab,btn){document.querySelectorAll('.ptab-content').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));document.getElementById('ptab-'+tab).classList.add('on');if(btn)btn.classList.add('on');document.getElementById('qry-ok').classList.remove('show');}
+
+function renderTimeline(){
+  if(!currentCustomer||!currentCustomer.timeline)return;
+  document.getElementById('timelineContainer').innerHTML=currentCustomer.timeline.map(t=>`
+    <div class="tl-item">
+      <div class="tl-dot ${t.status}">${t.icon}</div>
+      <div class="tl-content">
+        <div class="tl-title">${t.title}</div>
+        <div class="tl-date">📅 ${t.date}</div>
+        <div class="tl-desc">${t.desc}</div>
+        <span class="tl-badge ${t.status}">${t.status==='done'?'COMPLETED':t.status==='active'?'IN PROGRESS':'UPCOMING'}</span>
+      </div>
+    </div>`).join('');
+}
+function renderSubs(){
+  if(!currentCustomer||!currentCustomer.subscriptions)return;
+  document.getElementById('subContainer').innerHTML=currentCustomer.subscriptions.map(s=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;">${s.name}</div><div style="font-size:12px;color:var(--soft);">Since ${s.since} • ${s.billing}</div></div>
+        <div style="display:flex;align-items:center;gap:10px;"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--sun);">${s.price}</div><span style="background:rgba(0,230,118,0.15);color:var(--success);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;">${s.status}</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:7px;">
+        ${(s.features||[]).map(f=>`<div style="font-size:12px;color:var(--soft);"><span style="color:var(--success);">✓</span> ${f}</div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function renderQueries(){
+  if(!currentCustomer)return;
+  var q=currentCustomer.queries||[];
+  var c=document.getElementById('queriesContainer');
+  if(!q.length){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--soft);font-size:13px;">No queries yet. Use "New Query" tab to raise one.</div>';return;}
+  c.innerHTML=q.map(qi=>`
+    <div class="query-item">
+      <div class="qi-top"><div class="qi-title">${qi.type}</div><span class="qi-status ${qi.status}">${qi.status.toUpperCase()}</span></div>
+      <div class="qi-date">📅 ${qi.date} • Priority: ${qi.priority||'Normal'}</div>
+      <div class="qi-msg">${qi.message}</div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
