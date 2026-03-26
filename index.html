@@ -30,11 +30,20 @@ header{padding:14px 44px;display:flex;align-items:center;justify-content:space-b
 .logo-sm{font-size:8px;color:var(--soft);letter-spacing:4px;text-transform:uppercase;margin-top:-3px;}
 nav{display:flex;gap:2px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
 nav::-webkit-scrollbar{display:none;}
-.nl{padding:5px 10px;border-radius:6px;font-size:11.5px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:all 0.2s;white-space:nowrap;}
-.nl:hover,.nl.on{background:rgba(245,166,35,0.1);color:var(--sun);}
+.nl{padding:6px 11px;border-radius:7px;font-size:11.5px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:all 0.2s;white-space:nowrap;}
+.nl:hover,.nl.on{background:rgba(245,166,35,0.12);color:var(--sun);}
 .nl.blue-nl:hover,.nl.blue-nl.on{background:rgba(100,180,255,0.1);color:#64B4FF;}
 .nl.grn-nl:hover,.nl.grn-nl.on{background:rgba(0,230,118,0.1);color:#00E676;}
-.nl.sep{width:1px;height:20px;background:var(--border2);margin:0 4px;pointer-events:none;align-self:center;}
+.nl.sep{width:1px;height:18px;background:var(--border2);margin:0 3px;pointer-events:none;align-self:center;flex-shrink:0;}
+.hamburger{display:none;background:none;border:1px solid var(--border);border-radius:7px;padding:6px 10px;cursor:pointer;color:var(--soft);font-size:18px;line-height:1;}
+.mob-nav{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(8,15,30,0.98);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);z-index:299;padding:10px 16px 14px;flex-direction:column;gap:3px;}
+.mob-nav.open{display:flex;animation:fup 0.2s ease;}
+.mob-nl{padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:all 0.2s;text-align:left;width:100%;letter-spacing:0.3px;}
+.mob-nl:hover,.mob-nl.on{background:rgba(245,166,35,0.1);color:var(--sun);}
+.mob-nl.blue-nl:hover,.mob-nl.blue-nl.on{background:rgba(100,180,255,0.1);color:#64B4FF;}
+.mob-nl.grn-nl:hover,.mob-nl.grn-nl.on{background:rgba(0,230,118,0.1);color:#00E676;}
+.mob-divider{height:1px;background:var(--border2);margin:5px 0;}
+@media(max-width:900px){nav{display:none;}.hamburger{display:block;}}
 .hcall{padding:8px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:var(--deep);font-weight:700;font-size:12px;cursor:pointer;}
 .hcall:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,166,35,0.4);}
 
@@ -360,8 +369,27 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <button class="nl blue-nl" onclick="showPage('admin',this)">🔐 Admin</button>
     <button class="nl" onclick="showPage('setup',this)">⚙️</button>
   </nav>
-  <button class="hcall" onclick="window.open('tel:+919385449167')">📞 Call Now</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="hamburger" onclick="toggleMobNav()" id="hamBtn">☰</button>
+    <button class="hcall" onclick="window.open('tel:+919385449167')">📞 Call Now</button>
+  </div>
 </header>
+
+<!-- MOBILE NAVIGATION DRAWER -->
+<div class="mob-nav" id="mobNav">
+  <button class="mob-nl on" id="mob-home" onclick="mobPage('home')">🏠 &nbsp;Home</button>
+  <button class="mob-nl" id="mob-enquiry" onclick="mobPage('enquiry')">💬 &nbsp;Enquiry</button>
+  <button class="mob-nl" id="mob-quotation" onclick="mobPage('quotation')">💰 &nbsp;Quotation</button>
+  <button class="mob-nl" id="mob-calculator" onclick="mobPage('calculator')">🧮 &nbsp;Quote Calculator</button>
+  <div class="mob-divider"></div>
+  <button class="mob-nl" id="mob-plans" onclick="mobPage('plans')">💎 &nbsp;Plans & Pricing</button>
+  <button class="mob-nl" id="mob-subscribe" onclick="mobPage('subscribe')">📋 &nbsp;Subscribe</button>
+  <button class="mob-nl" id="mob-emi" onclick="mobPage('emi')">💳 &nbsp;EMI / Loan</button>
+  <div class="mob-divider"></div>
+  <button class="mob-nl grn-nl" id="mob-portal" onclick="mobPage('portal')">👤 &nbsp;My Account</button>
+  <button class="mob-nl blue-nl" id="mob-admin" onclick="mobPage('admin')">🔐 &nbsp;Admin</button>
+  <button class="mob-nl" id="mob-setup" onclick="mobPage('setup')">⚙️ &nbsp;Setup</button>
+</div>
 
 <!-- ═══ HOME ═══ -->
 <div class="hpage on" id="page-home">
@@ -396,11 +424,11 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px;"><span style="color:var(--sun);font-size:16px;">★★★★★</span><span style="font-size:12px;color:var(--soft);">4.9/5 on Google</span></div>
       </div>
       <div style="display:flex;gap:9px;flex-wrap:wrap;">
-        <a href="https://www.google.com/maps/search/Skyflies+Solar+Solutions+Tamil+Nadu" target="_blank" style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;color:var(--sun);font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+        <a href="https://www.google.com/maps/place/?q=place_id:CXlyzrExbEAkEBM" target="_blank" style="padding:8px 16px;background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3);border-radius:8px;color:var(--sun);font-size:12px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
           <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           View All Google Reviews ↗
         </a>
-        <a href="https://search.google.com/local/writereview?placeid=skyflies-solar" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:var(--deep);font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">⭐ Write a Review</a>
+        <a href="https://g.page/r/CXlyzrExbEAkEBM/review" target="_blank" style="padding:8px 16px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:var(--deep);font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">⭐ Write a Review</a>
       </div>
     </div>
     <div class="rev-grid">
@@ -413,7 +441,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div style="font-size:30px;">⭐</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--sun);">Happy with our service?</div>
         <div style="font-size:12px;color:var(--soft);line-height:1.6;">Share your experience on Google and help others discover Skyflies Solar!</div>
-        <a href="https://g.page/r/skyflies-solar/review" target="_blank" style="padding:9px 18px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:8px;color:var(--deep);font-weight:700;font-size:12px;text-decoration:none;">Write a Google Review →</a>
+        <a href="https://g.page/r/CXlyzrExbEAkEBM/review" target="_blank" style="padding:9px 18px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:8px;color:var(--deep);font-weight:700;font-size:12px;text-decoration:none;">Write a Google Review →</a>
       </div>
     </div>
   </div>
@@ -457,7 +485,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <!-- Address + social row -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:rgba(255,255,255,0.03);border-radius:11px;flex-wrap:wrap;gap:12px;">
       <div style="font-size:12px;color:var(--soft);">
-        📍 <strong style="color:#fff;">Tamil Nadu, India</strong> &nbsp;&nbsp;
+        📍 <strong style="color:#fff;">1st Floor, No.65/2, Bujannarao Street,<br>Walajapet, Tamil Nadu – 632513</strong> &nbsp;&nbsp;
         ⏰ <strong style="color:#fff;">Mon–Sat, 9am–6pm</strong> &nbsp;&nbsp;
         🌐 <a href="https://skyflies.in" target="_blank" style="color:var(--sun);text-decoration:none;font-weight:600;">www.skyflies.in</a>
       </div>
@@ -780,7 +808,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
           <a href="https://www.linkedin.com/company/skyfliessolar/" target="_blank" style="width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(0,119,181,0.1);border:1px solid rgba(0,119,181,0.3);text-decoration:none;transition:transform 0.2s;" title="LinkedIn" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''"><svg width="15" height="15" viewBox="0 0 24 24" fill="#0077B5"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
         </div>
         <div style="margin-top:14px;padding:12px 16px;background:rgba(255,255,255,0.03);border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-          <div style="font-size:12px;color:var(--soft);">📍 <strong style="color:#fff;">Tamil Nadu, India</strong> &nbsp;|&nbsp; ⏰ <strong style="color:#fff;">Mon–Sat, 9am–6pm IST</strong> &nbsp;|&nbsp; 🌐 <a href="https://skyflies.in" target="_blank" style="color:var(--sun);text-decoration:none;">www.skyflies.in</a></div>
+          <div style="font-size:12px;color:var(--soft);">📍 <strong style="color:#fff;">1st Floor, No.65/2, Bujannarao Street,<br>Walajapet, Tamil Nadu – 632513</strong> &nbsp;|&nbsp; ⏰ <strong style="color:#fff;">Mon–Sat, 9am–6pm IST</strong> &nbsp;|&nbsp; 🌐 <a href="https://skyflies.in" target="_blank" style="color:var(--sun);text-decoration:none;">www.skyflies.in</a></div>
           <div style="font-size:11px;color:var(--soft);">Est. 2022 • Trusted by 3600+ Clients</div>
         </div>
       </div>
@@ -1256,7 +1284,7 @@ function buildEmailBody(data, sheetName) {
         <!-- Address -->
         <div class="cbar-item" style="cursor:default;">
           <div class="ci-icon" style="background:rgba(0,230,118,0.15);"><svg width="16" height="16" viewBox="0 0 24 24" fill="#00E676"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-          <div class="ci-text"><span class="ci-lbl">Location</span><span class="ci-val">Tamil Nadu, India</span></div>
+          <div class="ci-text"><span class="ci-lbl">Office Address</span><span class="ci-val" style="font-size:12px;line-height:1.4;">1st Floor, No.65/2, Bujannarao St<br>Walajapet, TN – 632513</span></div>
         </div>
       </div>
       <div class="cbar-btns">
@@ -1298,7 +1326,7 @@ function buildEmailBody(data, sheetName) {
           <svg width="17" height="17" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </a>
         <!-- Google Maps -->
-        <a class="sbi" href="https://www.google.com/maps/search/Skyflies+Solar+Solutions+Tamil+Nadu" target="_blank" title="Find us on Google Maps" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);">
+        <a class="sbi" href="https://www.google.com/maps/place/?q=place_id:CXlyzrExbEAkEBM" target="_blank" title="Find us on Google Maps" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);">
           <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         </a>
       </div>
@@ -1312,7 +1340,7 @@ function buildEmailBody(data, sheetName) {
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;background:linear-gradient(135deg,var(--sun),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Skyflies Solar Solutions</div>
       <p>Tamil Nadu's trusted solar energy company. Serving Chennai, Vellore, Ranipet & Kanchipuram since 2022 with installation, cleaning, repair and AMC.</p>
       <div class="fci">
-        <div class="fc2">📍 <strong>Tamil Nadu, India</strong></div>
+        <div class="fc2">📍 <strong>1st Floor, No.65/2, Bujannarao Street,<br>Walajapet, Tamil Nadu – 632513</strong></div>
         <div class="fc2">🏢 <strong>Est. 2022 &nbsp;•&nbsp; 3600+ Happy Clients</strong></div>
         <div class="fc2">⏰ <strong>Mon–Sat, 9am–6pm IST</strong></div>
       </div>
@@ -1346,8 +1374,8 @@ function buildEmailBody(data, sheetName) {
   <!-- ══ FOOTER BOTTOM ══ -->
   <div class="fbot">
     <p>© 2025 Skyflies Solar Solutions &nbsp;—&nbsp; <a href="https://skyflies.in" target="_blank">www.skyflies.in</a></p>
-    <p>📞 +91 93854 49167 &nbsp;|&nbsp; ✉️ info@skyflies.in &nbsp;|&nbsp; Tamil Nadu, India</p>
-    <p>Made with ☀️ for a greener Tamil Nadu</p>
+    <p>📍 1st Floor, No.65/2, Bujannarao Street, Walajapet, Tamil Nadu – 632513</p>
+    <p>📞 +91 93854 49167 &nbsp;|&nbsp; ✉️ info@skyflies.in</p>
   </div>
 
 </footer>
@@ -1374,6 +1402,32 @@ function showPage(id,btn){
   });
   window.scrollTo({top:0,behavior:'smooth'});
 }
+// Mobile nav
+function toggleMobNav(){
+  var nav=document.getElementById('mobNav');
+  var btn=document.getElementById('hamBtn');
+  nav.classList.toggle('open');
+  btn.textContent=nav.classList.contains('open')?'✕':'☰';
+}
+function mobPage(id){
+  showPage(id,null);
+  // Update mobile nav active state
+  document.querySelectorAll('.mob-nl').forEach(b=>b.classList.remove('on'));
+  var mb=document.getElementById('mob-'+id);
+  if(mb)mb.classList.add('on');
+  // Close menu
+  document.getElementById('mobNav').classList.remove('open');
+  document.getElementById('hamBtn').textContent='☰';
+}
+// Close mobile nav when clicking outside
+document.addEventListener('click',function(e){
+  var nav=document.getElementById('mobNav');
+  var btn=document.getElementById('hamBtn');
+  if(nav&&nav.classList.contains('open')&&!nav.contains(e.target)&&e.target!==btn){
+    nav.classList.remove('open');
+    btn.textContent='☰';
+  }
+});
 
 // ─── PLANS ─────────────────────────────────────────────────
 function selPlan(el){document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
