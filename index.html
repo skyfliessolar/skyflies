@@ -1547,88 +1547,112 @@ function adminLogout(){
 // ─────────────────────────────────────────────────────────────
 // RENDER PENDING REGISTRATIONS
 // ─────────────────────────────────────────────────────────────
+// Global array so approve/reject can always find the right registration
+var PENDING_LIST = [];
+
 function renderPending(){
-  var all     = JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  var pending = all.filter(function(p){return p.status==='pending';});
+  var all = JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  PENDING_LIST = all.filter(function(p){return p.status==='pending';});
+
   var pc=document.getElementById('pendCount');
   var pb=document.getElementById('pendBadge');
-  if(pc)pc.textContent=pending.length;
-  if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
+  if(pc)pc.textContent=PENDING_LIST.length;
+  if(pb)pb.textContent=PENDING_LIST.length>0?PENDING_LIST.length+' waiting':'';
+
   var con=document.getElementById('pendingContainer');
   if(!con)return;
 
-  if(!pending.length){
+  if(!PENDING_LIST.length){
     con.innerHTML='<div style="text-align:center;padding:24px;color:var(--soft);font-size:13px;">✅ No pending registrations.</div>';
     return;
   }
 
-  // Clear container
   con.innerHTML='';
-  var wrap=document.createElement('div');
-  wrap.style.cssText='display:flex;flex-direction:column;gap:12px;';
 
-  pending.forEach(function(p){
-    var dt=p.submittedAt?new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
+  PENDING_LIST.forEach(function(p, idx){
+    var dt = p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '–';
 
-    var card=document.createElement('div');
-    card.style.cssText='background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;';
-    card.innerHTML=
-      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">'
-        +'<div>'
-          +'<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:6px;">👤 '+p.name+'</div>'
-          +'<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📞 '+p.phone+'</div>'
-          +'<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">✉️ '+p.email+'</div>'
-          +'<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📍 '+(p.city||'–')+'</div>'
-          +'<div style="font-size:11px;color:rgba(168,192,224,0.4);margin-top:4px;">🕐 '+dt+'</div>'
-        +'</div>'
-        +'<div id="btns-'+p.id+'" style="display:flex;flex-direction:column;gap:8px;min-width:180px;">'
-        +'</div>'
-      +'</div>';
+    var card = document.createElement('div');
+    card.style.cssText = 'background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;margin-bottom:12px;';
 
-    // Create approve button
-    var approveBtn=document.createElement('button');
-    approveBtn.textContent='✅ Approve & Activate';
-    approveBtn.style.cssText='padding:11px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
-    approveBtn.onclick=(function(reg){
-      return function(){
-        approveBtn.disabled=true;
-        approveBtn.textContent='⏳ Processing...';
-        approveReg(reg.id);
-      };
-    })(p);
+    // Info section
+    var info = document.createElement('div');
+    info.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;';
 
-    // Create reject button
-    var rejectBtn=document.createElement('button');
-    rejectBtn.textContent='❌ Reject';
-    rejectBtn.style.cssText='padding:11px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:13px;cursor:pointer;width:100%;';
-    rejectBtn.onclick=(function(reg){
-      return function(){rejectReg(reg.id);};
-    })(p);
+    var details = document.createElement('div');
+    details.innerHTML =
+      '<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:6px;">👤 '+p.name+'</div>'+
+      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📞 '+p.phone+'</div>'+
+      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">✉️ '+p.email+'</div>'+
+      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📍 '+(p.city||'–')+'</div>'+
+      '<div style="font-size:11px;color:rgba(168,192,224,0.4);">🕐 '+dt+'</div>';
 
-    var btnBox=card.querySelector('#btns-'+p.id);
+    // Buttons section
+    var btnBox = document.createElement('div');
+    btnBox.style.cssText = 'display:flex;flex-direction:column;gap:8px;min-width:190px;';
+
+    var approveBtn = document.createElement('button');
+    approveBtn.textContent = '✅ Approve & Activate';
+    approveBtn.style.cssText = 'padding:12px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+    approveBtn.setAttribute('data-idx', idx);
+    approveBtn.onclick = function(){
+      var i = parseInt(this.getAttribute('data-idx'));
+      var reg = PENDING_LIST[i];
+      if(!reg){ alert('Error: Registration not found. Please refresh.'); return; }
+      this.textContent = '⏳ Approving...';
+      this.disabled = true;
+      approveReg(reg.id);
+    };
+
+    var rejectBtn = document.createElement('button');
+    rejectBtn.textContent = '❌ Reject';
+    rejectBtn.style.cssText = 'padding:12px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:#FF5252;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+    rejectBtn.setAttribute('data-idx', idx);
+    rejectBtn.onclick = function(){
+      var i = parseInt(this.getAttribute('data-idx'));
+      var reg = PENDING_LIST[i];
+      if(!reg){ alert('Error: Registration not found.'); return; }
+      rejectReg(reg.id);
+    };
+
     btnBox.appendChild(approveBtn);
     btnBox.appendChild(rejectBtn);
-    wrap.appendChild(card);
+    info.appendChild(details);
+    info.appendChild(btnBox);
+    card.appendChild(info);
+    con.appendChild(card);
   });
-
-  con.appendChild(wrap);
 }
 
 // ─────────────────────────────────────────────────────────────
 // APPROVE REGISTRATION
 // ─────────────────────────────────────────────────────────────
 async function approveReg(regId){
-  var all  = JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  var reg  = null;
-  for(var i=0;i<all.length;i++){if(all[i].id===regId){reg=all[i];break;}}
-  if(!reg){alert('Registration not found.');return;}
-  // Generate next Customer ID
+  // Find registration in PENDING_LIST first, then localStorage
+  var reg = null;
+  for(var i=0;i<PENDING_LIST.length;i++){
+    if(PENDING_LIST[i].id===regId){reg=PENDING_LIST[i];break;}
+  }
+  // Fallback to localStorage
+  if(!reg){
+    var all=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+    for(var j=0;j<all.length;j++){
+      if(all[j].id===regId){reg=all[j];break;}
+    }
+  }
+  if(!reg){
+    alert('❌ Error: Registration not found. Try refreshing the page and logging in again.');
+    return;
+  }
+
+  // Generate Customer ID
   var existing = JSON.parse(localStorage.getItem('sf_customers')||'{}');
-  var count    = Object.keys(existing).length+1;
-  var custId   = 'SKY-'+String(count).padStart(3,'0');
-  // Build customer record
-  var newCustomer={
-    pwd:reg.pwd, name:reg.name, phone:reg.phone, email:reg.email, city:reg.city,
+  var count    = Object.keys(existing).length + 1;
+  var custId   = 'SKY-' + String(count).padStart(3,'0');
+
+  // Build customer record locally
+  var newCustomer = {
+    pwd:reg.pwd, name:reg.name, phone:reg.phone, email:reg.email, city:reg.city||'',
     address:'', systemSize:'Pending', panels:'Pending',
     installCost:'Pending', amountPaid:'Pending',
     plan:'Pending – Skyflies Team will contact you',
@@ -1638,20 +1662,23 @@ async function approveReg(regId){
     subscriptions:[],
     timeline:[
       {icon:'📝',title:'Account Registered',   date:new Date().toLocaleDateString('en-IN'),desc:'Customer registered via portal.',status:'done'},
-      {icon:'✅',title:'Account Approved',      date:new Date().toLocaleDateString('en-IN'),desc:'Account approved by Skyflies Team. Customer ID: '+custId,status:'done'},
-      {icon:'📞',title:'Site Survey Scheduled', date:'TBD',desc:'Skyflies Team will contact you to schedule a free site survey.',status:'active'},
-      {icon:'📋',title:'Quotation',             date:'TBD',desc:'Detailed quotation after site survey.',status:'pending'},
+      {icon:'✅',title:'Account Approved',      date:new Date().toLocaleDateString('en-IN'),desc:'Approved by Skyflies Team. ID: '+custId,status:'done'},
+      {icon:'📞',title:'Site Survey',           date:'TBD',desc:'Skyflies Team will contact you for site survey.',status:'active'},
+      {icon:'📋',title:'Quotation',             date:'TBD',desc:'Quotation will be sent after site survey.',status:'pending'},
       {icon:'🔧',title:'Installation',          date:'TBD',desc:'Solar system installation.',status:'pending'},
       {icon:'✅',title:'System Active',         date:'TBD',desc:'System commissioned and running.',status:'pending'}
     ],
     queries:[]
   };
-  existing[custId]=newCustomer;
-  localStorage.setItem('sf_customers',JSON.stringify(existing));
-  // Send to Google Sheet – Customer Logins tab
+
+  // Save to local customers
+  existing[custId] = newCustomer;
+  localStorage.setItem('sf_customers', JSON.stringify(existing));
+
+  // Send to Google Sheet
   await sendToSheet({
     action:'addCustomer', customerId:custId,
-    name:reg.name, phone:reg.phone, email:reg.email, city:reg.city,
+    name:reg.name, phone:reg.phone, email:reg.email, city:reg.city||'',
     password:reg.pwd, address:'', systemSize:'Pending', panels:'Pending',
     installCost:'Pending', amountPaid:'Pending',
     plan:'Pending – Skyflies Team will contact',
@@ -1660,12 +1687,31 @@ async function approveReg(regId){
     installDate:new Date().toLocaleDateString('en-IN'),
     notes:'Self-registered. Approved '+new Date().toLocaleDateString('en-IN')
   });
-  await new Promise(function(r){setTimeout(r,600);});
-  // Mark as approved
-  all=all.map(function(p){return p.id===regId?Object.assign({},p,{status:'approved',customerId:custId}):p;});
-  localStorage.setItem('sf_pending',JSON.stringify(all));
-  alert('✅ APPROVED!\n\nCustomer Name : '+reg.name+'\nCustomer ID   : '+custId+'\nPhone         : '+reg.phone+'\n\nCustomer can now login using:\n  Phone: '+reg.phone+'\n  OR Email: '+reg.email+'\n  Password: (as set during registration)\n\nShare Customer ID '+custId+' with them for reference.');
-  refreshDash(); renderPending(); renderCustList();
+
+  // Mark as approved in pending list
+  var allPending = JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  allPending = allPending.map(function(p){
+    return p.id===regId ? Object.assign({},p,{status:'approved',customerId:custId}) : p;
+  });
+  localStorage.setItem('sf_pending', JSON.stringify(allPending));
+
+  // Show success
+  alert(
+    '✅ APPROVED SUCCESSFULLY!\n\n'+
+    'Customer Name : '+reg.name+'\n'+
+    'Customer ID   : '+custId+'\n'+
+    'Phone         : '+reg.phone+'\n'+
+    'Email         : '+reg.email+'\n\n'+
+    'The customer can now login with:\n'+
+    '  📞 Phone: '+reg.phone+'\n'+
+    '  ✉️  Email: '+reg.email+'\n'+
+    '  🔑 Password: (what they set)\n\n'+
+    'Share Customer ID '+custId+' with them.'
+  );
+
+  refreshDash();
+  renderPending();
+  renderCustList();
 }
 
 // ─────────────────────────────────────────────────────────────
