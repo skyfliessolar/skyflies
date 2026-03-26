@@ -979,6 +979,8 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     </div>
     <div class="wrow"><input type="url" id="whUrl" placeholder="Paste Google Apps Script Web App URL..."><button class="svbtn" onclick="saveWh()">💾 Save</button></div>
     <div class="wst" id="whSt"></div>
+    <button onclick="testConnection()" style="margin-top:10px;padding:10px 20px;background:rgba(100,180,255,0.1);border:1px solid rgba(100,180,255,0.3);border-radius:8px;color:#64B4FF;font-weight:600;font-size:13px;cursor:pointer;">🔌 Test Connection</button>
+    <div id="testResult" style="margin-top:8px;font-size:13px;"></div>
   </div>
   <div class="scard2">
     <h3>🔐 Change Admin Password</h3>
@@ -1006,7 +1008,9 @@ var COLORS = {
 
 function doPost(e) {
   try {
-    var data = JSON.parse(e.postData.contents);
+    // Handle both application/json and text/plain (CORS workaround)
+    var raw = e.postData.contents;
+    var data = JSON.parse(raw);
     var ss   = SpreadsheetApp.getActiveSpreadsheet();
     if (data.action === 'getCustomer')      return respond(getCustomer(ss, data));
     if (data.action === 'addCustomer')      return respond(addCustomer(ss, data));
@@ -1314,6 +1318,9 @@ function buildEmail(data, sheetName) {
 
 <script>
 var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
+var curFilter='all';
+var PENDING_LIST=[];
+var currentCustomer=null;
 var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbx7mFpd5YA8cX-2LxswzS3kbS7j9Ie5tK1hDti62UR4ZYGXflJHb6GiBiaxMvNg8x93/exec';
 
 // ─── NAV ───────────────────────────────────────────────────
@@ -1423,11 +1430,18 @@ async function doSubmit(formEl,type,okId,erId){
   document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));
   refreshDash();
 }
-document.getElementById('enqForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'enquiry','e-ok','e-er');});
-document.getElementById('quotForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'quotation','q-ok','q-er');});
-document.getElementById('subForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'subscribe','s-ok','s-er');});
-document.getElementById('emiForm').addEventListener('submit',e=>{e.preventDefault();doSubmit(e.target,'emi','em-ok','em-er');});
-document.getElementById('queryForm').addEventListener('submit',async function(e){
+// Safely attach form listeners
+(function(){
+  function safeOn(id,type,fn){var el=document.getElementById(id);if(el)el.addEventListener(type,fn);}
+  safeOn('enqForm','submit',function(e){e.preventDefault();doSubmit(e.target,'enquiry','e-ok','e-er');});
+  safeOn('quotForm','submit',function(e){e.preventDefault();doSubmit(e.target,'quotation','q-ok','q-er');});
+  safeOn('subForm','submit',function(e){e.preventDefault();doSubmit(e.target,'subscribe','s-ok','s-er');});
+  safeOn('emiForm','submit',function(e){e.preventDefault();doSubmit(e.target,'emi','em-ok','em-er');});
+})();
+(function(){
+  var qf=document.getElementById('queryForm');
+  if(!qf)return;
+  qf.addEventListener('submit',async function(e){
   e.preventDefault();
   var btn=this.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.bll');
   var fd=new FormData(this),data={formType:'query',action:'addQuery',customerId:currentCustomer?currentCustomer.id:'',customerName:currentCustomer?currentCustomer.name:'',submittedAt:new Date().toISOString()};
@@ -1447,12 +1461,32 @@ document.getElementById('queryForm').addEventListener('submit',async function(e)
     currentCustomer.queries=[...(ld.queries||[]),...((currentCustomer.queries||[]).filter(q=>!ld.queries.find(lq=>lq.message===q.message)))];
     renderQueries();
   }
-});
+  });
+})();
 
 async function sendToSheet(data){
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
   if(!wh)return false;
-  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});return true;}catch(e){return false;}
+  try{
+    // Use text/plain — required for Google Apps Script CORS to work
+    await fetch(wh,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(data)
+    });
+    return true;
+  }catch(e){
+    // Fallback with no-cors if text/plain fails
+    try{
+      await fetch(wh,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data),
+        mode:'no-cors'
+      });
+      return true;
+    }catch(e2){return false;}
+  }
 }
 
 // ─── LOCAL STORAGE ──────────────────────────────────────────
@@ -1462,8 +1496,36 @@ function getCustomerData(id){return JSON.parse(localStorage.getItem('cdata_'+id)
 function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(d));}
 
 // ─── SETUP ──────────────────────────────────────────────────
-function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);s.textContent='✅ Webhook saved!';s.className='wst ok';}
+function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);WEBHOOK_URL=u;s.textContent='✅ Webhook saved!';s.className='wst ok';}
 function savePwd(){var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}localStorage.setItem(PW,p);s.textContent='✅ Password updated.';s.className='wst ok';}
+async function testConnection(){
+  var res=document.getElementById('testResult');
+  res.textContent='⏳ Testing connection...';res.style.color='#F5A623';
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  if(!wh){res.textContent='❌ No URL saved. Paste your Apps Script URL and save first.';res.style.color='#FF5252';return;}
+  try{
+    // Test GET request first
+    var r=await fetch(wh,{method:'GET'});
+    var data=await r.json();
+    if(data.status==='ok'){
+      res.textContent='✅ Connected! Google Sheet is working. App: '+data.app;
+      res.style.color='#00E676';
+    } else {
+      res.textContent='⚠️ Connected but unexpected response: '+JSON.stringify(data);
+      res.style.color='#F5A623';
+    }
+  }catch(e){
+    // Try POST with text/plain
+    try{
+      var r2=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({formType:'test',name:'Connection Test'})});
+      res.textContent='✅ Connected via POST! Data will save to Google Sheet.';
+      res.style.color='#00E676';
+    }catch(e2){
+      res.textContent='❌ Cannot connect: '+e.message+'. Check your Apps Script URL and redeploy.';
+      res.style.color='#FF5252';
+    }
+  }
+}
 window.addEventListener('load',()=>{if(!localStorage.getItem(WH))localStorage.setItem(WH,WEBHOOK_URL);var wh=localStorage.getItem(WH);var el=document.getElementById('whUrl');if(el){el.value=wh;var st=document.getElementById('whSt');if(st){st.textContent='✅ Google Sheet connected.';st.className='wst ok';}}refreshDash();});
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
 
@@ -1548,7 +1610,6 @@ function adminLogout(){
 // RENDER PENDING REGISTRATIONS
 // ─────────────────────────────────────────────────────────────
 // Global array so approve/reject can always find the right registration
-var PENDING_LIST = [];
 
 function renderPending(){
   var all = JSON.parse(localStorage.getItem('sf_pending')||'[]');
@@ -1728,7 +1789,6 @@ function rejectReg(regId){
 }
 
 // ─── CUSTOMER PORTAL LOGIN ────────────────────────────────
-var currentCustomer=null;
 
 async function cLogin(){
   var uid=document.getElementById('cuid').value.trim();
@@ -1878,7 +1938,10 @@ function exportCSV(){
 function clearData(){if(confirm('Clear all local submission data? (Google Sheet data is safe)')){localStorage.removeItem(DB);refreshDash();}}
 
 // ─── ADD CUSTOMER FORM ─────────────────────────────────────
-document.getElementById('addCustForm').addEventListener('submit',async function(e){
+(function(){
+  var frm=document.getElementById('addCustForm');
+  if(!frm)return;
+  frm.addEventListener('submit',async function(e){
   e.preventDefault();
   var btn=this.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.bll');
   document.getElementById('ac-ok').classList.remove('show');
@@ -1891,7 +1954,7 @@ document.getElementById('addCustForm').addEventListener('submit',async function(
   // Try sending to Google Sheet
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
   try{
-    var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});
     var res=await r.json();
     if(res.status==='success')success=true;
   }catch(err){
@@ -1921,11 +1984,12 @@ document.getElementById('addCustForm').addEventListener('submit',async function(
   if(success){
     document.getElementById('ac-ok').classList.add('show');
     this.reset();
-    renderCustList(); // refresh customer list in admin
+    renderCustList();
   } else {
     document.getElementById('ac-er').classList.add('show');
   }
-});
+  });
+})();
 
 // ─── PORTAL TAB SWITCHING ─────────────────────────────────
 function showPortalTab(tab,btn){document.querySelectorAll('.ptab-content').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));document.getElementById('ptab-'+tab).classList.add('on');if(btn)btn.classList.add('on');document.getElementById('qry-ok').classList.remove('show');}
