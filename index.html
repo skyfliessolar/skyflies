@@ -1012,21 +1012,32 @@ var COLORS = {
 // ──────────────────────────────────────────────────────
 function doPost(e) {
   try {
-    var data = JSON.parse(e.postData.contents);
+    // Handle both content types (application/json and text/plain)
+    var raw = e.postData.contents;
+    var data = JSON.parse(raw);
     var ss   = SpreadsheetApp.getActiveSpreadsheet();
 
     // Route by action
-    if (data.action === 'getCustomer')  return getCustomer(ss, data);
-    if (data.action === 'addCustomer')  return addCustomer(ss, data);
-    if (data.action === 'addQuery')     return addQuery(ss, data);
-    if (data.action === 'updateLogin')  return updateCustomerLogin(ss, data);
+    if (data.action === 'getCustomer')      return getCustomer(ss, data);
+    if (data.action === 'addCustomer')      return addCustomer(ss, data);
+    if (data.action === 'addQuery')         return addQuery(ss, data);
+    if (data.action === 'registerCustomer') return saveRegistration(ss, data);
+    if (data.action === 'loginEvent')       return saveLoginEvent(ss, data);
 
-    // ── Regular form submissions ──
+    // Regular form submissions
     return handleForm(ss, data);
 
   } catch(err) {
-    return json({status:'error', message:err.toString()});
+    return respond({status:'error', message:err.toString()});
   }
+}
+
+// ── SAVE LOGIN EVENT ─────────────────────────────────
+function saveLoginEvent(ss, data) {
+  var headers = ['Timestamp','Customer ID','Name','Phone','Login Time'];
+  var sh = getOrCreate(ss, 'Login History', headers, COLORS.grey);
+  sh.appendRow([timestamp(), data.customerId, data.name||'', data.phone||'', data.loginTime||timestamp()]);
+  return respond({status:'success'});
 }
 
 function doGet() {
@@ -1083,7 +1094,7 @@ function handleForm(ss, data) {
   // Email alert
   var subject = '🌞 New ' + cfg.sheet + ' – Skyflies Solar | ' + (data.name||data.customerId||'Unknown') + (data.city ? ' – '+data.city : '');
   var body = buildEmailBody(data, cfg.sheet);
-  try { MailApp.sendEmail('info@skyflies.in', subject, body); } catch(me) {}
+  try { MailApp.sendEmail('skyfliessolar@gmail.com', subject, body); } catch(me) {}
 
   return json({status:'success', sheet: cfg.sheet, row: rowNum});
 }
@@ -1192,7 +1203,7 @@ function addCustomer(ss, data) {
 
   // Email alert
   try {
-    MailApp.sendEmail('info@skyflies.in',
+    MailApp.sendEmail('skyfliessolar@gmail.com',
       '✅ New Customer Account – ' + data.name + ' (' + data.customerId + ')',
       'New customer portal account created:\n\n'
       +'Customer ID : ' + data.customerId + '\n'
@@ -1224,7 +1235,7 @@ function addQuery(ss, data) {
   sh.autoResizeColumns(1, sh.getLastColumn());
 
   try {
-    MailApp.sendEmail('info@skyflies.in',
+    MailApp.sendEmail('skyfliessolar@gmail.com',
       '🔔 Customer Query – ' + (data.customerName||data.customerId) + ' | ' + data.queryType,
       'New customer query:\n\nCustomer : ' + (data.customerName||'') + ' (' + data.customerId + ')\n'
       +'Type     : ' + data.queryType + '\n'
@@ -1791,22 +1802,35 @@ async function cLogin(){
   btn.style.display='none';loader.style.display='block';
 
   var customer=null;
-  // Check Google Sheet first
-  var wh=localStorage.getItem(WH);
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+
+  // 1. Try Google Sheet (with CORS)
   if(wh){
     try{
-      var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd})});
+      var r=await fetch(wh,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd})
+      });
       var res=await r.json();
-      if(res.status==='success')customer={...res.customer,id:res.customer.id};
-    }catch(e2){}
+      if(res.status==='success'){
+        customer=res.customer;
+        customer.id=res.customer.id;
+        // Save locally for offline use
+        var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+        lc[customer.id]=Object.assign({},customer,{pwd:pwd});
+        localStorage.setItem('sf_customers',JSON.stringify(lc));
+      }
+    }catch(e){}
   }
-  // Check locally approved customers (by phone or email or ID)
+
+  // 2. Fallback — check locally approved customers
   if(!customer){
     var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
     Object.keys(lc).forEach(function(k){
       var c=lc[k];
       if((c.phone===uid||c.email===uid||k===uid)&&c.pwd===pwd)
-        customer={...c,id:k};
+        customer=Object.assign({},c,{id:k});
     });
   }
 
@@ -1814,6 +1838,9 @@ async function cLogin(){
 
   if(customer){
     currentCustomer=customer;
+    // Save login event to Google Sheet
+    sendToSheet({formType:'loginEvent',customerId:customer.id,name:customer.name,phone:customer.phone,loginTime:new Date().toISOString()});
+    // Merge local queries
     var ld=JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');
     if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
     document.getElementById('cLoginBox').style.display='none';
@@ -1826,7 +1853,7 @@ async function cLogin(){
     document.getElementById('pc-next').textContent=customer.nextService||'–';
     renderTimeline();renderSubs();renderQueries();
   } else {
-    erEl.textContent='❌ Wrong phone/email or password. If not registered, click "New Registration" above.';
+    erEl.textContent='❌ Wrong phone/email or password. If not registered, click "New Registration" tab.';
     erEl.classList.add('show');
   }
 }
