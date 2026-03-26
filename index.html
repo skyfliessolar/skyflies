@@ -730,25 +730,53 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
 
 <!-- ═══ CUSTOMER PORTAL ═══ -->
 <div class="page" id="page-portal">
-  <div class="sh"><div class="stag">👤 My Account</div><h2>Customer <span>Portal</span></h2><p>Login to view your installation details, subscription plans, project timeline and raise queries.</p></div>
+  <div class="sh"><div class="stag">👤 My Account</div><h2>Customer <span>Portal</span></h2><p>Login or register to view your installation, subscription plans, project timeline and raise queries.</p></div>
 
-  <!-- LOGIN -->
+  <!-- PORTAL TABS: Login / Register -->
   <div class="clogin" id="cLoginBox">
-    <div class="fc">
-      <div class="ft">Customer Login</div>
-      <div class="fs">Login with your credentials. New customer? Contact Skyflies Team at +91 93854 49167 to get your login details.</div>
-      <div class="fi" style="margin-bottom:16px;"><label class="lb">Customer ID / Email <span>*</span></label><input type="text" id="cuid" placeholder="e.g. SKY-001 or your@email.com"></div>
-      <div class="fi" style="margin-bottom:8px;"><label class="lb">Password <span>*</span></label><input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()"></div>
-      <button onclick="cLogin()" class="sbtn" style="margin-top:16px;"><span>LOGIN →</span></button>
-      <div class="alrt er" id="cloginErr" style="margin-top:12px;">❌ &nbsp;Wrong ID or password. Contact Skyflies Team to reset.</div>
-      <p style="font-size:11px;color:var(--soft);margin-top:16px;text-align:center;">Demo login: ID <strong style="color:var(--sun)">SKY-001</strong> / Password <strong style="color:var(--sun)">solar123</strong></p>
+    <div style="display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;padding:4px;margin-bottom:20px;">
+      <button id="tabLoginBtn" onclick="switchAuthTab('login')" style="flex:1;padding:9px;border-radius:7px;border:none;cursor:pointer;font-weight:600;font-size:13px;background:linear-gradient(135deg,var(--sun),var(--solar));color:var(--deep);transition:all 0.2s;">Login</button>
+      <button id="tabRegBtn" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border-radius:7px;border:none;cursor:pointer;font-weight:600;font-size:13px;background:transparent;color:var(--soft);transition:all 0.2s;">New Registration</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="authLogin">
+      <div class="fc">
+        <div class="ft">Customer Login</div>
+        <div class="fs">Login with your registered phone/email and password.</div>
+        <div class="fi" style="margin-bottom:14px;"><label class="lb">Phone Number or Email <span>*</span></label><input type="text" id="cuid" placeholder="+91 XXXXX XXXXX or email@example.com"></div>
+        <div class="fi" style="margin-bottom:8px;"><label class="lb">Password <span>*</span></label><input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()"></div>
+        <button onclick="cLogin()" class="sbtn" style="margin-top:16px;"><span id="loginBtnTxt">LOGIN →</span><div class="bll" id="loginLoader"></div></button>
+        <div class="alrt er" id="cloginErr" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="authRegister" style="display:none;">
+      <div class="fc" style="--border:rgba(0,230,118,0.25);">
+        <div class="ft">New Registration</div>
+        <div class="fs">Register your details. Skyflies Team will verify and activate your account within 24 hours.</div>
+        <div class="fg">
+          <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" id="regName" placeholder="Your full name" required></div>
+          <div class="fi"><label class="lb">Phone Number <span>*</span></label><input type="tel" id="regPhone" placeholder="+91 XXXXX XXXXX" required></div>
+          <div class="fi"><label class="lb">Email Address <span>*</span></label><input type="email" id="regEmail" placeholder="your@email.com" required></div>
+          <div class="fi"><label class="lb">City <span>*</span></label>
+            <select id="regCity"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select>
+          </div>
+          <div class="fi full"><label class="lb">Set Your Password <span>*</span></label><input type="password" id="regPwd" placeholder="Choose a strong password (min 6 characters)" required></div>
+          <div class="fi full"><label class="lb">Confirm Password <span>*</span></label><input type="password" id="regPwd2" placeholder="Re-enter your password" required></div>
+        </div>
+        <button onclick="registerCustomer()" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;margin-top:20px;"><span id="regBtnTxt">SUBMIT REGISTRATION →</span><div class="bll" id="regLoader"></div></button>
+        <div class="alrt ok" id="reg-ok" style="margin-top:12px;">✅ &nbsp;Registration submitted! Skyflies Team will verify your details and activate your account within 24 hours. You will be able to login once approved.</div>
+        <div class="alrt er" id="reg-er" style="margin-top:12px;"></div>
+      </div>
     </div>
   </div>
 
   <!-- PORTAL DASHBOARD -->
   <div class="cportal" id="cPortal">
     <div class="portal-top">
-      <div><div class="portal-welcome" id="portalName">Welcome, Customer!</div><div style="font-size:13px;color:var(--soft);" id="portalId">ID: SKY-001</div></div>
+      <div><div class="portal-welcome" id="portalName">Welcome!</div><div style="font-size:13px;color:var(--soft);" id="portalId"></div></div>
       <button onclick="cLogout()" style="padding:8px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.2);border-radius:8px;color:var(--error);font-size:12px;font-weight:600;cursor:pointer;">🔓 Logout</button>
     </div>
     <div class="portal-tabs">
@@ -854,14 +882,14 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
 
 <!-- ═══ ADMIN DASHBOARD ═══ -->
 <div class="page" id="page-admin">
-  <div class="sh"><div class="stag">🔐 Admin</div><h2>Admin <span>Dashboard</span></h2><p>View all submissions from enquiries, quotations, subscriptions, EMI & queries.</p></div>
+  <div class="sh"><div class="stag">🔐 Admin</div><h2>Admin <span>Dashboard</span></h2><p>Manage all submissions, customer accounts and pending registrations.</p></div>
   <div class="alogin" id="adminLoginBox">
     <div class="fc">
-      <div class="ft">Admin Login</div><div class="fs">Enter the admin password to access the dashboard.</div>
-      <div class="fi" style="margin-bottom:16px;"><label class="lb">Password</label><input type="password" id="adminPwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
-      <button onclick="adminLogin()" class="sbtn" style="margin-top:0;"><span>LOGIN →</span></button>
-      <div class="alrt er" id="loginErr" style="margin-top:12px;">❌ &nbsp;Wrong password.</div>
-      <p style="font-size:11px;color:var(--soft);margin-top:14px;text-align:center;">Default: <strong style="color:var(--sun)">skyflies2024</strong> — Change in Setup</p>
+      <div class="ft">Admin Login</div>
+      <div class="fs">Enter your admin password to access the dashboard.</div>
+      <div class="fi" style="margin-bottom:14px;"><label class="lb">Admin Password <span>*</span></label><input type="password" id="adminPwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <button onclick="adminLogin()" class="sbtn" style="margin-top:16px;"><span>LOGIN →</span></button>
+      <div class="alrt er" id="loginErr" style="margin-top:12px;">❌ &nbsp;Wrong password. Default is skyflies2024 — change it in Setup tab.</div>
     </div>
   </div>
   <div class="adash" id="adminDash">
@@ -871,12 +899,21 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
       <div class="dcard gr"><div style="font-size:24px;margin-bottom:10px;">💰</div><div class="dcv" id="quotCount">0</div><div class="dcl">Quotations</div></div>
       <div class="dcard pu"><div style="font-size:24px;margin-bottom:10px;">⭐</div><div class="dcv" id="subCount">0</div><div class="dcl">Subscriptions</div></div>
       <div class="dcard cy"><div style="font-size:24px;margin-bottom:10px;">💳</div><div class="dcv" id="emiCount">0</div><div class="dcl">EMI Enquiries</div></div>
+      <div class="dcard" style="border-color:rgba(255,165,0,0.3);"><div style="font-size:24px;margin-bottom:10px;">⏳</div><div class="dcv" id="pendCount" style="background:linear-gradient(135deg,#FF9800,#FF5722);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">0</div><div class="dcl">Pending Approval</div></div>
     </div>
     <div class="dacts">
       <button class="dbtn p" onclick="exportCSV()">📥 Export CSV</button>
       <button class="dbtn s" onclick="clearData()">🗑️ Clear Data</button>
       <button class="dbtn s" onclick="adminLogout()">🔓 Logout</button>
     </div>
+
+    <!-- PENDING REGISTRATIONS — shown first if any -->
+    <div class="dtw" id="pendingBox" style="margin-bottom:16px;border-color:rgba(255,165,0,0.3);">
+      <h4 style="color:#FF9800;">⏳ Pending Customer Registrations <span id="pendBadge" style="background:rgba(255,152,0,0.2);color:#FF9800;padding:2px 10px;border-radius:12px;font-size:12px;margin-left:8px;"></span></h4>
+      <p style="font-size:12px;color:var(--soft);margin-bottom:14px;">New customers who registered are waiting for your approval. Review and approve or reject each one.</p>
+      <div id="pendingContainer"><div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">No pending registrations.</div></div>
+    </div>
+
     <div class="fbr">
       <button class="fb2 on" onclick="filterTable('all',this)">All Submissions</button>
       <button class="fb2" onclick="filterTable('enquiry',this)">Enquiries</button>
@@ -892,18 +929,16 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <!-- CUSTOMER ACCOUNTS LIST -->
     <div class="dtw" style="margin-top:8px;">
       <h4 style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-        <span>👥 Customer Accounts</span>
-        <span style="font-size:11px;color:var(--soft);font-weight:400;">All accounts saved to Google Sheet → "Customer Logins" tab</span>
+        <span>👥 Active Customer Accounts</span>
+        <span style="font-size:11px;color:var(--soft);font-weight:400;">Saved in Google Sheet → "Customer Logins" tab</span>
       </h4>
-      <div id="custListContainer">
-        <div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No customer accounts created yet. Add one below.</div>
-      </div>
+      <div id="custListContainer"><div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No customer accounts yet.</div></div>
     </div>
 
-    <!-- ADD CUSTOMER ACCOUNT -->
+    <!-- ADD CUSTOMER ACCOUNT MANUALLY -->
     <div class="dtw" style="margin-top:8px;">
-      <h4>👤 Add New Customer Account</h4>
-      <p style="font-size:12px;color:var(--soft);margin-bottom:20px;line-height:1.6;">Create a login account for a customer. Their details will be saved to the <strong style="color:var(--sun)">Customer Logins</strong> sheet in Google Sheets. They can then login with their ID and password to see their project details.</p>
+      <h4>➕ Add Customer Account Manually</h4>
+      <p style="font-size:12px;color:var(--soft);margin-bottom:20px;line-height:1.6;">Manually create a login for a customer. Their details save to <strong style="color:var(--sun)">Customer Logins</strong> sheet and they can login immediately.</p>
       <form id="addCustForm">
         <div class="fg">
           <div class="fi"><label class="lb">Customer ID <span>*</span></label><input type="text" name="customerId" placeholder="e.g. SKY-002" required></div>
@@ -922,11 +957,11 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
           <div class="fi"><label class="lb">Installation Date</label><input type="text" name="installDate" placeholder="e.g. 28 Jan 2026"></div>
           <div class="fi"><label class="lb">Next Service Date</label><input type="text" name="nextService" placeholder="e.g. 15 Apr 2026"></div>
           <div class="fi"><label class="lb">System Status</label><select name="systemStatus"><option value="Active">Active ✅</option><option value="Pending Installation">Pending Installation</option><option value="Under Maintenance">Under Maintenance</option><option value="Inactive">Inactive</option></select></div>
-          <div class="fi"><label class="lb">Notes</label><input type="text" name="notes" placeholder="Any extra notes about this customer"></div>
+          <div class="fi"><label class="lb">Notes</label><input type="text" name="notes" placeholder="Any extra notes"></div>
         </div>
-        <button type="submit" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);margin-top:20px;"><span class="bt">CREATE CUSTOMER ACCOUNT →</span><div class="bll"></div></button>
-        <div class="alrt ok" id="ac-ok" style="margin-top:12px;">✅ &nbsp;Customer account created and saved to Google Sheet! Share the Customer ID and Password with them.</div>
-        <div class="alrt er" id="ac-er" style="margin-top:12px;">❌ &nbsp;Error creating account. Check your Google Sheet connection in Setup.</div>
+        <button type="submit" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;margin-top:20px;"><span class="bt">CREATE ACCOUNT →</span><div class="bll"></div></button>
+        <div class="alrt ok" id="ac-ok" style="margin-top:12px;">✅ &nbsp;Customer account created! Share their ID and password with them.</div>
+        <div class="alrt er" id="ac-er" style="margin-top:12px;">❌ &nbsp;Error. Check your Google Sheet connection in Setup.</div>
       </form>
     </div>
 </div>
@@ -1029,6 +1064,11 @@ function handleForm(ss, data) {
       sheet: 'Customer Queries', color: COLORS.teal,
       headers: ['#','Timestamp','Customer ID','Customer Name','Query Type','Priority','Message','Status','Response'],
       row: (d,n) => [n,ts,d.customerId,d.customerName||'',d.queryType,d.priority||'Normal',d.message,'Open','']
+    },
+    register: {
+      sheet: 'Pending Registrations', color: COLORS.grey,
+      headers: ['#','Timestamp','Name','Phone','Email','City','Status','Notes'],
+      row: (d,n) => [n,ts,d.name,d.phone,d.email,d.city,'Pending Approval','Awaiting admin review']
     }
   };
 
@@ -1541,10 +1581,217 @@ function savePwd(){var p=document.getElementById('newPwd').value.trim();var s=do
 window.addEventListener('load',()=>{var wh=localStorage.getItem(WH);if(wh){var el=document.getElementById('whUrl');if(el){el.value=wh;document.getElementById('whSt').textContent='✅ Webhook active.';document.getElementById('whSt').className='wst ok';}}refreshDash();});
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
 
-// ─── ADMIN ──────────────────────────────────────────────────
-function adminLogin(){var pwd=document.getElementById('adminPwd').value;var correct=localStorage.getItem(PW)||'skyflies2024';if(pwd===correct){document.getElementById('adminLoginBox').style.display='none';document.getElementById('adminDash').classList.add('on');refreshDash();renderCustList();}else{var e=document.getElementById('loginErr');e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000);}}
-function adminLogout(){document.getElementById('adminLoginBox').style.display='';document.getElementById('adminDash').classList.remove('on');document.getElementById('adminPwd').value='';}
-var curFilter='all';
+// ─── AUTH TAB SWITCH ──────────────────────────────────────
+function switchAuthTab(tab){
+  var loginBtn=document.getElementById('tabLoginBtn');
+  var regBtn=document.getElementById('tabRegBtn');
+  var loginDiv=document.getElementById('authLogin');
+  var regDiv=document.getElementById('authRegister');
+  if(tab==='login'){
+    loginDiv.style.display='';regDiv.style.display='none';
+    loginBtn.style.background='linear-gradient(135deg,var(--sun),var(--solar))';loginBtn.style.color='var(--deep)';
+    regBtn.style.background='transparent';regBtn.style.color='var(--soft)';
+  } else {
+    loginDiv.style.display='none';regDiv.style.display='';
+    regBtn.style.background='linear-gradient(135deg,#00E676,#00B0FF)';regBtn.style.color='#080F1E';
+    loginBtn.style.background='transparent';loginBtn.style.color='var(--soft)';
+  }
+}
+
+// ─── CUSTOMER REGISTRATION ────────────────────────────────
+async function registerCustomer(){
+  var name=document.getElementById('regName').value.trim();
+  var phone=document.getElementById('regPhone').value.trim();
+  var email=document.getElementById('regEmail').value.trim();
+  var city=document.getElementById('regCity').value;
+  var pwd=document.getElementById('regPwd').value;
+  var pwd2=document.getElementById('regPwd2').value;
+  var okEl=document.getElementById('reg-ok');
+  var erEl=document.getElementById('reg-er');
+  okEl.classList.remove('show');erEl.classList.remove('show');
+
+  if(!name||!phone||!email||!pwd){erEl.textContent='❌ Please fill in all required fields.';erEl.classList.add('show');return;}
+  if(pwd.length<6){erEl.textContent='❌ Password must be at least 6 characters.';erEl.classList.add('show');return;}
+  if(pwd!==pwd2){erEl.textContent='❌ Passwords do not match.';erEl.classList.add('show');return;}
+
+  var btn=document.getElementById('regBtnTxt');var loader=document.getElementById('regLoader');
+  btn.style.display='none';loader.style.display='block';
+
+  // Save to pending registrations locally + Google Sheet
+  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  var reg={id:'REG-'+Date.now(),name,phone,email,city,pwd,status:'pending',submittedAt:new Date().toISOString()};
+  pending.push(reg);
+  localStorage.setItem('sf_pending',JSON.stringify(pending));
+
+  // Send to Google Sheet
+  var data={formType:'register',action:'registerCustomer',name,phone,email,city,password:pwd,status:'Pending Approval',submittedAt:new Date().toISOString()};
+  await sendToSheet(data);
+  await new Promise(r=>setTimeout(r,800));
+  btn.style.display='';loader.style.display='none';
+  okEl.classList.add('show');
+  document.getElementById('regName').value='';document.getElementById('regPhone').value='';
+  document.getElementById('regEmail').value='';document.getElementById('regPwd').value='';
+  document.getElementById('regPwd2').value='';
+}
+
+// ─── ADMIN LOGIN (email + password) ───────────────────────
+function adminLogin(){
+  var pwd=document.getElementById('adminPwd').value.trim();
+  var correct=localStorage.getItem(PW)||'skyflies2024';
+  if(pwd===correct){
+    document.getElementById('adminLoginBox').style.display='none';
+    document.getElementById('adminDash').classList.add('on');
+    refreshDash();renderCustList();renderPending();
+  }else{
+    var e=document.getElementById('loginErr');
+    e.classList.add('show');
+    setTimeout(()=>e.classList.remove('show'),4000);
+  }
+}
+function adminLogout(){
+  document.getElementById('adminLoginBox').style.display='';
+  document.getElementById('adminDash').classList.remove('on');
+  document.getElementById('adminPwd').value='';
+}
+
+// ─── RENDER PENDING REGISTRATIONS ─────────────────────────
+function renderPending(){
+  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]').filter(p=>p.status==='pending');
+  var pc=document.getElementById('pendCount');var pb=document.getElementById('pendBadge');
+  if(pc)pc.textContent=pending.length;
+  if(pb)pb.textContent=pending.length>0?pending.length+' waiting':'';
+  var con=document.getElementById('pendingContainer');if(!con)return;
+  if(!pending.length){con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">✅ No pending registrations.</div>';return;}
+  var html='<div style="display:flex;flex-direction:column;gap:10px;">';
+  pending.forEach(function(p){
+    html+=`<div style="background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.25);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-weight:700;font-size:14px;color:#fff;">${p.name}</div>
+        <div style="font-size:12px;color:var(--soft);margin-top:3px;">📞 ${p.phone} &nbsp;|&nbsp; ✉️ ${p.email} &nbsp;|&nbsp; 📍 ${p.city||'–'}</div>
+        <div style="font-size:11px;color:var(--soft);margin-top:2px;">Registered: ${new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="approveReg('${p.id}','${p.name}','${p.phone}','${p.email}','${p.city||''}','${p.pwd}')"
+          style="padding:8px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:12px;cursor:pointer;">✅ Approve & Activate</button>
+        <button onclick="rejectReg('${p.id}')"
+          style="padding:8px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:var(--error);font-weight:700;font-size:12px;cursor:pointer;">❌ Reject</button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  con.innerHTML=html;
+}
+
+// ─── APPROVE REGISTRATION ─────────────────────────────────
+async function approveReg(id,name,phone,email,city,pwd){
+  // Generate Customer ID
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  var num=Object.keys(lc).length+1;
+  var custId='SKY-'+String(num).padStart(3,'0');
+
+  // Create customer account
+  var custData={
+    action:'addCustomer',customerId:custId,name,phone,email,city,
+    password:pwd,address:'',systemSize:'Pending',panels:'Pending',
+    installCost:'Pending',amountPaid:'Pending',plan:'Pending',
+    billingCycle:'Monthly',nextService:'TBD',systemStatus:'Pending Installation',
+    installDate:'',notes:'Self-registered. Awaiting installation details.',
+    subscriptions:[],timeline:[
+      {icon:'📝',title:'Account Registered',date:new Date().toLocaleDateString('en-IN'),desc:'Customer registered via portal and account approved by Skyflies Team.',status:'done'},
+      {icon:'📅',title:'Awaiting Installation',date:'TBD',desc:'Installation details to be updated by Skyflies Team.',status:'active'}
+    ],queries:[]
+  };
+
+  // Save locally
+  lc[custId]=custData;
+  localStorage.setItem('sf_customers',JSON.stringify(lc));
+
+  // Send to Google Sheet
+  await sendToSheet(custData);
+  await new Promise(r=>setTimeout(r,600));
+
+  // Remove from pending
+  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  pending=pending.map(p=>p.id===id?{...p,status:'approved',customerId:custId}:p);
+  localStorage.setItem('sf_pending',JSON.stringify(pending));
+
+  alert('✅ '+name+' approved!\n\nCustomer ID: '+custId+'\nPassword: (as they set during registration)\n\nShare this Customer ID with them: '+custId);
+  renderPending();renderCustList();
+  var pc=document.getElementById('pendCount');
+  if(pc)pc.textContent=pending.filter(p=>p.status==='pending').length;
+}
+
+// ─── REJECT REGISTRATION ──────────────────────────────────
+function rejectReg(id){
+  if(!confirm('Reject this registration?')) return;
+  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  pending=pending.map(p=>p.id===id?{...p,status:'rejected'}:p);
+  localStorage.setItem('sf_pending',JSON.stringify(pending));
+  renderPending();
+}
+
+// ─── CUSTOMER PORTAL LOGIN ────────────────────────────────
+var currentCustomer=null;
+
+async function cLogin(){
+  var uid=document.getElementById('cuid').value.trim();
+  var pwd=document.getElementById('cpwd').value.trim();
+  var erEl=document.getElementById('cloginErr');
+  erEl.classList.remove('show');
+  if(!uid||!pwd){erEl.textContent='❌ Please enter your phone/email and password.';erEl.classList.add('show');return;}
+
+  var btn=document.getElementById('loginBtnTxt');var loader=document.getElementById('loginLoader');
+  btn.style.display='none';loader.style.display='block';
+
+  var customer=null;
+  // Check Google Sheet first
+  var wh=localStorage.getItem(WH);
+  if(wh){
+    try{
+      var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd})});
+      var res=await r.json();
+      if(res.status==='success')customer={...res.customer,id:res.customer.id};
+    }catch(e2){}
+  }
+  // Check locally approved customers (by phone or email or ID)
+  if(!customer){
+    var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+    Object.keys(lc).forEach(function(k){
+      var c=lc[k];
+      if((c.phone===uid||c.email===uid||k===uid)&&c.pwd===pwd)
+        customer={...c,id:k};
+    });
+  }
+
+  btn.style.display='';loader.style.display='none';
+
+  if(customer){
+    currentCustomer=customer;
+    var ld=JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');
+    if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
+    document.getElementById('cLoginBox').style.display='none';
+    document.getElementById('cPortal').classList.add('on');
+    document.getElementById('portalName').textContent='Welcome, '+customer.name+'!';
+    document.getElementById('portalId').textContent='ID: '+customer.id+' • '+customer.phone;
+    document.getElementById('pc-cost').textContent=customer.installCost||'–';
+    document.getElementById('pc-paid').textContent=customer.amountPaid||'–';
+    document.getElementById('pc-plan').textContent=customer.plan||'–';
+    document.getElementById('pc-next').textContent=customer.nextService||'–';
+    renderTimeline();renderSubs();renderQueries();
+  } else {
+    erEl.textContent='❌ Wrong phone/email or password. If not registered, click "New Registration" above.';
+    erEl.classList.add('show');
+  }
+}
+
+function cLogout(){
+  document.getElementById('cLoginBox').style.display='';
+  document.getElementById('cPortal').classList.remove('on');
+  currentCustomer=null;
+  document.getElementById('cuid').value='';
+  document.getElementById('cpwd').value='';
+  switchAuthTab('login');
+}
 function refreshDash(){
   var data=getLocal();
   var counts={all:data.length,enquiry:0,quotation:0,subscribe:0,emi:0};
@@ -1554,6 +1801,8 @@ function refreshDash(){
   var qc=document.getElementById('quotCount');if(qc)qc.textContent=counts.quotation;
   var sc=document.getElementById('subCount');if(sc)sc.textContent=counts.subscribe;
   var mc=document.getElementById('emiCount');if(mc)mc.textContent=counts.emi;
+  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]').filter(p=>p.status==='pending');
+  var pc=document.getElementById('pendCount');if(pc)pc.textContent=pending.length;
   renderTable(curFilter);
   renderCustList();
 }
@@ -1668,83 +1917,7 @@ document.getElementById('addCustForm').addEventListener('submit',async function(
   }
 });
 
-// ─── CUSTOMER PORTAL ───────────────────────────────────────
-var currentCustomer=null;
-// Demo fallback customer (works without Google Sheet)
-var DEMO_CUSTOMERS={
-  'SKY-001':{pwd:'solar123',name:'Karthick Kumar',city:'Chennai',installCost:'₹3,45,000',amountPaid:'₹3,45,000',plan:'Standard Care – ₹999/mo',nextService:'15 Apr 2026',systemStatus:'Active',systemSize:'5 kW',panels:'10',
-    timeline:[
-      {icon:'📞',title:'Enquiry Received',date:'12 Jan 2026',desc:'Initial enquiry submitted via website.',status:'done'},
-      {icon:'📋',title:'Quotation Sent',date:'13 Jan 2026',desc:'Detailed quotation of ₹3,45,000 sent to customer email.',status:'done'},
-      {icon:'💰',title:'Order Confirmed & Payment',date:'18 Jan 2026',desc:'Payment received. 5 kW system ordered.',status:'done'},
-      {icon:'📦',title:'Panels Delivered',date:'25 Jan 2026',desc:'10 × 400W Monocrystalline panels delivered to site.',status:'done'},
-      {icon:'🔧',title:'Installation Completed',date:'28 Jan 2026',desc:'Full 5 kW grid-tied system installed.',status:'done'},
-      {icon:'✅',title:'Commissioning & Handover',date:'30 Jan 2026',desc:'System live. Generating ~22 units/day.',status:'done'},
-      {icon:'🧹',title:'First Cleaning Service',date:'28 Feb 2026',desc:'Monthly cleaning done. Performance verified.',status:'done'},
-      {icon:'📅',title:'Next Service Scheduled',date:'15 Apr 2026',desc:'Monthly cleaning and electrical inspection.',status:'active'}
-    ],
-    subscriptions:[{name:'Standard Care',price:'₹999/month',billing:'Monthly',since:'1 Feb 2026',status:'Active',features:['2× Panel cleaning/month','Electrical + inverter check','Monthly performance report','WhatsApp support']}],
-    queries:[{type:'Post-Installation Issue',priority:'Normal',message:'Inverter showing error code E03. Please advise.',date:'10 Mar 2026',status:'closed'},{type:'Cleaning Request',priority:'Normal',message:'Requesting early cleaning after dust storm.',date:'20 Mar 2026',status:'open'}]
-  }
-};
-
-async function cLogin(){
-  var uid=document.getElementById('cuid').value.trim();
-  var pwd=document.getElementById('cpwd').value.trim();
-  if(!uid||!pwd){alert('Please enter your Customer ID and Password.');return;}
-
-  var btn=document.querySelector('#cLoginBox .sbtn');
-  btn.disabled=true;btn.textContent='Checking...';
-
-  var customer=null;
-  // 1. Try Google Sheet first
-  var wh=localStorage.getItem(WH);
-  if(wh){
-    try{
-      var resp=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd}),mode:'no-cors'});
-      // no-cors can't read response body — try cors version
-    }catch(e){}
-    // Try cors fetch (works if CORS is set correctly in Apps Script)
-    try{
-      var r2=await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd})});
-      var res=await r2.json();
-      if(res.status==='success')customer={...res.customer,id:uid};
-    }catch(e2){}
-  }
-  // 2. Fallback to demo customers
-  if(!customer){
-    var dc=DEMO_CUSTOMERS[uid];
-    if(dc&&dc.pwd===pwd)customer={...dc,id:uid};
-  }
-  // 3. Check locally added customers
-  if(!customer){
-    var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
-    var lcu=lc[uid];
-    if(lcu&&lcu.pwd===pwd)customer={...lcu,id:uid};
-  }
-
-  btn.disabled=false;btn.textContent='LOGIN →';
-
-  if(customer){
-    currentCustomer=customer;
-    // Merge locally stored queries
-    var ld=JSON.parse(localStorage.getItem('cdata_'+uid)||'{}');
-    if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
-    document.getElementById('cLoginBox').style.display='none';
-    document.getElementById('cPortal').classList.add('on');
-    document.getElementById('portalName').textContent='Welcome, '+customer.name+'!';
-    document.getElementById('portalId').textContent='Customer ID: '+uid;
-    document.getElementById('pc-cost').textContent=customer.installCost||customer.cost||'–';
-    document.getElementById('pc-paid').textContent=customer.amountPaid||customer.paid||'–';
-    document.getElementById('pc-plan').textContent=customer.plan||'–';
-    document.getElementById('pc-next').textContent=customer.nextService||'–';
-    renderTimeline();renderSubs();renderQueries();
-  }else{
-    var e=document.getElementById('cloginErr');e.classList.add('show');
-    setTimeout(()=>e.classList.remove('show'),4000);
-  }
-}
-function cLogout(){document.getElementById('cLoginBox').style.display='';document.getElementById('cPortal').classList.remove('on');currentCustomer=null;document.getElementById('cuid').value='';document.getElementById('cpwd').value='';}
+// ─── PORTAL TAB SWITCHING ─────────────────────────────────
 function showPortalTab(tab,btn){document.querySelectorAll('.ptab-content').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));document.getElementById('ptab-'+tab).classList.add('on');if(btn)btn.classList.add('on');document.getElementById('qry-ok').classList.remove('show');}
 
 function renderTimeline(){
