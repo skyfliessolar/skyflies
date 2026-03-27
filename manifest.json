@@ -1,0 +1,52 @@
+{
+  "name": "Skyflies Solar Solutions",
+  "short_name": "Skyflies Solar",
+  "description": "Solar Installation, Cleaning, AMC & Customer Portal – Tamil Nadu",
+  "start_url": "/skyflies/",
+  "scope": "/skyflies/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080F1E",
+  "theme_color": "#F5A623",
+  "icons": [
+    {
+      "src": "https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "utilities"],
+  "lang": "en-IN",
+  "dir": "ltr",
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Get Free Quote",
+      "short_name": "Quote",
+      "description": "Get a solar quote instantly",
+      "url": "/skyflies/?page=calculator",
+      "icons": [{"src": "https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "My Account",
+      "short_name": "Account",
+      "description": "Customer portal login",
+      "url": "/skyflies/?page=portal",
+      "icons": [{"src": "https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png", "sizes": "96x96"}]
+    },
+    {
+      "name": "Enquiry",
+      "short_name": "Enquiry",
+      "description": "Send an enquiry",
+      "url": "/skyflies/?page=enquiry",
+      "icons": [{"src": "https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png", "sizes": "96x96"}]
+    }
+  ]
+}
