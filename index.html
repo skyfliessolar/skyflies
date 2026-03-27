@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Skyflies Solar Solutions – Tamil Nadu</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F5A623">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Skyflies Solar">
+<link rel="apple-touch-icon" href="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
+
+<!-- SEO -->
+<meta name="description" content="Skyflies Solar Solutions – Solar Installation, Cleaning, Repair & AMC across Chennai, Vellore, Ranipet & Kanchipuram. Get a free quote today!">
+<meta name="keywords" content="solar installation Tamil Nadu, solar cleaning Vellore, solar AMC Chennai, Skyflies Solar">
+<meta property="og:title" content="Skyflies Solar Solutions">
+<meta property="og:description" content="Tamil Nadu's trusted solar energy company. 3600+ happy clients.">
+<meta property="og:image" content="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
+<meta property="og:url" content="https://skyfliessolar.github.io/skyflies">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1345,7 +1362,7 @@ var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
-var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbx7mFpd5YA8cX-2LxswzS3kbS7j9Ie5tK1hDti62UR4ZYGXflJHb6GiBiaxMvNg8x93/exec';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbz81M05F9pfRPj5sm8hFcEHwN3_5dsEBao4fiFGa0f-7LYxd66nyn2ewEkO7iOhqks7/exec';
 
 // ─── NAV ───────────────────────────────────────────────────
 function showPage(id,btn){
@@ -2095,6 +2112,14 @@ function renderQueries(){
       <div class="qi-date">📅 ${qi.date} • Priority: ${qi.priority||'Normal'}</div>
       <div class="qi-msg">${qi.message}</div>
     </div>`).join('');
+}
+// ── REGISTER SERVICE WORKER (PWA) ─────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js')
+      .then(function(reg){ console.log('SW registered'); })
+      .catch(function(err){ console.log('SW failed:', err); });
+  });
 }
 </script>
 </body>
