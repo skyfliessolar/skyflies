@@ -22,6 +22,75 @@
 <meta property="og:image" content="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
 <meta property="og:url" content="https://skyfliessolar.github.io/skyflies">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+
+<!-- Razorpay SDK (loaded when needed) -->
+<script>
+// ── FIREBASE CONFIG ────────────────────────────────
+// Replace with your Firebase project config from console.firebase.google.com
+var FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Firebase enabled flag — set to true after you add your config
+var FIREBASE_ENABLED = false;
+var db = null;
+
+function initFirebase(){
+  if(!FIREBASE_ENABLED) return;
+  if(FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY') return;
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    console.log('✅ Firebase connected');
+  }catch(e){ console.log('Firebase init failed:', e); }
+}
+
+// ── FIREBASE DATABASE FUNCTIONS ────────────────────
+async function fbSave(collection, docId, data){
+  if(!db) return false;
+  try{
+    await db.collection(collection).doc(docId).set(data, {merge:true});
+    return true;
+  }catch(e){ return false; }
+}
+
+async function fbGet(collection, docId){
+  if(!db) return null;
+  try{
+    var doc = await db.collection(collection).doc(docId).get();
+    return doc.exists ? doc.data() : null;
+  }catch(e){ return null; }
+}
+
+async function fbQuery(collection, field, value){
+  if(!db) return [];
+  try{
+    var snap = await db.collection(collection).where(field,'==',value).get();
+    var results = [];
+    snap.forEach(function(doc){ results.push(Object.assign({id:doc.id}, doc.data())); });
+    return results;
+  }catch(e){ return []; }
+}
+
+async function fbListen(collection, callback){
+  if(!db) return;
+  db.collection(collection).onSnapshot(function(snap){
+    var data = [];
+    snap.forEach(function(doc){ data.push(Object.assign({id:doc.id}, doc.data())); });
+    callback(data);
+  });
+}
+</script>
 <style>
 :root{
   --sun:#F5A623;--solar:#FF6B00;--deep:#080F1E;--navy:#0D1F3C;
@@ -897,12 +966,19 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <!-- OVERVIEW -->
     <div class="ptab-content on" id="ptab-overview">
       <div class="info-grid">
-        <div class="icard"><div class="il">Installation Cost</div><div class="iv" id="pc-cost">₹3,45,000</div><div class="is">5 kW Grid-Tied System</div></div>
-        <div class="icard"><div class="il">Amount Paid</div><div class="iv" id="pc-paid" style="color:var(--success);">₹3,45,000</div><div class="is">Fully paid – No dues</div></div>
-        <div class="icard"><div class="il">Current Subscription</div><div class="iv" id="pc-plan" style="color:var(--sun);">Standard Care</div><div class="is">₹999/month – Active</div></div>
-        <div class="icard"><div class="il">Next Service Date</div><div class="iv" id="pc-next">15 Apr 2026</div><div class="is">Panel cleaning scheduled</div></div>
-        <div class="icard"><div class="il">Monthly Savings</div><div class="iv" style="color:#00E676;">₹4,200</div><div class="is">Est. based on usage</div></div>
-        <div class="icard"><div class="il">System Status</div><div class="iv" style="color:var(--success);">✅ Active</div><div class="is">All panels operational</div></div>
+        <div class="icard"><div class="il">Installation Cost</div><div class="iv" id="pc-cost">–</div><div class="is">Solar system</div></div>
+        <div class="icard"><div class="il">Amount Paid</div><div class="iv" id="pc-paid" style="color:var(--success);">–</div><div class="is">Payment status</div></div>
+        <div class="icard"><div class="il">Current Subscription</div><div class="iv" id="pc-plan" style="color:var(--sun);">–</div><div class="is">Active plan</div></div>
+        <div class="icard"><div class="il">Next Service Date</div><div class="iv" id="pc-next">–</div><div class="is">Scheduled maintenance</div></div>
+        <div class="icard"><div class="il">Monthly Savings</div><div class="iv" style="color:#00E676;" id="pc-savings">–</div><div class="is">Est. based on system</div></div>
+        <div class="icard"><div class="il">System Status</div><div class="iv" id="pc-status" style="color:var(--success);">–</div><div class="is">Current condition</div></div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="payNow(999,'Monthly Subscription','Standard Care')" style="padding:10px 20px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:9px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">💳 Pay Subscription</button>
+        <button onclick="requestNotificationPermission()" style="padding:10px 20px;background:rgba(100,180,255,0.1);border:1px solid rgba(100,180,255,0.3);border-radius:9px;color:#64B4FF;font-weight:600;font-size:13px;cursor:pointer;">🔔 Enable Alerts</button>
+        <button onclick="showPortalTab('newquery',null)" style="padding:10px 20px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:9px;color:#00E676;font-weight:600;font-size:13px;cursor:pointer;">💬 Raise Query</button>
       </div>
 
       <!-- COMPANY CONTACT AT BOTTOM OF PORTAL -->
@@ -1010,6 +1086,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     </div>
     <div class="dacts">
       <button class="dbtn p" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="dbtn s" onclick="sendAdminNotification()">🔔 Send Notification</button>
       <button class="dbtn s" onclick="clearData()">🗑️ Clear Data</button>
       <button class="dbtn s" onclick="adminLogout()">🔓 Logout</button>
     </div>
@@ -1510,6 +1587,11 @@ var PENDING_LIST=[];
 var currentCustomer=null;
 var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbz81M05F9pfRPj5sm8hFcEHwN3_5dsEBao4fiFGa0f-7LYxd66nyn2ewEkO7iOhqks7/exec';
 
+// ── RAZORPAY CONFIG ────────────────────────────────
+// Add your Razorpay Key ID here when ready (starts with rzp_live_ or rzp_test_)
+var RAZORPAY_KEY = 'YOUR_RAZORPAY_KEY';
+var RAZORPAY_ENABLED = false; // set true when you have your key
+
 // ── SECURITY CONFIG ────────────────────────────────
 var MAX_LOGIN_ATTEMPTS = 5;      // lock after 5 wrong OTPs
 var LOCKOUT_DURATION   = 15 * 60 * 1000; // 15 minutes
@@ -1734,26 +1816,104 @@ async function doSubmit(formEl,type,okId,erId){
   });
 })();
 
+// ── PUSH NOTIFICATIONS ─────────────────────────────
+async function requestNotificationPermission(){
+  if(!('Notification' in window)){showToast('Your browser does not support notifications.');return false;}
+  var permission=await Notification.requestPermission();
+  if(permission==='granted'){
+    localStorage.setItem('notif_enabled','1');
+    showToast('✅ Notifications enabled!');
+    return true;
+  }
+  showToast('❌ Notifications blocked. Enable in browser settings.');
+  return false;
+}
+function sendLocalNotification(title,body){
+  if(Notification.permission!=='granted')return;
+  new Notification(title,{
+    body:body,
+    icon:'https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png',
+    badge:'https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png',
+    tag:'skyflies-notif'
+  });
+}
+function sendAdminNotification(){
+  var title=prompt('Notification Title:','Skyflies Solar Update');
+  if(!title)return;
+  var body=prompt('Notification Message:','Your solar service is scheduled tomorrow.');
+  if(!body)return;
+  sendLocalNotification(title,body);
+  sendToSheet({action:'adminNotification',title,body,sentAt:new Date().toISOString()});
+  showToast('✅ Notification sent!');
+}
+function checkServiceNotifications(){
+  if(!currentCustomer||Notification.permission!=='granted')return;
+  var ns=currentCustomer.nextService;
+  if(!ns||ns==='TBD')return;
+  try{
+    var d=new Date(ns);
+    var days=Math.ceil((d-new Date())/(864e5));
+    if(days===1) sendLocalNotification('🔧 Service Tomorrow!','Your solar panel service is scheduled for tomorrow.');
+    else if(days===3) sendLocalNotification('📅 Upcoming Service','Your solar service is in 3 days on '+ns+'.');
+  }catch(e){}
+}
+
+// ── TOAST ──────────────────────────────────────────
+function showToast(msg,duration){
+  var e=document.getElementById('sfToast');if(e)e.remove();
+  var t=document.createElement('div');t.id='sfToast';t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(8,15,30,0.97);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;border:1px solid rgba(245,166,35,0.3);backdrop-filter:blur(10px);max-width:90vw;text-align:center;';
+  document.body.appendChild(t);
+  setTimeout(function(){t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(function(){t.remove();},300);},(duration||3000));
+}
+
+// ── RAZORPAY PAYMENT ───────────────────────────────
+function loadRazorpay(cb){
+  if(window.Razorpay){cb();return;}
+  var s=document.createElement('script');s.src='https://checkout.razorpay.com/v1/checkout.js';s.onload=cb;document.head.appendChild(s);
+}
+function payNow(amount,description,planName){
+  if(!RAZORPAY_ENABLED||RAZORPAY_KEY==='YOUR_RAZORPAY_KEY'){
+    showToast('💳 Payment gateway coming soon! Call +91 93854 49167 to pay.');return;
+  }
+  loadRazorpay(function(){
+    var rzp=new Razorpay({
+      key:RAZORPAY_KEY,amount:amount*100,currency:'INR',
+      name:'Skyflies Solar Solutions',description:description||planName,
+      image:'https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png',
+      prefill:{name:currentCustomer?currentCustomer.name:'',email:currentCustomer?currentCustomer.email:'',contact:currentCustomer?currentCustomer.phone:''},
+      notes:{customerId:currentCustomer?currentCustomer.id:'',plan:planName},
+      theme:{color:'#F5A623'},
+      handler:function(res){
+        sendToSheet({action:'paymentSuccess',customerId:currentCustomer?currentCustomer.id:'',paymentId:res.razorpay_payment_id,amount:amount,plan:planName,paidAt:new Date().toISOString()});
+        logActivity('PAYMENT','₹'+amount+' for '+planName+' | ID:'+res.razorpay_payment_id);
+        showToast('✅ Payment ₹'+amount+' successful!');
+        sendLocalNotification('✅ Payment Successful!','₹'+amount+' for '+planName+' confirmed.');
+      }
+    });
+    rzp.on('payment.failed',function(r){showToast('❌ Payment failed: '+r.error.description);});
+    rzp.open();
+  });
+}
+
+// ── ENHANCED sendToSheet with Firebase ─────────────
 async function sendToSheet(data){
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
   if(!wh)return false;
+  // Firebase save if enabled
+  if(FIREBASE_ENABLED&&db){
+    try{
+      var col=data.formType||data.action||'misc';
+      await fbSave(col,'doc_'+Date.now(),Object.assign({},data,{savedAt:new Date().toISOString()}));
+    }catch(fe){}
+  }
+  // Google Apps Script
   try{
-    // Use text/plain — required for Google Apps Script CORS to work
-    await fetch(wh,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(data)
-    });
+    await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});
     return true;
   }catch(e){
-    // Fallback with no-cors if text/plain fails
     try{
-      await fetch(wh,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(data),
-        mode:'no-cors'
-      });
+      await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});
       return true;
     }catch(e2){return false;}
   }
@@ -1827,6 +1987,8 @@ window.addEventListener('load',()=>{
 
   refreshDash();
   logActivity('PAGE_LOAD', 'App opened');
+  // Init Firebase if configured
+  initFirebase();
 });
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
 
@@ -2308,6 +2470,13 @@ function loginSuccess(customer){
   document.getElementById('pc-paid').textContent = customer.amountPaid||'–';
   document.getElementById('pc-plan').textContent = customer.plan||'–';
   document.getElementById('pc-next').textContent = customer.nextService||'–';
+  // New dynamic fields
+  var savingsEl=document.getElementById('pc-savings');
+  var statusEl=document.getElementById('pc-status');
+  if(savingsEl) savingsEl.textContent = customer.systemSize&&customer.systemSize!=='Pending' ? '~₹'+(parseInt(customer.systemSize)*840).toLocaleString('en-IN')+'/mo' : '–';
+  if(statusEl) statusEl.textContent = customer.systemStatus||'–';
+  // Check service notifications
+  checkServiceNotifications();
 
   // Log login event to sheet
   sendToSheet({action:'loginEvent', customerId:customer.id, name:customer.name,
