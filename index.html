@@ -789,10 +789,71 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <div id="authLogin">
       <div class="fc">
         <div class="ft">Customer Login</div>
-        <div class="fs">Login with your registered phone/email and password.</div>
-        <div class="fi" style="margin-bottom:14px;"><label class="lb">Phone Number or Email <span>*</span></label><input type="text" id="cuid" placeholder="+91 XXXXX XXXXX or email@example.com"></div>
-        <div class="fi" style="margin-bottom:8px;"><label class="lb">Password <span>*</span></label><input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()"></div>
-        <button onclick="cLogin()" class="sbtn" style="margin-top:16px;"><span id="loginBtnTxt">LOGIN →</span><div class="bll" id="loginLoader"></div></button>
+
+        <!-- STEP 1: Enter Email -->
+        <div id="otpStep1">
+          <div class="fs">Enter your registered email to receive a 6-digit OTP.</div>
+          <div class="fi" style="margin-bottom:14px;">
+            <label class="lb">Registered Email <span>*</span></label>
+            <input type="email" id="otpEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')sendOTP()">
+          </div>
+          <button onclick="sendOTP()" class="sbtn" style="margin-top:8px;">
+            <span id="otpSendTxt">📧 Send OTP →</span>
+            <div class="bll" id="otpSendLoader"></div>
+          </button>
+          <div class="alrt er" id="otpStep1Err" style="margin-top:12px;"></div>
+          <p style="font-size:11px;color:var(--soft);margin-top:14px;text-align:center;">
+            Prefer password login? 
+            <span onclick="toggleLoginMode()" style="color:var(--sun);cursor:pointer;text-decoration:underline;">Click here</span>
+          </p>
+        </div>
+
+        <!-- STEP 2: Enter OTP -->
+        <div id="otpStep2" style="display:none;">
+          <div class="fs">OTP sent to <strong id="otpEmailShow" style="color:var(--sun);"></strong></div>
+          <div style="margin:16px 0;padding:14px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);border-radius:10px;font-size:12px;color:var(--soft);">
+            📧 Check your email inbox. OTP expires in <strong id="otpTimer" style="color:#00E676;">5:00</strong>
+          </div>
+          <div class="fi" style="margin-bottom:14px;">
+            <label class="lb">Enter 6-Digit OTP <span>*</span></label>
+            <input type="text" id="otpCode" placeholder="Enter OTP" maxlength="6" 
+              style="font-size:22px;letter-spacing:8px;text-align:center;font-weight:700;"
+              onkeydown="if(event.key==='Enter')verifyOTP()">
+          </div>
+          <button onclick="verifyOTP()" class="sbtn" style="margin-top:8px;background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;">
+            <span id="otpVerifyTxt">✅ Verify OTP & Login →</span>
+            <div class="bll" id="otpVerifyLoader"></div>
+          </button>
+          <div class="alrt er" id="otpStep2Err" style="margin-top:12px;"></div>
+          <p style="font-size:12px;color:var(--soft);margin-top:12px;text-align:center;">
+            Didn't receive? 
+            <span onclick="sendOTP()" style="color:var(--sun);cursor:pointer;text-decoration:underline;">Resend OTP</span>
+            &nbsp;|&nbsp;
+            <span onclick="resetOTPLogin()" style="color:var(--soft);cursor:pointer;text-decoration:underline;">Change email</span>
+          </p>
+        </div>
+
+        <!-- PASSWORD LOGIN (fallback) -->
+        <div id="pwdLoginMode" style="display:none;">
+          <div class="fs">Login with your phone/email and password.</div>
+          <div class="fi" style="margin-bottom:14px;">
+            <label class="lb">Phone or Email <span>*</span></label>
+            <input type="text" id="cuid" placeholder="+91 XXXXX XXXXX or email@example.com">
+          </div>
+          <div class="fi" style="margin-bottom:8px;">
+            <label class="lb">Password <span>*</span></label>
+            <input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()">
+          </div>
+          <button onclick="cLogin()" class="sbtn" style="margin-top:8px;">
+            <span id="loginBtnTxt">LOGIN →</span>
+            <div class="bll" id="loginLoader"></div>
+          </button>
+          <p style="font-size:11px;color:var(--soft);margin-top:14px;text-align:center;">
+            Use OTP login instead? 
+            <span onclick="toggleLoginMode()" style="color:var(--sun);cursor:pointer;text-decoration:underline;">Click here</span>
+          </p>
+        </div>
+
         <div class="alrt er" id="cloginErr" style="margin-top:12px;"></div>
       </div>
     </div>
@@ -1010,6 +1071,17 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div class="alrt er" id="ac-er" style="margin-top:12px;">❌ &nbsp;Error. Check your Google Sheet connection in Setup.</div>
       </form>
     </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="dtw" style="margin-top:8px;">
+      <h4 style="display:flex;align-items:center;justify-content:space-between;">
+        <span>📋 Activity Log</span>
+        <button onclick="renderActivityLog()" style="padding:4px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:6px;color:var(--soft);font-size:11px;cursor:pointer;">🔄 Refresh</button>
+      </h4>
+      <div id="activityLog" style="max-height:300px;overflow-y:auto;">
+        <div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">No activity recorded.</div>
+      </div>
+    </div>
 </div>
 
 <!-- ═══ SETUP ═══ -->
@@ -1125,6 +1197,8 @@ Sheet: '+ss.getUrl());}catch(me){}
   return {status:'success'};
 }
 
+// NOTE: Passwords stored as SHA-256 hashes — never plain text
+// The app hashes passwords before sending — this sheet stores hashes only
 function getCustomer(ss, data) {
   var sh=ss.getSheetByName('Customer Logins');
   if(!sh) return {status:'error',message:'No customer accounts found.'};
@@ -1222,6 +1296,49 @@ function saveLoginEvent(ss, data) {
   var sh=getOrCreate(ss,'Login History',headers,COLORS.grey);
   sh.appendRow([timestamp(),data.customerId||'',data.name||'',data.phone||'',data.loginTime||timestamp()]);
   return {status:'success'};
+}
+
+// ── SEND OTP VIA EMAIL ──────────────────────────────
+function sendOTP(ss, data) {
+  try {
+    MailApp.sendEmail(data.email,
+      'Your Skyflies Solar Login OTP',
+      'Dear Customer,\n\n' +
+      'Your One-Time Password (OTP) for Skyflies Solar App login is:\n\n' +
+      '  ' + data.otp + '\n\n' +
+      'This OTP is valid for 5 minutes.\n' +
+      'Do not share this OTP with anyone.\n\n' +
+      'If you did not request this, please ignore this email.\n\n' +
+      'Regards,\nSkyflies Solar Team\n+91 93854 49167\nwww.skyflies.in'
+    );
+    return {status:'success'};
+  } catch(e) {
+    return {status:'error', message:e.toString()};
+  }
+}
+
+// ── GET CUSTOMER BY EMAIL (for OTP login) ────────────
+function getCustomerByEmail(ss, data) {
+  var sh = ss.getSheetByName('Customer Logins');
+  if (!sh) return {status:'error', message:'No accounts found.'};
+  var rows = sh.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    var r = rows[i];
+    if (String(r[4]).trim().toLowerCase() === String(data.email).trim().toLowerCase()) {
+      try { sh.getRange(i+1, 18).setValue(timestamp()); } catch(le) {}
+      return {
+        status: 'success',
+        customer: {
+          id:r[0], name:r[1], password:r[2], phone:r[3], email:r[4],
+          city:r[5], address:r[6], systemSize:r[7], panels:r[8],
+          installCost:r[9], amountPaid:r[10], plan:r[11],
+          billingCycle:r[12], nextService:r[13], systemStatus:r[14],
+          installDate:r[15], notes:r[16]||''
+        }
+      };
+    }
+  }
+  return {status:'error', message:'No account found with this email.'};
 }
 
 function getOrCreate(ss, name, headers, color) {
@@ -1392,6 +1509,89 @@ var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
 var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbz81M05F9pfRPj5sm8hFcEHwN3_5dsEBao4fiFGa0f-7LYxd66nyn2ewEkO7iOhqks7/exec';
+
+// ── SECURITY CONFIG ────────────────────────────────
+var MAX_LOGIN_ATTEMPTS = 5;      // lock after 5 wrong OTPs
+var LOCKOUT_DURATION   = 15 * 60 * 1000; // 15 minutes
+var SESSION_DURATION   = 8 * 60 * 60 * 1000; // 8 hour session
+
+// ── SESSION MANAGEMENT ─────────────────────────────
+function saveSession(customer){
+  var session={
+    customerId: customer.id,
+    name: customer.name,
+    phone: customer.phone,
+    email: customer.email,
+    loginTime: Date.now(),
+    expires: Date.now() + SESSION_DURATION
+  };
+  sessionStorage.setItem('sf_session', JSON.stringify(session));
+}
+function getSession(){
+  try{
+    var s=JSON.parse(sessionStorage.getItem('sf_session')||'null');
+    if(!s) return null;
+    if(Date.now() > s.expires){ sessionStorage.removeItem('sf_session'); return null; }
+    return s;
+  }catch(e){ return null; }
+}
+function clearSession(){
+  sessionStorage.removeItem('sf_session');
+}
+
+// ── RATE LIMITING (login attempts) ─────────────────
+function checkRateLimit(key){
+  var data=JSON.parse(localStorage.getItem('rl_'+key)||'{"attempts":0,"lockedUntil":0}');
+  if(Date.now() < data.lockedUntil){
+    var mins=Math.ceil((data.lockedUntil-Date.now())/60000);
+    return {blocked:true, message:'Too many attempts. Try again in '+mins+' minutes.'};
+  }
+  return {blocked:false, attempts:data.attempts};
+}
+function recordAttempt(key, success){
+  var data=JSON.parse(localStorage.getItem('rl_'+key)||'{"attempts":0,"lockedUntil":0}');
+  if(success){
+    localStorage.removeItem('rl_'+key);
+    return;
+  }
+  data.attempts++;
+  if(data.attempts >= MAX_LOGIN_ATTEMPTS){
+    data.lockedUntil = Date.now() + LOCKOUT_DURATION;
+    data.attempts = 0;
+  }
+  localStorage.setItem('rl_'+key, JSON.stringify(data));
+}
+
+// ── ACTIVITY LOG ───────────────────────────────────
+function logActivity(action, details){
+  var log=JSON.parse(localStorage.getItem('sf_activity')||'[]');
+  log.unshift({
+    action, details,
+    time: new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    ts: Date.now()
+  });
+  if(log.length > 100) log = log.slice(0,100); // keep last 100
+  localStorage.setItem('sf_activity', JSON.stringify(log));
+}
+
+// ── SHA-256 PASSWORD HASHING ───────────────────────
+// Passwords are hashed before storing — never stored as plain text
+async function hashPassword(pwd){
+  var msgBuffer = new TextEncoder().encode(pwd);
+  var hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  var hashArray  = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+
+// Hash synchronously for quick checks using simple djb2 (fallback)
+function quickHash(str){
+  var hash=5381;
+  for(var i=0;i<str.length;i++){
+    hash=((hash<<5)+hash)+str.charCodeAt(i);
+    hash=hash&hash;
+  }
+  return 'h'+Math.abs(hash).toString(16);
+}
 
 // ─── NAV ───────────────────────────────────────────────────
 function showPage(id,btn){
@@ -1567,7 +1767,16 @@ function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(
 
 // ─── SETUP ──────────────────────────────────────────────────
 function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);WEBHOOK_URL=u;s.textContent='✅ Webhook saved!';s.className='wst ok';}
-function savePwd(){var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}localStorage.setItem(PW,p);s.textContent='✅ Password updated.';s.className='wst ok';}
+function savePwd(){
+  var p=document.getElementById('newPwd').value.trim();
+  var s=document.getElementById('pwdSt');
+  if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}
+  hashPassword(p).then(function(hashed){
+    localStorage.setItem(PW,hashed);
+    s.textContent='✅ Password updated securely (hashed).';
+    s.className='wst ok';
+  });
+}
 async function testConnection(){
   var res=document.getElementById('testResult');
   res.textContent='⏳ Testing connection...';res.style.color='#F5A623';
@@ -1596,7 +1805,29 @@ async function testConnection(){
     }
   }
 }
-window.addEventListener('load',()=>{if(!localStorage.getItem(WH))localStorage.setItem(WH,WEBHOOK_URL);var wh=localStorage.getItem(WH);var el=document.getElementById('whUrl');if(el){el.value=wh;var st=document.getElementById('whSt');if(st){st.textContent='✅ Google Sheet connected.';st.className='wst ok';}}refreshDash();});
+window.addEventListener('load',()=>{
+  if(!localStorage.getItem(WH))localStorage.setItem(WH,WEBHOOK_URL);
+  var wh=localStorage.getItem(WH);
+  var el=document.getElementById('whUrl');
+  if(el){el.value=wh;var st=document.getElementById('whSt');if(st){st.textContent='✅ Google Sheet connected.';st.className='wst ok';}}
+
+  // Auto restore session if customer was logged in
+  var session=getSession();
+  if(session){
+    var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+    var customer=lc[session.customerId];
+    if(customer){
+      customer.id=session.customerId;
+      // If on portal page, restore login
+      if(document.getElementById('page-portal').classList.contains('on')){
+        loginSuccess(customer);
+      }
+    }
+  }
+
+  refreshDash();
+  logActivity('PAGE_LOAD', 'App opened');
+});
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
 
 // ─── AUTH TAB SWITCH ──────────────────────────────────────
@@ -1641,13 +1872,15 @@ async function registerCustomer(){
   }
   var btn=document.getElementById('regBtnTxt'); var loader=document.getElementById('regLoader');
   btn.style.display='none'; loader.style.display='block';
+  // Hash password before storing
+  var hashedPwd = await hashPassword(pwd);
   // Save locally — THIS IS HOW ADMIN SEES IT
   var regId='REG-'+Date.now();
-  var reg={id:regId,name,phone,email,city,pwd,status:'pending',submittedAt:new Date().toISOString()};
+  var reg={id:regId,name,phone,email,city,pwd:hashedPwd,status:'pending',submittedAt:new Date().toISOString()};
   pending.push(reg);
   localStorage.setItem('sf_pending',JSON.stringify(pending));
-  // Send to Google Sheet
-  await sendToSheet({action:'registerCustomer',formType:'register',name,phone,email,city,password:pwd,status:'Pending Approval',regId,submittedAt:new Date().toISOString()});
+  // Send to Google Sheet — password is hashed
+  await sendToSheet({action:'registerCustomer',formType:'register',name,phone,email,city,password:hashedPwd,status:'Pending Approval',regId,submittedAt:new Date().toISOString()});
   await new Promise(function(r){setTimeout(r,800);});
   btn.style.display=''; loader.style.display='none';
   okEl.classList.add('show');
@@ -1660,18 +1893,20 @@ async function registerCustomer(){
 function adminLogin(){
   var pwd     = document.getElementById('adminPwd').value.trim();
   var correct = localStorage.getItem(PW)||'skyflies2024';
-  if(pwd===correct){
-    document.getElementById('adminLoginBox').style.display='none';
-    document.getElementById('adminDash').classList.add('on');
-    refreshDash();
-    renderCustList();
-    // Load pending from Google Sheet first, then render
-    loadPendingFromSheet().then(function(){ renderPending(); });
-  }else{
-    var e=document.getElementById('loginErr');
-    e.classList.add('show');
-    setTimeout(function(){e.classList.remove('show');},4000);
-  }
+  // Support both plain and hashed passwords for backward compatibility
+  hashPassword(pwd).then(function(hashedPwd){
+    if(pwd===correct||hashedPwd===correct){
+      document.getElementById('adminLoginBox').style.display='none';
+      document.getElementById('adminDash').classList.add('on');
+      refreshDash();
+      renderCustList();
+      loadPendingFromSheet().then(function(){ renderPending(); });
+    }else{
+      var e=document.getElementById('loginErr');
+      e.classList.add('show');
+      setTimeout(function(){e.classList.remove('show');},4000);
+    }
+  });
 }
 function adminLogout(){
   document.getElementById('adminLoginBox').style.display='';
@@ -1823,7 +2058,8 @@ async function approveReg(regId){
 
   // Build customer record locally
   var newCustomer = {
-    pwd:reg.pwd, name:reg.name, phone:reg.phone, email:reg.email, city:reg.city||'',
+    pwd:reg.pwd,  // already hashed from registration
+    name:reg.name, phone:reg.phone, email:reg.email, city:reg.city||'',
     address:'', systemSize:'Pending', panels:'Pending',
     installCost:'Pending', amountPaid:'Pending',
     plan:'Pending – Skyflies Team will contact you',
@@ -1898,7 +2134,187 @@ function rejectReg(regId){
   if(pc)pc.textContent=all.filter(function(p){return p.status==='pending';}).length;
 }
 
-// ─── CUSTOMER PORTAL LOGIN ────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// OTP LOGIN SYSTEM
+// ─────────────────────────────────────────────────────────────
+var otpStore = null;  // {otp, email, expires}
+var otpTimerInterval = null;
+
+function toggleLoginMode(){
+  var otp = document.getElementById('otpStep1');
+  var pwd = document.getElementById('pwdLoginMode');
+  if(otp.style.display === 'none'){
+    otp.style.display = '';
+    pwd.style.display = 'none';
+  } else {
+    otp.style.display = 'none';
+    pwd.style.display = '';
+  }
+}
+
+function resetOTPLogin(){
+  document.getElementById('otpStep1').style.display = '';
+  document.getElementById('otpStep2').style.display = 'none';
+  document.getElementById('otpEmail').value = '';
+  document.getElementById('otpCode').value = '';
+  if(otpTimerInterval) clearInterval(otpTimerInterval);
+  otpStore = null;
+}
+
+async function sendOTP(){
+  var email = document.getElementById('otpEmail').value.trim();
+  var errEl = document.getElementById('otpStep1Err');
+  errEl.classList.remove('show');
+
+  if(!email || !email.includes('@')){
+    errEl.textContent = '❌ Please enter a valid email address.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  var btn = document.getElementById('otpSendTxt');
+  var loader = document.getElementById('otpSendLoader');
+  btn.style.display = 'none'; loader.style.display = 'block';
+
+  // Generate 6-digit OTP
+  var otp = Math.floor(100000 + Math.random() * 900000).toString();
+  var expires = Date.now() + 5 * 60 * 1000; // 5 minutes
+  otpStore = { otp: otp, email: email, expires: expires };
+
+  // Send OTP via Google Apps Script email
+  var wh = localStorage.getItem(WH)||WEBHOOK_URL;
+  try {
+    await fetch(wh, {
+      method: 'POST',
+      headers: {'Content-Type':'text/plain'},
+      body: JSON.stringify({
+        action: 'sendOTP',
+        email: email,
+        otp: otp
+      })
+    });
+  } catch(e){}
+
+  btn.style.display = ''; loader.style.display = 'none';
+
+  // Show step 2
+  document.getElementById('otpStep1').style.display = 'none';
+  document.getElementById('otpStep2').style.display = '';
+  document.getElementById('otpEmailShow').textContent = email;
+  document.getElementById('otpCode').focus();
+
+  // Start countdown timer
+  startOTPTimer(expires);
+}
+
+function startOTPTimer(expires){
+  if(otpTimerInterval) clearInterval(otpTimerInterval);
+  var timerEl = document.getElementById('otpTimer');
+  otpTimerInterval = setInterval(function(){
+    var remaining = Math.max(0, expires - Date.now());
+    var mins = Math.floor(remaining / 60000);
+    var secs = Math.floor((remaining % 60000) / 1000);
+    if(timerEl) timerEl.textContent = mins + ':' + String(secs).padStart(2,'0');
+    if(remaining <= 0){
+      clearInterval(otpTimerInterval);
+      if(timerEl) timerEl.textContent = 'Expired';
+      otpStore = null;
+    }
+  }, 1000);
+}
+
+async function verifyOTP(){
+  var entered = document.getElementById('otpCode').value.trim();
+  var errEl = document.getElementById('otpStep2Err');
+  errEl.classList.remove('show');
+
+  if(!entered){ errEl.textContent='❌ Please enter the OTP.'; errEl.classList.add('show'); return; }
+
+  // Rate limit check
+  var rl = checkRateLimit('otp_'+otpStore?.email);
+  if(rl.blocked){ errEl.textContent='❌ '+rl.message; errEl.classList.add('show'); return; }
+
+  if(!otpStore){ errEl.textContent='❌ OTP expired. Please request a new one.'; errEl.classList.add('show'); return; }
+  if(Date.now() > otpStore.expires){ errEl.textContent='❌ OTP expired. Please request a new one.'; errEl.classList.add('show'); otpStore=null; return; }
+
+  if(entered !== otpStore.otp){
+    recordAttempt('otp_'+otpStore.email, false);
+    var rl2=checkRateLimit('otp_'+otpStore.email);
+    var remaining = MAX_LOGIN_ATTEMPTS - (rl2.attempts||0);
+    errEl.textContent='❌ Wrong OTP. '+remaining+' attempts remaining.';
+    errEl.classList.add('show');
+    return;
+  }
+
+  // OTP correct
+  recordAttempt('otp_'+otpStore.email, true);
+  logActivity('OTP_LOGIN', 'Email: '+otpStore.email);
+  var btn = document.getElementById('otpVerifyTxt');
+  var loader = document.getElementById('otpVerifyLoader');
+  btn.style.display = 'none'; loader.style.display = 'block';
+
+  var email = otpStore.email;
+  var customer = null;
+  var wh = localStorage.getItem(WH)||WEBHOOK_URL;
+
+  // Find customer from Google Sheet
+  try{
+    var r = await fetch(wh, {
+      method: 'POST',
+      headers: {'Content-Type':'text/plain'},
+      body: JSON.stringify({action:'getCustomerByEmail', email: email})
+    });
+    var res = await r.json();
+    if(res.status === 'success') customer = res.customer;
+  }catch(e){}
+
+  // Fallback — check localStorage
+  if(!customer){
+    var lc = JSON.parse(localStorage.getItem('sf_customers')||'{}');
+    Object.keys(lc).forEach(function(k){
+      if(lc[k].email === email) customer = Object.assign({},lc[k],{id:k});
+    });
+  }
+
+  btn.style.display = ''; loader.style.display = 'none';
+  if(otpTimerInterval) clearInterval(otpTimerInterval);
+
+  if(customer){
+    otpStore = null;
+    loginSuccess(customer);
+  } else {
+    errEl.textContent = '❌ No account found with this email. Please register first.';
+    errEl.classList.add('show');
+  }
+}
+
+// Shared login success handler
+function loginSuccess(customer){
+  currentCustomer = customer;
+
+  // Save secure session
+  saveSession(customer);
+  logActivity('LOGIN_SUCCESS', 'Customer: '+customer.name+' ('+customer.id+')');
+
+  var ld = JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');
+  if(ld.queries && ld.queries.length)
+    customer.queries = [...(ld.queries||[]), ...(customer.queries||[])];
+
+  document.getElementById('cLoginBox').style.display = 'none';
+  document.getElementById('cPortal').classList.add('on');
+  document.getElementById('portalName').textContent = 'Welcome, '+customer.name+'! ☀️';
+  document.getElementById('portalId').textContent = 'ID: '+customer.id+' • '+customer.phone;
+  document.getElementById('pc-cost').textContent = customer.installCost||'–';
+  document.getElementById('pc-paid').textContent = customer.amountPaid||'–';
+  document.getElementById('pc-plan').textContent = customer.plan||'–';
+  document.getElementById('pc-next').textContent = customer.nextService||'–';
+
+  // Log login event to sheet
+  sendToSheet({action:'loginEvent', customerId:customer.id, name:customer.name,
+    phone:customer.phone, loginTime:new Date().toISOString()});
+
+  renderTimeline(); renderSubs(); renderQueries();
+}
 
 async function cLogin(){
   var uid=document.getElementById('cuid').value.trim();
@@ -1910,6 +2326,9 @@ async function cLogin(){
   var btn=document.getElementById('loginBtnTxt');var loader=document.getElementById('loginLoader');
   btn.style.display='none';loader.style.display='block';
 
+  // Hash the entered password for comparison
+  var hashedPwd = await hashPassword(pwd);
+
   var customer=null;
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
 
@@ -1919,7 +2338,7 @@ async function cLogin(){
       var r=await fetch(wh,{
         method:'POST',
         headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify({action:'getCustomer',customerId:uid,password:pwd})
+        body:JSON.stringify({action:'getCustomer',customerId:uid,password:hashedPwd})
       });
       var res=await r.json();
       if(res.status==='success'){
@@ -1927,7 +2346,7 @@ async function cLogin(){
         customer.id=res.customer.id;
         // Save locally for offline use
         var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
-        lc[customer.id]=Object.assign({},customer,{pwd:pwd});
+        lc[customer.id]=Object.assign({},customer,{pwd:hashedPwd});
         localStorage.setItem('sf_customers',JSON.stringify(lc));
       }
     }catch(e){}
@@ -1938,7 +2357,7 @@ async function cLogin(){
     var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
     Object.keys(lc).forEach(function(k){
       var c=lc[k];
-      if((c.phone===uid||c.email===uid||k===uid)&&c.pwd===pwd)
+      if((c.phone===uid||c.email===uid||k===uid)&&c.pwd===hashedPwd)
         customer=Object.assign({},c,{id:k});
     });
   }
@@ -1946,21 +2365,7 @@ async function cLogin(){
   btn.style.display='';loader.style.display='none';
 
   if(customer){
-    currentCustomer=customer;
-    // Save login event to Google Sheet
-    sendToSheet({action:'loginEvent',customerId:customer.id,name:customer.name,phone:customer.phone,loginTime:new Date().toISOString()});
-    // Merge local queries
-    var ld=JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');
-    if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
-    document.getElementById('cLoginBox').style.display='none';
-    document.getElementById('cPortal').classList.add('on');
-    document.getElementById('portalName').textContent='Welcome, '+customer.name+'!';
-    document.getElementById('portalId').textContent='ID: '+customer.id+' • '+customer.phone;
-    document.getElementById('pc-cost').textContent=customer.installCost||'–';
-    document.getElementById('pc-paid').textContent=customer.amountPaid||'–';
-    document.getElementById('pc-plan').textContent=customer.plan||'–';
-    document.getElementById('pc-next').textContent=customer.nextService||'–';
-    renderTimeline();renderSubs();renderQueries();
+    loginSuccess(customer);
   } else {
     erEl.textContent='❌ Wrong phone/email or password. If not registered, click "New Registration" tab.';
     erEl.classList.add('show');
@@ -1968,11 +2373,14 @@ async function cLogin(){
 }
 
 function cLogout(){
+  clearSession();
+  logActivity('LOGOUT', currentCustomer?currentCustomer.name:'unknown');
   document.getElementById('cLoginBox').style.display='';
   document.getElementById('cPortal').classList.remove('on');
   currentCustomer=null;
-  document.getElementById('cuid').value='';
-  document.getElementById('cpwd').value='';
+  resetOTPLogin();
+  var cuid=document.getElementById('cuid'); if(cuid)cuid.value='';
+  var cpwd=document.getElementById('cpwd'); if(cpwd)cpwd.value='';
   switchAuthTab('login');
 }
 function refreshDash(){
@@ -1988,6 +2396,7 @@ function refreshDash(){
   var pc=document.getElementById('pendCount');if(pc)pc.textContent=pending.length;
   renderTable(curFilter);
   renderCustList();
+  renderActivityLog();
 }
 function filterTable(f,btn){curFilter=f;document.querySelectorAll('.fb2').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderTable(f);}
 function renderTable(filter){
@@ -2045,6 +2454,26 @@ function exportCSV(){
   allData.forEach(function(d){csv+=cols.map(function(c){return JSON.stringify(String(d[c]||''));}).join(',')+'\n';});
   var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='skyflies_complete_data.csv';a.click();
 }
+function renderActivityLog(){
+  var log=JSON.parse(localStorage.getItem('sf_activity')||'[]');
+  var el=document.getElementById('activityLog');
+  if(!el)return;
+  if(!log.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">No activity yet.</div>';return;}
+  var icons={'LOGIN_SUCCESS':'✅','LOGOUT':'🔓','OTP_LOGIN':'📧','PAGE_LOAD':'👁️','APPROVE':'✅','REJECT':'❌'};
+  el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px;">'
+    +log.slice(0,50).map(function(l){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--border2);">'
+        +'<span style="font-size:16px;">'+(icons[l.action]||'📌')+'</span>'
+        +'<div style="flex:1;">'
+          +'<div style="font-size:12px;color:#fff;font-weight:500;">'+l.action.replace(/_/g,' ')+'</div>'
+          +'<div style="font-size:11px;color:var(--soft);">'+l.details+'</div>'
+        +'</div>'
+        +'<div style="font-size:10px;color:rgba(168,192,224,0.4);white-space:nowrap;">'+l.time+'</div>'
+      +'</div>';
+    }).join('')
+  +'</div>';
+}
+
 function clearData(){if(confirm('Clear all local submission data? (Google Sheet data is safe)')){localStorage.removeItem(DB);refreshDash();}}
 
 // ─── ADD CUSTOMER FORM ─────────────────────────────────────
