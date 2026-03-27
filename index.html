@@ -48,6 +48,11 @@ var db = null;
 
 function initFirebase(){
   if(!FIREBASE_ENABLED) return;
+  // Wait for Firebase SDK to be available
+  if(typeof firebase === 'undefined'){
+    setTimeout(initFirebase, 500);
+    return;
+  }
   try{
     if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     db = firebase.firestore();
@@ -2748,7 +2753,7 @@ function renderQueries(){
     </div>`).join('');
 }
 // ── REGISTER SERVICE WORKER (PWA) ─────────────────
-if('serviceWorker' in navigator){
+if('serviceWorker' in navigator && location.hostname !== 'www.claudeusercontent.com'){
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('sw.js')
       .then(function(reg){ console.log('SW registered'); })
