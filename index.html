@@ -23,35 +23,42 @@
 <meta property="og:url" content="https://skyfliessolar.github.io/skyflies">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Firebase SDK -->
+<!-- Firebase SDK (compat mode for easy use) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
 
 <!-- Razorpay SDK (loaded when needed) -->
 <script>
 // ── FIREBASE CONFIG ────────────────────────────────
 // Replace with your Firebase project config from console.firebase.google.com
 var FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCjsw3gwtfqSpAGEehtdFSCIpgPlbxnIFM",
+  authDomain: "skyflies-solar.firebaseapp.com",
+  projectId: "skyflies-solar",
+  storageBucket: "skyflies-solar.firebasestorage.app",
+  messagingSenderId: "714418955246",
+  appId: "1:714418955246:web:d8206ea5c0b866faaf64ff",
+  measurementId: "G-2DD4EM94MY"
 };
 
-// Firebase enabled flag — set to true after you add your config
-var FIREBASE_ENABLED = false;
+// Firebase enabled
+var FIREBASE_ENABLED = true;
 var db = null;
 
 function initFirebase(){
   if(!FIREBASE_ENABLED) return;
-  if(FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY') return;
   try{
     if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     db = firebase.firestore();
-    console.log('✅ Firebase connected');
+    // Enable offline persistence
+    db.enablePersistence().catch(function(err){
+      if(err.code === 'failed-precondition') console.log('Multiple tabs open');
+      else if(err.code === 'unimplemented') console.log('Browser not supported');
+    });
+    // Init analytics
+    if(typeof firebase.analytics === 'function') firebase.analytics();
+    console.log('✅ Firebase connected - Project: skyflies-solar');
   }catch(e){ console.log('Firebase init failed:', e); }
 }
 
