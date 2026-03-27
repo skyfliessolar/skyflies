@@ -1017,6 +1017,7 @@ function doPost(e) {
     if (data.action === 'addQuery')         return respond(addQuery(ss, data));
     if (data.action === 'registerCustomer') return respond(saveRegistration(ss, data));
     if (data.action === 'loginEvent')       return respond(saveLoginEvent(ss, data));
+    if (data.action === 'getPending')        return respond(getPending(ss, data));
     return respond(handleForm(ss, data));
   } catch(err) {
     return respond({status:'error', message:err.toString()});
@@ -1145,6 +1146,29 @@ Message: '+data.message+'
 
 Sheet: '+ss.getUrl());}catch(me){}
   return {status:'success'};
+}
+
+function getPending(ss, data) {
+  var sh = ss.getSheetByName('Pending Registrations');
+  if (!sh) return respond({status:'success', pending:[]});
+  var rows = sh.getDataRange().getValues();
+  var pending = [];
+  for (var i = 1; i < rows.length; i++) {
+    var r = rows[i];
+    if (String(r[8]).trim() === 'Pending Approval') {
+      pending.push({
+        regId:   String(r[7]).trim(),
+        name:    String(r[2]).trim(),
+        phone:   String(r[3]).trim(),
+        email:   String(r[4]).trim(),
+        city:    String(r[5]).trim(),
+        password:String(r[6]).trim(),
+        status:  String(r[8]).trim(),
+        submittedAt: String(r[1]).trim()
+      });
+    }
+  }
+  return respond({status:'success', pending:pending});
 }
 
 function saveLoginEvent(ss, data) {
@@ -1593,7 +1617,10 @@ function adminLogin(){
   if(pwd===correct){
     document.getElementById('adminLoginBox').style.display='none';
     document.getElementById('adminDash').classList.add('on');
-    refreshDash(); renderCustList(); renderPending();
+    refreshDash();
+    renderCustList();
+    // Load pending from Google Sheet first, then render
+    loadPendingFromSheet().then(function(){ renderPending(); });
   }else{
     var e=document.getElementById('loginErr');
     e.classList.add('show');
@@ -1604,6 +1631,43 @@ function adminLogout(){
   document.getElementById('adminLoginBox').style.display='';
   document.getElementById('adminDash').classList.remove('on');
   document.getElementById('adminPwd').value='';
+}
+
+// ─────────────────────────────────────────────────────────────
+// LOAD PENDING REGISTRATIONS FROM GOOGLE SHEET
+// ─────────────────────────────────────────────────────────────
+async function loadPendingFromSheet(){
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  var con=document.getElementById('pendingContainer');
+  if(con) con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);">⏳ Loading pending registrations...</div>';
+  try{
+    var r=await fetch(wh,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'getPending'})
+    });
+    var res=await r.json();
+    if(res.status==='success'&&res.pending&&res.pending.length){
+      // Merge sheet data with localStorage
+      var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+      var localIds=local.map(function(p){return p.regId||p.id;});
+      res.pending.forEach(function(p){
+        if(!localIds.includes(p.regId)){
+          local.push({
+            id:p.regId||('REG-'+Date.now()),
+            name:p.name, phone:p.phone, email:p.email,
+            city:p.city, pwd:p.password,
+            status:'pending',
+            submittedAt:p.submittedAt||new Date().toISOString()
+          });
+        }
+      });
+      localStorage.setItem('sf_pending',JSON.stringify(local));
+    }
+  }catch(e){
+    // If sheet fails, just use localStorage
+  }
+  renderPending();
 }
 
 // ─────────────────────────────────────────────────────────────
