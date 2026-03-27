@@ -392,6 +392,23 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
   </div>
 </header>
 
+<!-- INSTALL APP BANNER -->
+<div id="installBanner" style="display:none;background:linear-gradient(135deg,rgba(245,166,35,0.12),rgba(255,107,0,0.08));border-bottom:1px solid var(--border);padding:10px 20px;">
+  <div style="max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:36px;height:36px;border-radius:8px;object-fit:contain;">
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#fff;">Install Skyflies Solar App</div>
+        <div style="font-size:11px;color:var(--soft);">Add to home screen for quick access</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="installApp()" style="padding:8px 18px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">📲 Install</button>
+      <button onclick="dismissBanner()" style="padding:8px 12px;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--soft);font-size:13px;cursor:pointer;">✕</button>
+    </div>
+  </div>
+</div>
+
 <!-- MOBILE NAVIGATION DRAWER -->
 <div class="mob-nav" id="mobNav">
   <button class="mob-nl on" id="mob-home" onclick="mobPage('home')">🏠 &nbsp;Home</button>
@@ -417,6 +434,18 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <button class="sbtn" style="width:auto;padding:13px 28px;font-size:16px;margin-top:0;" onclick="showPage('calculator',null)">Get Free Quotation →</button>
     <button onclick="showPage('plans',null)" style="padding:13px 28px;background:transparent;border:1px solid var(--border);border-radius:10px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;">View Plans</button>
     <button onclick="showPage('portal',null)" style="padding:13px 28px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);border-radius:10px;color:#00E676;font-weight:600;font-size:14px;cursor:pointer;">👤 My Account</button>
+    <button id="heroInstallBtn" onclick="installApp()" style="display:none;padding:13px 28px;background:linear-gradient(135deg,#7C3AED,#4F46E5);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">📲 Install App</button>
+  </div>
+
+  <!-- iOS INSTALL INSTRUCTIONS (shows only on iOS) -->
+  <div id="iosInstallBox" style="display:none;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:32px;max-width:480px;">
+    <div style="font-weight:700;font-size:14px;color:var(--sun);margin-bottom:10px;">📱 Install on iPhone / iPad</div>
+    <div style="font-size:13px;color:var(--soft);line-height:1.8;">
+      1. Open this page in <strong style="color:#fff;">Safari</strong><br>
+      2. Tap the <strong style="color:#fff;">Share button</strong> ⬆️ at the bottom<br>
+      3. Scroll down and tap <strong style="color:#fff;">"Add to Home Screen"</strong><br>
+      4. Tap <strong style="color:#fff;">Add</strong> — done! ✅
+    </div>
   </div>
   <div style="display:flex;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:30px;flex-wrap:wrap;">
     <div style="flex:1;min-width:120px;padding:20px 14px;text-align:center;border-right:1px solid var(--border);"><div style="font-family:'Bebas Neue',sans-serif;font-size:36px;background:linear-gradient(135deg,var(--sun),var(--solar));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">3600+</div><div style="font-size:9.5px;color:var(--soft);letter-spacing:2px;text-transform:uppercase;margin-top:2px;">Happy Clients</div></div>
@@ -2121,6 +2150,68 @@ if('serviceWorker' in navigator){
       .catch(function(err){ console.log('SW failed:', err); });
   });
 }
+
+// ── PWA INSTALL LOGIC ──────────────────────────────
+var deferredPrompt = null;
+
+// Detect iOS
+var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+var isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner and button
+  var banner = document.getElementById('installBanner');
+  var heroBtn = document.getElementById('heroInstallBtn');
+  if(banner && !localStorage.getItem('pwa_dismissed')) banner.style.display = 'block';
+  if(heroBtn) heroBtn.style.display = 'inline-flex';
+});
+
+window.addEventListener('appinstalled', function(){
+  var banner = document.getElementById('installBanner');
+  if(banner) banner.style.display = 'none';
+  var heroBtn = document.getElementById('heroInstallBtn');
+  if(heroBtn) heroBtn.style.display = 'none';
+  deferredPrompt = null;
+  alert('✅ Skyflies Solar App installed successfully!');
+});
+
+function installApp(){
+  if(deferredPrompt){
+    // Android / Chrome — show native install prompt
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(result){
+      if(result.outcome === 'accepted'){
+        console.log('App installed');
+      }
+      deferredPrompt = null;
+    });
+  } else if(isIOS && !isInStandaloneMode){
+    // iOS — show instructions
+    var box = document.getElementById('iosInstallBox');
+    if(box){
+      box.style.display = 'block';
+      box.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  } else {
+    alert('To install:\n\nAndroid: Open in Chrome → tap menu ⋮ → "Add to Home Screen"\n\niPhone: Open in Safari → tap Share ⬆️ → "Add to Home Screen"');
+  }
+}
+
+function dismissBanner(){
+  var banner = document.getElementById('installBanner');
+  if(banner) banner.style.display = 'none';
+  localStorage.setItem('pwa_dismissed', '1');
+}
+
+// Show iOS box automatically if on iOS and not installed
+window.addEventListener('load', function(){
+  if(isIOS && !isInStandaloneMode){
+    var heroBtn = document.getElementById('heroInstallBtn');
+    if(heroBtn) heroBtn.style.display = 'inline-flex';
+  }
+});
 </script>
 </body>
 </html>
