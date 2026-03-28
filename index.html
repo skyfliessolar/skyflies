@@ -122,7 +122,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--deep);color:#fff;min-heig
 /* HEADER */
 header{padding:14px 44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,15,30,0.92);backdrop-filter:blur(28px);position:sticky;top:0;z-index:300;}
 .logo{display:flex;align-items:center;gap:12px;cursor:pointer;}
-.logo-orb{width:40px;height:40px;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;animation:glw 3s ease-in-out infinite;}
+.logo-orb{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;animation:glw 3s ease-in-out infinite;}
 @keyframes glw{0%,100%{box-shadow:0 0 20px rgba(245,166,35,0.4);}50%{box-shadow:0 0 40px rgba(245,166,35,0.7);}}
 .logo-nm{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;background:linear-gradient(135deg,var(--sun),#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .logo-sm{font-size:8px;color:var(--soft);letter-spacing:4px;text-transform:uppercase;margin-top:-3px;}
@@ -460,7 +460,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
 <!-- HEADER -->
 <header>
   <div class="logo" onclick="showPage('home',null)">
-    <div class="logo-orb">☀️</div>
+    <div class="logo-orb"><img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:44px;height:44px;object-fit:contain;border-radius:10px;" alt="Skyflies Solar" onerror="this.parentElement.innerHTML='☀️';this.parentElement.style.background='linear-gradient(135deg,#F5A623,#FF6B00)';this.parentElement.style.fontSize='20px';"></div>
     <div><div class="logo-nm">Skyflies Solar</div><div class="logo-sm">Solutions • Tamil Nadu</div></div>
   </div>
   <nav>
@@ -880,6 +880,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     </div>
 
     <!-- LOGIN FORM — Amazon Style -->
+    <div id="authLogin">
       <div class="fc amazon-login">
         <!-- MAIN LOGIN FORM -->
         <div id="mainLoginForm">
@@ -2092,18 +2093,25 @@ function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd')
 
 // ─── AUTH TAB SWITCH ──────────────────────────────────────
 function switchAuthTab(tab){
-  var loginBtn=document.getElementById('tabLoginBtn');
-  var regBtn=document.getElementById('tabRegBtn');
-  var loginDiv=document.getElementById('authLogin');
-  var regDiv=document.getElementById('authRegister');
-  if(tab==='login'){
-    loginDiv.style.display='';regDiv.style.display='none';
-    loginBtn.style.background='linear-gradient(135deg,var(--sun),var(--solar))';loginBtn.style.color='var(--deep)';
-    regBtn.style.background='transparent';regBtn.style.color='var(--soft)';
-  }else{
-    loginDiv.style.display='none';regDiv.style.display='';
-    regBtn.style.background='linear-gradient(135deg,#00E676,#00B0FF)';regBtn.style.color='#080F1E';
-    loginBtn.style.background='transparent';loginBtn.style.color='var(--soft)';
+  try{
+    var loginBtn=document.getElementById('tabLoginBtn');
+    var regBtn=document.getElementById('tabRegBtn');
+    var loginDiv=document.getElementById('authLogin');
+    var regDiv=document.getElementById('authRegister');
+    if(!loginDiv){console.error('authLogin not found!');alert('DEBUG: authLogin div missing');return;}
+    if(!regDiv){console.error('authRegister not found!');alert('DEBUG: authRegister div missing');return;}
+    if(tab==='login'){
+      loginDiv.style.display='';regDiv.style.display='none';
+      if(loginBtn){loginBtn.style.background='linear-gradient(135deg,var(--sun),var(--solar))';loginBtn.style.color='var(--deep)';}
+      if(regBtn){regBtn.style.background='transparent';regBtn.style.color='var(--soft)';}
+    }else{
+      loginDiv.style.display='none';regDiv.style.display='';
+      if(regBtn){regBtn.style.background='linear-gradient(135deg,#00E676,#00B0FF)';regBtn.style.color='#080F1E';}
+      if(loginBtn){loginBtn.style.background='transparent';loginBtn.style.color='var(--soft)';}
+    }
+  }catch(err){
+    console.error('switchAuthTab error:',err);
+    alert('Tab error: '+err.message+' — Line: '+(err.stack||'').split('\n')[1]);
   }
 }
 
