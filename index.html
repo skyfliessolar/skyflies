@@ -1659,20 +1659,11 @@ function buildEmail(data, sheetName) {
 </div>
 
 <script>
-window.onerror=function(msg,src,line,col,err){
-  document.body.innerHTML='<div style="background:#1a0000;color:#ff6b6b;padding:40px;font-family:monospace;font-size:15px;line-height:2.2;min-height:100vh;">' +
-    '<h2 style="color:#ff4444;font-size:22px;">⚠️ JS Error — Setup Blank Page Cause Found</h2>' +
-    '<p><b>Error:</b> '+msg+'</p>' +
-    '<p><b>Line:</b> '+line+'</p>' +
-    '<p><b>Column:</b> '+col+'</p>' +
-    '</div>';
-  return false;
-};
 var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
-var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbz81M05F9pfRPj5sm8hFcEHwN3_5dsEBao4fiFGa0f-7LYxd66nyn2ewEkO7iOhqks7/exec';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbzcgyHupxMYByqJ__NctoEeTnndkkQMKfyLTT4k1VOA5HkrC0quqXDgF1Bo7taYmcFG/exec';
 
 // ── RAZORPAY CONFIG ────────────────────────────────
 // Add your Razorpay Key ID here when ready (starts with rzp_live_ or rzp_test_)
@@ -1789,10 +1780,10 @@ function showPage(id,btn){
   var el=document.getElementById('page-'+id);
   if(el)el.classList.add('on');
   if(btn)btn.classList.add('on');
-  else document.querySelectorAll('.nl').forEach(n=>{
-    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('on');
-  });
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
+  document.querySelectorAll('.mob-nl').forEach(b=>b.classList.remove('on'));
+  var mob=document.getElementById('mob-'+id);
+  if(mob)mob.classList.add('on');
 }
 // Mobile nav
 function toggleMobNav(){
@@ -2493,6 +2484,87 @@ function loginSuccess(customer){
     phone:customer.phone, loginTime:new Date().toISOString()});
 
   renderTimeline(); renderSubs(); renderQueries();
+}
+
+// ── LOGIN UI HELPERS ───────────────────────────────
+function showMainLogin(){
+  var ml=document.getElementById('mainLoginForm');
+  var fp=document.getElementById('forgotPwdSection');
+  if(ml)ml.style.display='';
+  if(fp)fp.style.display='none';
+  var s1=document.getElementById('fpStep1');var s2=document.getElementById('fpStep2');
+  if(s1)s1.style.display='';if(s2)s2.style.display='none';
+  if(resetOtpTimerInterval)clearInterval(resetOtpTimerInterval);
+}
+function showForgotPassword(){
+  var ml=document.getElementById('mainLoginForm');
+  var fp=document.getElementById('forgotPwdSection');
+  if(ml)ml.style.display='none';
+  if(fp)fp.style.display='';
+  var em=document.getElementById('fpEmail');if(em)em.focus();
+}
+
+var resetOtpStore=null;
+var resetOtpTimerInterval=null;
+
+async function sendResetOTP(){
+  var email=document.getElementById('fpEmail').value.trim();
+  var errEl=document.getElementById('fpStep1Err');
+  errEl.classList.remove('show');
+  if(!email||!email.includes('@')){errEl.textContent='❌ Enter a valid email.';errEl.classList.add('show');return;}
+  var rl=checkRateLimit('fp_'+email);
+  if(rl.blocked){errEl.textContent='❌ '+rl.message;errEl.classList.add('show');return;}
+  var btn=document.getElementById('fpSendTxt');var loader=document.getElementById('fpSendLoader');
+  btn.style.display='none';loader.style.display='block';
+  var otp=Math.floor(100000+Math.random()*900000).toString();
+  var expires=Date.now()+5*60*1000;
+  resetOtpStore={otp:otp,email:email,expires:expires};
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendOTP',email:email,otp:otp})});}catch(e){}
+  btn.style.display='';loader.style.display='none';
+  document.getElementById('fpStep1').style.display='none';
+  document.getElementById('fpStep2').style.display='';
+  document.getElementById('fpEmailShow').textContent=email;
+  document.getElementById('fpOtpCode').focus();
+  if(resetOtpTimerInterval)clearInterval(resetOtpTimerInterval);
+  var timerEl=document.getElementById('fpTimer');
+  resetOtpTimerInterval=setInterval(function(){
+    var rem=Math.max(0,expires-Date.now());
+    var m=Math.floor(rem/60000);var s=Math.floor((rem%60000)/1000);
+    if(timerEl)timerEl.textContent=m+':'+String(s).padStart(2,'0');
+    if(rem<=0){clearInterval(resetOtpTimerInterval);resetOtpStore=null;if(timerEl)timerEl.textContent='Expired';}
+  },1000);
+}
+
+async function verifyResetOTP(){
+  var otp=document.getElementById('fpOtpCode').value.trim();
+  var newPwd=document.getElementById('fpNewPwd').value;
+  var newPwd2=document.getElementById('fpNewPwd2').value;
+  var errEl=document.getElementById('fpStep2Err');var okEl=document.getElementById('fpResetOk');
+  errEl.classList.remove('show');okEl.classList.remove('show');
+  if(!otp){errEl.textContent='❌ Enter OTP.';errEl.classList.add('show');return;}
+  if(!resetOtpStore||Date.now()>resetOtpStore.expires){errEl.textContent='❌ OTP expired. Resend.';errEl.classList.add('show');resetOtpStore=null;return;}
+  if(otp!==resetOtpStore.otp){errEl.textContent='❌ Wrong OTP. Check your email.';errEl.classList.add('show');return;}
+  if(!newPwd||newPwd.length<6){errEl.textContent='❌ Min 6 characters.';errEl.classList.add('show');return;}
+  if(newPwd!==newPwd2){errEl.textContent='❌ Passwords do not match.';errEl.classList.add('show');return;}
+  var btn=document.getElementById('fpVerifyTxt');var loader=document.getElementById('fpVerifyLoader');
+  btn.style.display='none';loader.style.display='block';
+  var hashedPwd=await hashPassword(newPwd);
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'updatePassword',email:resetOtpStore.email,newPassword:hashedPwd})});}catch(e){}
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  Object.keys(lc).forEach(function(k){if(lc[k].email===resetOtpStore.email)lc[k].pwd=hashedPwd;});
+  localStorage.setItem('sf_customers',JSON.stringify(lc));
+  if(FIREBASE_ENABLED&&db){try{var snap=await db.collection('customers').where('email','==',resetOtpStore.email).get();snap.forEach(function(doc){doc.ref.update({pwd:hashedPwd});});}catch(fe){}}
+  logActivity('PASSWORD_RESET','Email: '+resetOtpStore.email);
+  btn.style.display='';loader.style.display='none';
+  clearInterval(resetOtpTimerInterval);resetOtpStore=null;
+  okEl.classList.add('show');
+  setTimeout(function(){
+    showMainLogin();
+    ['fpEmail','fpOtpCode','fpNewPwd','fpNewPwd2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+    okEl.classList.remove('show');
+  },3000);
 }
 
 async function cLogin(){
