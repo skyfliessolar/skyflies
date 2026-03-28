@@ -979,25 +979,60 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
 
     <!-- REGISTER FORM -->
     <div id="authRegister" style="display:none;">
+
+    <!-- STEP 1: Fill Details -->
+    <div id="regStep1">
       <div class="fc" style="--border:rgba(0,230,118,0.25);">
-        <div class="ft">New Registration</div>
-        <div class="fs">Register your details. Skyflies Team will verify and activate your account within 24 hours.</div>
+        <div class="ft">Create Account</div>
+        <div class="fs">Fill your details — we'll send an OTP to verify your email instantly.</div>
         <div class="fg">
-          <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" id="regName" placeholder="Your full name" required></div>
-          <div class="fi"><label class="lb">Phone Number <span>*</span></label><input type="tel" id="regPhone" placeholder="+91 XXXXX XXXXX" required></div>
-          <div class="fi"><label class="lb">Email Address <span>*</span></label><input type="email" id="regEmail" placeholder="your@email.com" required></div>
+          <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" id="regName" placeholder="Your full name"></div>
+          <div class="fi"><label class="lb">Phone Number <span>*</span></label><input type="tel" id="regPhone" placeholder="+91 XXXXX XXXXX"></div>
+          <div class="fi"><label class="lb">Email Address <span>*</span></label><input type="email" id="regEmail" placeholder="your@email.com"></div>
           <div class="fi"><label class="lb">City <span>*</span></label>
             <select id="regCity" onchange="handleOtherCity(this)"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select>
             <input type="text" id="regCityOther" placeholder="Enter your city name" style="display:none;margin-top:8px;">
           </div>
-          <div class="fi full"><label class="lb">Set Your Password <span>*</span></label><input type="password" id="regPwd" placeholder="Choose a strong password (min 6 characters)" required></div>
-          <div class="fi full"><label class="lb">Confirm Password <span>*</span></label><input type="password" id="regPwd2" placeholder="Re-enter your password" required></div>
+          <div class="fi full"><label class="lb">Set Password <span>*</span></label><input type="password" id="regPwd" placeholder="Min 6 characters"></div>
+          <div class="fi full"><label class="lb">Confirm Password <span>*</span></label><input type="password" id="regPwd2" placeholder="Re-enter password"></div>
         </div>
-        <button onclick="registerCustomer()" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;margin-top:20px;"><span id="regBtnTxt">SUBMIT REGISTRATION →</span><div class="bll" id="regLoader"></div></button>
-        <div class="alrt ok" id="reg-ok" style="margin-top:12px;">✅ &nbsp;Registration submitted! Skyflies Team will verify your details and activate your account within 24 hours. You will be able to login once approved.</div>
+        <button onclick="startRegistration()" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;margin-top:20px;">
+          <span id="regStep1Txt">SEND VERIFICATION OTP →</span>
+          <div class="bll" id="regStep1Loader"></div>
+        </button>
         <div class="alrt er" id="reg-er" style="margin-top:12px;"></div>
+        <div class="login-divider"><span></span><p>Already have account?</p><span></span></div>
+        <button onclick="switchAuthTab('login')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;">Sign In →</button>
       </div>
     </div>
+
+    <!-- STEP 2: OTP Verification -->
+    <div id="regStep2" style="display:none;">
+      <div class="fc" style="--border:rgba(0,230,118,0.25);">
+        <div class="ft">Verify Email</div>
+        <div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);border-radius:10px;padding:14px;margin-bottom:18px;">
+          <div style="font-size:13px;color:#fff;font-weight:600;margin-bottom:4px;">📧 OTP sent to your email</div>
+          <div style="font-size:12px;color:var(--soft);">Check <strong id="regEmailShow" style="color:var(--sun);"></strong> — expires in <strong id="regOtpTimer" style="color:#00E676;">5:00</strong></div>
+        </div>
+        <div class="fi" style="margin-bottom:18px;">
+          <label class="lb">Enter 6-digit OTP</label>
+          <input type="text" id="regOtpInput" placeholder="_ _ _ _ _ _" maxlength="6"
+            style="font-size:32px;letter-spacing:12px;text-align:center;font-weight:700;"
+            onkeydown="if(event.key==='Enter')verifyRegOTP()">
+        </div>
+        <button onclick="verifyRegOTP()" class="sbtn" style="background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;">
+          <span id="regVerifyTxt">VERIFY & CREATE ACCOUNT →</span>
+          <div class="bll" id="regVerifyLoader"></div>
+        </button>
+        <div class="alrt ok" id="reg-ok" style="margin-top:12px;"></div>
+        <div class="alrt er" id="reg-er2" style="margin-top:12px;"></div>
+        <p style="font-size:12px;color:var(--soft);margin-top:14px;text-align:center;">
+          Didn't receive? <span onclick="startRegistration()" style="color:var(--sun);cursor:pointer;">Resend OTP</span>
+          &nbsp;|&nbsp; <span onclick="backToRegStep1()" style="color:var(--soft);cursor:pointer;">← Change details</span>
+        </p>
+      </div>
+    </div>
+
   </div>
 
   <!-- PORTAL DASHBOARD -->
@@ -1292,6 +1327,8 @@ function doPost(e) {
     if (data.action === 'updatePassword')   return respond(updatePassword(ss, data));
     if (data.action === 'approveCustomer')  return respond(approveCustomer(ss, data));
     if (data.action === 'getAllCustomers')   return respond(getAllCustomers(ss, data));
+    if (data.action === 'sendWelcomeEmail')  return respond(sendWelcomeEmail(ss, data));
+    if (data.action === 'adminAlert')        return respond(sendAdminAlert(data));
     return respond(handleForm(ss, data));
   } catch(err) {
     return respond({status:'error', message:err.toString()});
@@ -1518,6 +1555,43 @@ function saveLoginEvent(ss, data) {
   return {status:'success'};
 }
 
+// ── WELCOME EMAIL ────────────────────────────────────
+function sendWelcomeEmail(ss, data) {
+  try{
+    MailApp.sendEmail({
+      to: data.email,
+      subject: '✅ Welcome to Skyflies Solar! Your Account is Ready – ID: ' + data.customerId,
+      htmlBody:
+        '<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;">' +
+        '<div style="background:#F5A623;padding:20px;border-radius:12px 12px 0 0;text-align:center;">' +
+        '<h2 style="color:#080F1E;margin:0;">☀️ Welcome to Skyflies Solar!</h2></div>' +
+        '<div style="background:#f9f9f9;padding:24px;border-radius:0 0 12px 12px;">' +
+        '<p style="font-size:15px;color:#333;">Hi <strong>'+data.name+'</strong>, your account is ready!</p>' +
+        '<div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:20px;margin:16px 0;">' +
+        '<p style="margin:0 0 8px;font-size:13px;color:#666;">Your Customer ID:</p>' +
+        '<h1 style="color:#FF6B00;font-size:36px;margin:0;letter-spacing:4px;">'+data.customerId+'</h1></div>' +
+        '<p style="font-size:13px;color:#666;">You can now login using:<br>' +
+        '📞 Phone: <strong>'+data.phone+'</strong><br>' +
+        '✉️ Email: <strong>'+data.email+'</strong><br>' +
+        '🔑 Password: <strong>your chosen password</strong></p>' +
+        '<p style="font-size:13px;color:#666;">Our team will contact you shortly to schedule a free site survey.</p>' +
+        '<a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;margin-top:10px;">Open My Account →</a>' +
+        '<hr style="margin:20px 0;border:none;border-top:1px solid #eee;">' +
+        '<p style="font-size:12px;color:#999;">📞 +91 93854 49167 | ✉️ info@skyflies.in | 🌐 skyflies.in</p>' +
+        '</div></div>'
+    });
+    return {status:'success'};
+  }catch(e){ return {status:'error',message:e.toString()}; }
+}
+
+// ── ADMIN ALERT ───────────────────────────────────────
+function sendAdminAlert(data) {
+  try{
+    MailApp.sendEmail(ADMIN_EMAIL, data.subject||'Skyflies Alert', data.message||'');
+    return {status:'success'};
+  }catch(e){ return {status:'error',message:e.toString()}; }
+}
+
 // ── GET ALL CUSTOMERS ────────────────────────────────
 function getAllCustomers(ss, data) {
   var sh = ss.getSheetByName('Customer Logins');
@@ -1704,7 +1778,7 @@ var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
-var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbyt75SwoVPxEX3qBkDrf0fzvXn1ZITylUNR6-HyC62Sqmx0cjG1XhmkmmG_gYZxFtm6/exec';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbzYqh8LGljWJiTMzMA2lG6Zy2YOLKmemgetnmmI133eXcM8QjHvKK9Kf0ccDC89qKx3/exec';
 
 // ── RAZORPAY CONFIG ────────────────────────────────
 // Add your Razorpay Key ID here when ready (starts with rzp_live_ or rzp_test_)
@@ -2151,47 +2225,194 @@ function switchAuthTab(tab){
 }
 
 // ─────────────────────────────────────────────────────────────
-// CUSTOMER REGISTRATION
+// CUSTOMER REGISTRATION — OTP FLOW
 // ─────────────────────────────────────────────────────────────
-async function registerCustomer(){
+
+var regOtpStore = null;
+var regOtpTimerInterval = null;
+
+function backToRegStep1(){
+  document.getElementById('regStep1').style.display='';
+  document.getElementById('regStep2').style.display='none';
+  if(regOtpTimerInterval) clearInterval(regOtpTimerInterval);
+}
+
+async function startRegistration(){
   var name  = document.getElementById('regName').value.trim();
   var phone = document.getElementById('regPhone').value.trim();
   var email = document.getElementById('regEmail').value.trim();
   var city  = document.getElementById('regCity').value;
   if(city==='Other'){
-    var otherInput=document.getElementById('regCityOther');
-    city=otherInput&&otherInput.value.trim()?otherInput.value.trim():'Other';
+    var oc=document.getElementById('regCityOther');
+    city=oc&&oc.value.trim()?oc.value.trim():'Other';
   }
-  var pwd   = document.getElementById('regPwd').value;
-  var pwd2  = document.getElementById('regPwd2').value;
-  var okEl  = document.getElementById('reg-ok');
-  var erEl  = document.getElementById('reg-er');
-  okEl.classList.remove('show'); erEl.classList.remove('show');
-  if(!name||!phone||!email||!pwd){erEl.textContent='❌ Please fill in all required fields.';erEl.classList.add('show');return;}
+  var pwd  = document.getElementById('regPwd').value;
+  var pwd2 = document.getElementById('regPwd2').value;
+  var erEl = document.getElementById('reg-er');
+  erEl.classList.remove('show');
+
+  // Validate
+  if(!name||!phone||!email||!city||!pwd){erEl.textContent='❌ Please fill in all fields.';erEl.classList.add('show');return;}
+  if(!email.includes('@')){erEl.textContent='❌ Enter a valid email.';erEl.classList.add('show');return;}
   if(pwd.length<6){erEl.textContent='❌ Password must be at least 6 characters.';erEl.classList.add('show');return;}
   if(pwd!==pwd2){erEl.textContent='❌ Passwords do not match.';erEl.classList.add('show');return;}
-  // Duplicate check
-  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  var dup=pending.find(function(p){return (p.phone===phone||p.email===email)&&p.status!=='rejected';});
-  if(dup){
-    if(dup.status==='pending'){erEl.textContent='❌ Already registered. Waiting for admin approval.';erEl.classList.add('show');return;}
-    if(dup.status==='approved'){erEl.textContent='❌ Already approved. Please login with your phone/email + password.';erEl.classList.add('show');return;}
-  }
-  var btn=document.getElementById('regBtnTxt'); var loader=document.getElementById('regLoader');
+
+  // Check duplicate
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  var btn=document.getElementById('regStep1Txt');
+  var loader=document.getElementById('regStep1Loader');
   btn.style.display='none'; loader.style.display='block';
-  // Hash password before storing
+
+  // Generate OTP
+  var otp = Math.floor(100000+Math.random()*900000).toString();
+  var expires = Date.now() + 5*60*1000;
   var hashedPwd = await hashPassword(pwd);
-  // Save locally — THIS IS HOW ADMIN SEES IT
-  var regId='REG-'+Date.now();
-  var reg={id:regId,name,phone,email,city,pwd:hashedPwd,status:'pending',submittedAt:new Date().toISOString()};
-  pending.push(reg);
-  localStorage.setItem('sf_pending',JSON.stringify(pending));
-  // Send to Google Sheet — password is hashed
-  await sendToSheet({action:'registerCustomer',formType:'register',name,phone,email,city,password:hashedPwd,status:'Pending Approval',regId,submittedAt:new Date().toISOString()});
-  await new Promise(function(r){setTimeout(r,800);});
+
+  regOtpStore = {otp, email, name, phone, city, pwd:hashedPwd, expires};
+
+  // Send OTP via Apps Script
+  try{
+    await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'sendOTP',email,otp,
+        subject:'Verify your Skyflies Solar Account – OTP: '+otp,
+        purpose:'registration',name})});
+  }catch(e){}
+
   btn.style.display=''; loader.style.display='none';
+
+  // Show Step 2
+  document.getElementById('regStep1').style.display='none';
+  document.getElementById('regStep2').style.display='';
+  document.getElementById('regEmailShow').textContent=email;
+  document.getElementById('regOtpInput').value='';
+  document.getElementById('regOtpInput').focus();
+
+  // Start countdown timer
+  if(regOtpTimerInterval) clearInterval(regOtpTimerInterval);
+  var timerEl=document.getElementById('regOtpTimer');
+  regOtpTimerInterval=setInterval(function(){
+    var rem=Math.max(0,expires-Date.now());
+    var m=Math.floor(rem/60000); var s=Math.floor((rem%60000)/1000);
+    if(timerEl) timerEl.textContent=m+':'+String(s).padStart(2,'0');
+    if(rem<=0){clearInterval(regOtpTimerInterval);regOtpStore=null;if(timerEl)timerEl.textContent='Expired';}
+  },1000);
+}
+
+async function verifyRegOTP(){
+  var otp = document.getElementById('regOtpInput').value.trim();
+  var erEl = document.getElementById('reg-er2');
+  var okEl = document.getElementById('reg-ok');
+  erEl.classList.remove('show'); okEl.classList.remove('show');
+
+  if(!otp){erEl.textContent='❌ Please enter the OTP.';erEl.classList.add('show');return;}
+  if(!regOtpStore||Date.now()>regOtpStore.expires){
+    erEl.textContent='❌ OTP expired. Click Resend OTP.';erEl.classList.add('show');
+    regOtpStore=null; return;
+  }
+  if(otp!==regOtpStore.otp){erEl.textContent='❌ Wrong OTP. Please check your email.';erEl.classList.add('show');return;}
+
+  var btn=document.getElementById('regVerifyTxt');
+  var loader=document.getElementById('regVerifyLoader');
+  btn.style.display='none'; loader.style.display='block';
+
+  // OTP correct — auto approve, assign Customer ID
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  var existing=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+
+  // Get next customer ID from sheet
+  var count=Object.keys(existing).length+1;
+  var custId='SKY-'+String(count).padStart(3,'0');
+
+  // Try to get actual count from Sheet for correct ID
+  try{
+    var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'getAllCustomers'})});
+    var res=await r.json();
+    if(res.status==='success'&&res.customers){
+      count=res.customers.length+1;
+      custId='SKY-'+String(count).padStart(3,'0');
+    }
+  }catch(e){}
+
+  // Build customer record
+  var newCustomer={
+    pwd:regOtpStore.pwd, name:regOtpStore.name, phone:regOtpStore.phone,
+    email:regOtpStore.email, city:regOtpStore.city,
+    address:'', systemSize:'Pending', panels:'Pending',
+    installCost:'Pending', amountPaid:'Pending',
+    plan:'Pending – Skyflies Team will contact you',
+    billingCycle:'Monthly', nextService:'TBD',
+    systemStatus:'Pending Installation',
+    installDate:'', notes:'Self-registered via OTP. '+new Date().toLocaleDateString('en-IN'),
+    subscriptions:[],
+    timeline:[
+      {icon:'📝',title:'Account Created',date:new Date().toLocaleDateString('en-IN'),desc:'Account verified via OTP. Customer ID: '+custId,status:'done'},
+      {icon:'📞',title:'Site Survey',date:'TBD',desc:'Skyflies Team will contact you shortly for a free site survey.',status:'active'},
+      {icon:'💰',title:'Quotation',date:'TBD',desc:'Detailed quote sent after site survey.',status:'pending'},
+      {icon:'🔧',title:'Installation',date:'TBD',desc:'Solar system installation.',status:'pending'},
+      {icon:'✅',title:'System Active',date:'TBD',desc:'System live and generating power.',status:'pending'}
+    ],
+    queries:[]
+  };
+
+  // Save locally
+  existing[custId]=newCustomer;
+  localStorage.setItem('sf_customers',JSON.stringify(existing));
+
+  // Save to Google Sheet + Firebase
+  await sendToSheet({
+    action:'addCustomer', customerId:custId,
+    name:regOtpStore.name, phone:regOtpStore.phone,
+    email:regOtpStore.email, city:regOtpStore.city,
+    password:regOtpStore.pwd, address:'',
+    systemSize:'Pending', panels:'Pending',
+    installCost:'Pending', amountPaid:'Pending',
+    plan:'Pending – Skyflies Team will contact',
+    billingCycle:'Monthly', nextService:'TBD',
+    systemStatus:'Pending Installation',
+    installDate:new Date().toLocaleDateString('en-IN'),
+    notes:'Self-registered via OTP. '+new Date().toLocaleDateString('en-IN')
+  });
+
+  // Send welcome email
+  try{
+    await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({
+        action:'sendWelcomeEmail',
+        email:regOtpStore.email,
+        name:regOtpStore.name,
+        customerId:custId,
+        phone:regOtpStore.phone
+      })});
+  }catch(e){}
+
+  // Notify admin
+  await sendToSheet({
+    action:'adminAlert',
+    subject:'🎉 New Customer Registered – '+regOtpStore.name+' ('+custId+')',
+    message:'New customer registered via OTP verification.
+
+Name: '+regOtpStore.name+'
+Phone: '+regOtpStore.phone+'
+Email: '+regOtpStore.email+'
+City: '+regOtpStore.city+'
+Customer ID: '+custId
+  });
+
+  clearInterval(regOtpTimerInterval);
+  regOtpStore=null;
+
+  btn.style.display=''; loader.style.display='none';
+
+  // Show success + auto login
+  okEl.textContent='✅ Account created! Your ID: '+custId+' — Signing you in...';
   okEl.classList.add('show');
-  ['regName','regPhone','regEmail','regPwd','regPwd2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  logActivity('REGISTER_OTP','New customer: '+newCustomer.name+' ('+custId+')');
+
+  // Auto login after 2 seconds
+  setTimeout(function(){
+    loginSuccess(Object.assign({},newCustomer,{id:custId}));
+  },2000);
 }
 
 // ─────────────────────────────────────────────────────────────
