@@ -1659,6 +1659,15 @@ function buildEmail(data, sheetName) {
 </div>
 
 <script>
+window.onerror=function(msg,src,line,col,err){
+  document.body.innerHTML='<div style="background:#1a0000;color:#ff6b6b;padding:40px;font-family:monospace;font-size:15px;line-height:2.2;min-height:100vh;">' +
+    '<h2 style="color:#ff4444;font-size:22px;">⚠️ JS Error — Setup Blank Page Cause Found</h2>' +
+    '<p><b>Error:</b> '+msg+'</p>' +
+    '<p><b>Line:</b> '+line+'</p>' +
+    '<p><b>Column:</b> '+col+'</p>' +
+    '</div>';
+  return false;
+};
 var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
