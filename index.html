@@ -2230,69 +2230,65 @@ function adminLogout(){
 // ─────────────────────────────────────────────────────────────
 async function loadCustomersFromSheet(){
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
-  var loaded = false;
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
 
-  // 1. Try Firebase first
+  // 1. Load from Firebase 'customers' collection
   if(FIREBASE_ENABLED && db){
     try{
       var snap = await db.collection('customers').get();
       if(!snap.empty){
-        var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
         snap.forEach(function(doc){
           var d=doc.data();
-          var id=d.customerId||doc.id;
-          if(id && !lc[id]){
-            lc[id]={
+          var id=d.customerId||d.id||doc.id;
+          if(id && id.startsWith('SKY')){
+            lc[id]=lc[id]||{};
+            Object.assign(lc[id],{
               name:d.name||'', phone:d.phone||'', email:d.email||'',
               city:d.city||'', pwd:d.pwd||d.password||'',
               systemSize:d.systemSize||'Pending', panels:d.panels||'Pending',
               installCost:d.installCost||'Pending', amountPaid:d.amountPaid||'Pending',
               plan:d.plan||'Pending', billingCycle:d.billingCycle||'Monthly',
-              nextService:d.nextService||'TBD', systemStatus:d.systemStatus||'Pending Installation',
-              installDate:d.installDate||'', address:d.address||'', notes:d.notes||'',
-              subscriptions:d.subscriptions||[], timeline:d.timeline||[], queries:d.queries||[]
-            };
+              nextService:d.nextService||'TBD',
+              systemStatus:d.systemStatus||'Pending Installation',
+              installDate:d.installDate||'', address:d.address||'',
+              notes:d.notes||'', subscriptions:d.subscriptions||[],
+              timeline:d.timeline||[], queries:d.queries||[]
+            });
           }
         });
-        localStorage.setItem('sf_customers',JSON.stringify(lc));
-        loaded = true;
-        console.log('✅ Loaded '+snap.size+' customers from Firebase');
-        renderCustList();
-        refreshDash();
+        console.log('✅ Firebase customers loaded: '+snap.size);
       }
-    }catch(fe){ console.log('Firebase customer load failed:', fe); }
+    }catch(fe){ console.log('Firebase customers failed:',fe); }
   }
 
-  // 2. Try Google Sheet
+  // 2. Load from Google Sheet 'Customer Logins' tab
   try{
-    var r=await fetch(wh,{
-      method:'POST',
+    var r=await fetch(wh,{method:'POST',
       headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'getAllCustomers'})
-    });
+      body:JSON.stringify({action:'getAllCustomers'})});
     var res=await r.json();
     if(res.status==='success' && res.customers && res.customers.length){
-      var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
       res.customers.forEach(function(c){
-        if(c.id && !lc[c.id]){
-          lc[c.id]={
-            name:c.name||'', phone:c.phone||'', email:c.email||'',
-            city:c.city||'', pwd:c.password||'',
-            systemSize:c.systemSize||'Pending', panels:c.panels||'Pending',
-            installCost:c.installCost||'Pending', amountPaid:c.amountPaid||'Pending',
-            plan:c.plan||'Pending', billingCycle:c.billingCycle||'Monthly',
-            nextService:c.nextService||'TBD', systemStatus:c.systemStatus||'Pending Installation',
-            installDate:c.installDate||'', address:c.address||'', notes:c.notes||'',
-            subscriptions:[], timeline:[], queries:[]
-          };
-        }
+        if(!c.id) return;
+        lc[c.id]=lc[c.id]||{};
+        Object.assign(lc[c.id],{
+          name:c.name||'', phone:c.phone||'', email:c.email||'',
+          city:c.city||'', pwd:c.password||lc[c.id].pwd||'',
+          systemSize:c.systemSize||'Pending', panels:c.panels||'Pending',
+          installCost:c.installCost||'Pending', amountPaid:c.amountPaid||'Pending',
+          plan:c.plan||'Pending', billingCycle:c.billingCycle||'Monthly',
+          nextService:c.nextService||'TBD',
+          systemStatus:c.systemStatus||'Pending Installation',
+          installDate:c.installDate||'', address:c.address||'', notes:c.notes||''
+        });
       });
-      localStorage.setItem('sf_customers',JSON.stringify(lc));
-      console.log('✅ Loaded '+res.customers.length+' customers from Sheet');
-      renderCustList();
-      refreshDash();
+      console.log('✅ Sheet customers loaded: '+res.customers.length);
     }
-  }catch(e){ console.log('Sheet customer load failed:', e); }
+  }catch(e){ console.log('Sheet customers failed:',e); }
+
+  localStorage.setItem('sf_customers',JSON.stringify(lc));
+  renderCustList();
+  refreshDash();
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -2301,65 +2297,67 @@ async function loadCustomersFromSheet(){
 async function loadPendingFromSheet(){
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
   var con=document.getElementById('pendingContainer');
-  if(con) con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);">⏳ Loading pending registrations...</div>';
+  if(con) con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);">⏳ Loading...</div>';
 
-  var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  // Always start fresh from server — don't rely on localStorage
+  var freshPending=[];
 
-  // 1. Try Firebase — check ALL register docs and filter pending
+  // 1. Firebase 'register' collection — get only truly pending
   if(FIREBASE_ENABLED && db){
     try{
       var snap = await db.collection('register').get();
-      if(!snap.empty){
-        var localIds=local.map(function(p){return p.id||p.regId;});
-        snap.forEach(function(doc){
-          var p=doc.data();
-          var st=String(p.status||'').toLowerCase();
-          // Accept any pending status variation
-          if(st.includes('pending')||st===''||!st){
-            var rid=p.regId||doc.id;
-            if(!localIds.includes(rid)){
-              local.push({
-                id:rid, name:p.name||'', phone:p.phone||'',
-                email:p.email||'', city:p.city||'',
-                pwd:p.password||'', status:'pending',
-                submittedAt:p.submittedAt||new Date().toISOString()
-              });
-              localIds.push(rid);
-            }
-          }
-        });
-        localStorage.setItem('sf_pending',JSON.stringify(local));
-        console.log('✅ Firebase register docs scanned: '+snap.size);
-      }
-    }catch(fe){ console.log('Firebase pending fetch failed:', fe); }
-  }
-
-  // 2. Always also try Google Sheet (not just fallback)
-  try{
-    var r=await fetch(wh,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'getPending'})
-    });
-    var res=await r.json();
-    if(res.status==='success'&&res.pending&&res.pending.length){
-      var localIds2=local.map(function(p){return p.regId||p.id;});
-      res.pending.forEach(function(p){
-        if(!localIds2.includes(p.regId)&&!localIds2.includes(p.id)){
-          local.push({
-            id:p.regId||('REG-'+Date.now()),
+      snap.forEach(function(doc){
+        var p=doc.data();
+        var st=String(p.status||'').toLowerCase().trim();
+        // Only show if NOT approved and NOT rejected
+        if(st!=='approved' && st!=='rejected'){
+          freshPending.push({
+            id:p.regId||doc.id,
             name:p.name||'', phone:p.phone||'',
             email:p.email||'', city:p.city||'',
             pwd:p.password||'', status:'pending',
-            submittedAt:p.submittedAt||new Date().toISOString()
+            submittedAt:p.submittedAt||''
           });
         }
       });
-      localStorage.setItem('sf_pending',JSON.stringify(local));
-      console.log('✅ Loaded '+res.pending.length+' pending from Google Sheet');
-    }
-  }catch(e){ console.log('Sheet pending fetch failed:', e); }
+      console.log('Firebase register scanned, pending:'+freshPending.length);
+    }catch(fe){ console.log('Firebase pending failed:',fe); }
+  }
 
+  // 2. Google Sheet 'Pending Registrations' tab
+  try{
+    var r=await fetch(wh,{method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'getPending'})});
+    var res=await r.json();
+    if(res.status==='success' && res.pending && res.pending.length){
+      var existingIds=freshPending.map(function(p){return p.id;});
+      res.pending.forEach(function(p){
+        if(!existingIds.includes(p.regId)){
+          freshPending.push({
+            id:p.regId||('ROW-'+Date.now()),
+            name:p.name||'', phone:p.phone||'',
+            email:p.email||'', city:p.city||'',
+            pwd:p.password||'', status:'pending',
+            submittedAt:p.submittedAt||''
+          });
+        }
+      });
+      console.log('Sheet pending loaded:'+res.pending.length);
+    }
+  }catch(e){ console.log('Sheet pending failed:',e); }
+
+  // Merge with local (keep any local pending not on server)
+  var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  var serverIds=freshPending.map(function(p){return p.id;});
+  local.forEach(function(p){
+    if(p.status==='pending' && !serverIds.includes(p.id)){
+      freshPending.push(p);
+    }
+  });
+
+  // Save merged back
+  localStorage.setItem('sf_pending',JSON.stringify(freshPending));
   renderPending();
 }
 
@@ -2369,16 +2367,19 @@ async function loadPendingFromSheet(){
 // Global array so approve/reject can always find the right registration
 
 function renderPending(){
-  var all = JSON.parse(localStorage.getItem('sf_pending')||'[]');
-  PENDING_LIST = all.filter(function(p){return p.status==='pending';});
+  var all=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  PENDING_LIST=all.filter(function(p){
+    var st=String(p.status||'').toLowerCase();
+    return st==='pending' || st==='' || !st;
+  });
 
   var pc=document.getElementById('pendCount');
   var pb=document.getElementById('pendBadge');
-  if(pc)pc.textContent=PENDING_LIST.length;
-  if(pb)pb.textContent=PENDING_LIST.length>0?PENDING_LIST.length+' waiting':'';
+  if(pc) pc.textContent=PENDING_LIST.length;
+  if(pb) pb.textContent=PENDING_LIST.length>0?PENDING_LIST.length+' waiting':'';
 
   var con=document.getElementById('pendingContainer');
-  if(!con)return;
+  if(!con) return;
 
   if(!PENDING_LIST.length){
     con.innerHTML='<div style="text-align:center;padding:24px;color:var(--soft);font-size:13px;">✅ No pending registrations.</div>';
@@ -2386,53 +2387,42 @@ function renderPending(){
   }
 
   con.innerHTML='';
-
-  PENDING_LIST.forEach(function(p, idx){
-    var dt = p.submittedAt ? new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '–';
-
-    var card = document.createElement('div');
-    card.style.cssText = 'background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;margin-bottom:12px;';
-
-    // Info section
-    var info = document.createElement('div');
-    info.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;';
-
-    var details = document.createElement('div');
-    details.innerHTML =
+  PENDING_LIST.forEach(function(p,idx){
+    var dt=p.submittedAt?new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
+    var card=document.createElement('div');
+    card.style.cssText='background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;margin-bottom:12px;';
+    var info=document.createElement('div');
+    info.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;';
+    var details=document.createElement('div');
+    details.innerHTML=
       '<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:6px;">👤 '+p.name+'</div>'+
-      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📞 '+p.phone+'</div>'+
-      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">✉️ '+p.email+'</div>'+
+      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📞 '+(p.phone||'–')+'</div>'+
+      '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">✉️ '+(p.email||'–')+'</div>'+
       '<div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📍 '+(p.city||'–')+'</div>'+
       '<div style="font-size:11px;color:rgba(168,192,224,0.4);">🕐 '+dt+'</div>';
-
-    // Buttons section
-    var btnBox = document.createElement('div');
-    btnBox.style.cssText = 'display:flex;flex-direction:column;gap:8px;min-width:190px;';
-
-    var approveBtn = document.createElement('button');
-    approveBtn.textContent = '✅ Approve & Activate';
-    approveBtn.style.cssText = 'padding:12px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
-    approveBtn.setAttribute('data-idx', idx);
-    approveBtn.onclick = function(){
-      var i = parseInt(this.getAttribute('data-idx'));
-      var reg = PENDING_LIST[i];
-      if(!reg){ alert('Error: Registration not found. Please refresh.'); return; }
-      this.textContent = '⏳ Approving...';
-      this.disabled = true;
+    var btnBox=document.createElement('div');
+    btnBox.style.cssText='display:flex;flex-direction:column;gap:8px;min-width:190px;';
+    var approveBtn=document.createElement('button');
+    approveBtn.textContent='✅ Approve & Activate';
+    approveBtn.style.cssText='padding:12px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+    approveBtn.setAttribute('data-idx',idx);
+    approveBtn.onclick=function(){
+      var i=parseInt(this.getAttribute('data-idx'));
+      var reg=PENDING_LIST[i];
+      if(!reg){alert('Error: not found. Refresh page.');return;}
+      this.textContent='⏳ Approving...';this.disabled=true;
       approveReg(reg.id);
     };
-
-    var rejectBtn = document.createElement('button');
-    rejectBtn.textContent = '❌ Reject';
-    rejectBtn.style.cssText = 'padding:12px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:#FF5252;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
-    rejectBtn.setAttribute('data-idx', idx);
-    rejectBtn.onclick = function(){
-      var i = parseInt(this.getAttribute('data-idx'));
-      var reg = PENDING_LIST[i];
-      if(!reg){ alert('Error: Registration not found.'); return; }
+    var rejectBtn=document.createElement('button');
+    rejectBtn.textContent='❌ Reject';
+    rejectBtn.style.cssText='padding:12px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:#FF5252;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+    rejectBtn.setAttribute('data-idx',idx);
+    rejectBtn.onclick=function(){
+      var i=parseInt(this.getAttribute('data-idx'));
+      var reg=PENDING_LIST[i];
+      if(!reg){alert('Error.');return;}
       rejectReg(reg.id);
     };
-
     btnBox.appendChild(approveBtn);
     btnBox.appendChild(rejectBtn);
     info.appendChild(details);
