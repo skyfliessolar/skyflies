@@ -1288,6 +1288,7 @@ function doPost(e) {
     if (data.action === 'getCustomerByEmail') return respond(getCustomerByEmail(ss, data));
     if (data.action === 'updatePassword')   return respond(updatePassword(ss, data));
     if (data.action === 'approveCustomer')  return respond(approveCustomer(ss, data));
+    if (data.action === 'getAllCustomers')   return respond(getAllCustomers(ss, data));
     return respond(handleForm(ss, data));
   } catch(err) {
     return respond({status:'error', message:err.toString()});
@@ -1496,6 +1497,26 @@ function saveLoginEvent(ss, data) {
   var sh=getOrCreate(ss,'Login History',headers,COLORS.grey);
   sh.appendRow([timestamp(),data.customerId||'',data.name||'',data.phone||'',data.loginTime||timestamp()]);
   return {status:'success'};
+}
+
+// ── GET ALL CUSTOMERS ────────────────────────────────
+function getAllCustomers(ss, data) {
+  var sh = ss.getSheetByName('Customer Logins');
+  if (!sh) return {status:'success', customers:[]};
+  var rows = sh.getDataRange().getValues();
+  var customers = [];
+  for (var i = 1; i < rows.length; i++) {
+    var r = rows[i];
+    if (!String(r[0]).trim()) continue;
+    customers.push({
+      id:r[0], name:r[1], password:r[2], phone:r[3], email:r[4],
+      city:r[5], address:r[6], systemSize:r[7], panels:r[8],
+      installCost:r[9], amountPaid:r[10], plan:r[11],
+      billingCycle:r[12], nextService:r[13], systemStatus:r[14],
+      installDate:r[15], notes:r[16]||''
+    });
+  }
+  return {status:'success', customers:customers};
 }
 
 function getOrCreate(ss, name, headers, color) {
@@ -2165,14 +2186,16 @@ async function registerCustomer(){
 function adminLogin(){
   var pwd     = document.getElementById('adminPwd').value.trim();
   var correct = localStorage.getItem(PW)||'skyflies2024';
-  // Support both plain and hashed passwords for backward compatibility
   hashPassword(pwd).then(function(hashedPwd){
     if(pwd===correct||hashedPwd===correct){
       document.getElementById('adminLoginBox').style.display='none';
       document.getElementById('adminDash').classList.add('on');
       refreshDash();
       renderCustList();
+      // Load pending from Firebase/Sheet
       loadPendingFromSheet().then(function(){ renderPending(); });
+      // Load customers from Firebase/Sheet
+      loadCustomersFromSheet();
     }else{
       var e=document.getElementById('loginErr');
       e.classList.add('show');
@@ -2184,6 +2207,76 @@ function adminLogout(){
   document.getElementById('adminLoginBox').style.display='';
   document.getElementById('adminDash').classList.remove('on');
   document.getElementById('adminPwd').value='';
+}
+
+// ─────────────────────────────────────────────────────────────
+// LOAD ALL CUSTOMERS FROM GOOGLE SHEET + FIREBASE
+// ─────────────────────────────────────────────────────────────
+async function loadCustomersFromSheet(){
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  var loaded = false;
+
+  // 1. Try Firebase first
+  if(FIREBASE_ENABLED && db){
+    try{
+      var snap = await db.collection('customers').get();
+      if(!snap.empty){
+        var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+        snap.forEach(function(doc){
+          var d=doc.data();
+          var id=d.customerId||doc.id;
+          if(id && !lc[id]){
+            lc[id]={
+              name:d.name||'', phone:d.phone||'', email:d.email||'',
+              city:d.city||'', pwd:d.pwd||d.password||'',
+              systemSize:d.systemSize||'Pending', panels:d.panels||'Pending',
+              installCost:d.installCost||'Pending', amountPaid:d.amountPaid||'Pending',
+              plan:d.plan||'Pending', billingCycle:d.billingCycle||'Monthly',
+              nextService:d.nextService||'TBD', systemStatus:d.systemStatus||'Pending Installation',
+              installDate:d.installDate||'', address:d.address||'', notes:d.notes||'',
+              subscriptions:d.subscriptions||[], timeline:d.timeline||[], queries:d.queries||[]
+            };
+          }
+        });
+        localStorage.setItem('sf_customers',JSON.stringify(lc));
+        loaded = true;
+        console.log('✅ Loaded '+snap.size+' customers from Firebase');
+        renderCustList();
+        refreshDash();
+      }
+    }catch(fe){ console.log('Firebase customer load failed:', fe); }
+  }
+
+  // 2. Try Google Sheet
+  try{
+    var r=await fetch(wh,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'getAllCustomers'})
+    });
+    var res=await r.json();
+    if(res.status==='success' && res.customers && res.customers.length){
+      var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+      res.customers.forEach(function(c){
+        if(c.id && !lc[c.id]){
+          lc[c.id]={
+            name:c.name||'', phone:c.phone||'', email:c.email||'',
+            city:c.city||'', pwd:c.password||'',
+            systemSize:c.systemSize||'Pending', panels:c.panels||'Pending',
+            installCost:c.installCost||'Pending', amountPaid:c.amountPaid||'Pending',
+            plan:c.plan||'Pending', billingCycle:c.billingCycle||'Monthly',
+            nextService:c.nextService||'TBD', systemStatus:c.systemStatus||'Pending Installation',
+            installDate:c.installDate||'', address:c.address||'', notes:c.notes||'',
+            subscriptions:[], timeline:[], queries:[]
+          };
+        }
+      });
+      localStorage.setItem('sf_customers',JSON.stringify(lc));
+      console.log('✅ Loaded '+res.customers.length+' customers from Sheet');
+      renderCustList();
+      refreshDash();
+    }
+  }catch(e){ console.log('Sheet customer load failed:', e); }
 }
 
 // ─────────────────────────────────────────────────────────────
