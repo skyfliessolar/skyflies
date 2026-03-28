@@ -1354,11 +1354,23 @@ function getPending(ss, data) {
   var rows=sh.getDataRange().getValues();
   var pending=[];
   for(var i=1;i<rows.length;i++){
-    if(String(rows[i][8]).trim()==='Pending Approval'){
-      pending.push({regId:String(rows[i][7]).trim(),name:String(rows[i][2]).trim(),
-        phone:String(rows[i][3]).trim(),email:String(rows[i][4]).trim(),
-        city:String(rows[i][5]).trim(),password:String(rows[i][6]).trim(),
-        submittedAt:String(rows[i][1]).trim()});
+    var status=String(rows[i][8]||'').trim().toLowerCase();
+    var name=String(rows[i][2]||'').trim();
+    // Accept any pending status, skip approved/rejected rows
+    var isPending = status.indexOf('pending')!==-1 || (status==='' && name!=='');
+    var isApproved = status.indexOf('approved')!==-1 || status.indexOf('rejected')!==-1;
+    if(isPending && !isApproved && name){
+      var regId=String(rows[i][7]||'').trim()||('ROW-'+i);
+      pending.push({
+        regId:regId,
+        name:name,
+        phone:String(rows[i][3]||'').trim(),
+        email:String(rows[i][4]||'').trim(),
+        city:String(rows[i][5]||'').trim(),
+        password:String(rows[i][6]||'').trim(),
+        submittedAt:String(rows[i][1]||'').trim(),
+        rowIndex:i
+      });
     }
   }
   return {status:'success',pending:pending};
@@ -1436,7 +1448,11 @@ function approveCustomer(ss, data) {
   if(sh){
     var rows=sh.getDataRange().getValues();
     for(var i=1;i<rows.length;i++){
-      if(String(rows[i][7]).trim()===String(data.regId).trim()){
+      // Match by regId OR phone OR rowIndex
+      var rowMatch = String(rows[i][7]).trim()===String(data.regId).trim()
+        || (data.phone && String(rows[i][3]).trim()===String(data.phone).trim())
+        || (data.rowIndex && i===parseInt(data.rowIndex));
+      if(rowMatch){
         sh.getRange(i+1,9).setValue('Approved');
         sh.getRange(i+1,10).setValue('Approved as '+data.customerId);
         break;
@@ -1685,7 +1701,7 @@ var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
-var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbyYgzRSjvqbLBcY9QRT1xjMay1g1iaVjlZdeS6xC7hK5Fn__TwKiV2yHYrMk26hwxtS/exec';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbyt75SwoVPxEX3qBkDrf0fzvXn1ZITylUNR6-HyC62Sqmx0cjG1XhmkmmG_gYZxFtm6/exec';
 
 // ── RAZORPAY CONFIG ────────────────────────────────
 // Add your Razorpay Key ID here when ready (starts with rzp_live_ or rzp_test_)
@@ -2287,65 +2303,62 @@ async function loadPendingFromSheet(){
   var con=document.getElementById('pendingContainer');
   if(con) con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);">⏳ Loading pending registrations...</div>';
 
-  var found = false;
+  var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
 
-  // 1. Try Firebase first (fastest)
+  // 1. Try Firebase — check ALL register docs and filter pending
   if(FIREBASE_ENABLED && db){
     try{
-      var snap = await db.collection('register')
-        .where('status','==','Pending Approval').get();
+      var snap = await db.collection('register').get();
       if(!snap.empty){
-        var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
         var localIds=local.map(function(p){return p.id||p.regId;});
         snap.forEach(function(doc){
           var p=doc.data();
-          if(!localIds.includes(p.regId)){
-            local.push({
-              id:p.regId||doc.id,
-              name:p.name, phone:p.phone,
-              email:p.email, city:p.city,
-              pwd:p.password,
-              status:'pending',
-              submittedAt:p.submittedAt||new Date().toISOString()
-            });
+          var st=String(p.status||'').toLowerCase();
+          // Accept any pending status variation
+          if(st.includes('pending')||st===''||!st){
+            var rid=p.regId||doc.id;
+            if(!localIds.includes(rid)){
+              local.push({
+                id:rid, name:p.name||'', phone:p.phone||'',
+                email:p.email||'', city:p.city||'',
+                pwd:p.password||'', status:'pending',
+                submittedAt:p.submittedAt||new Date().toISOString()
+              });
+              localIds.push(rid);
+            }
           }
         });
         localStorage.setItem('sf_pending',JSON.stringify(local));
-        found = true;
-        console.log('✅ Loaded pending from Firebase: '+snap.size);
+        console.log('✅ Firebase register docs scanned: '+snap.size);
       }
     }catch(fe){ console.log('Firebase pending fetch failed:', fe); }
   }
 
-  // 2. Try Google Sheet as fallback
-  if(!found){
-    try{
-      var r=await fetch(wh,{
-        method:'POST',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify({action:'getPending'})
+  // 2. Always also try Google Sheet (not just fallback)
+  try{
+    var r=await fetch(wh,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'getPending'})
+    });
+    var res=await r.json();
+    if(res.status==='success'&&res.pending&&res.pending.length){
+      var localIds2=local.map(function(p){return p.regId||p.id;});
+      res.pending.forEach(function(p){
+        if(!localIds2.includes(p.regId)&&!localIds2.includes(p.id)){
+          local.push({
+            id:p.regId||('REG-'+Date.now()),
+            name:p.name||'', phone:p.phone||'',
+            email:p.email||'', city:p.city||'',
+            pwd:p.password||'', status:'pending',
+            submittedAt:p.submittedAt||new Date().toISOString()
+          });
+        }
       });
-      var res=await r.json();
-      if(res.status==='success'&&res.pending&&res.pending.length){
-        var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
-        var localIds=local.map(function(p){return p.regId||p.id;});
-        res.pending.forEach(function(p){
-          if(!localIds.includes(p.regId)){
-            local.push({
-              id:p.regId||('REG-'+Date.now()),
-              name:p.name, phone:p.phone,
-              email:p.email, city:p.city,
-              pwd:p.password,
-              status:'pending',
-              submittedAt:p.submittedAt||new Date().toISOString()
-            });
-          }
-        });
-        localStorage.setItem('sf_pending',JSON.stringify(local));
-        console.log('✅ Loaded pending from Google Sheet');
-      }
-    }catch(e){ console.log('Sheet pending fetch failed:', e); }
-  }
+      localStorage.setItem('sf_pending',JSON.stringify(local));
+      console.log('✅ Loaded '+res.pending.length+' pending from Google Sheet');
+    }
+  }catch(e){ console.log('Sheet pending fetch failed:', e); }
 
   renderPending();
 }
