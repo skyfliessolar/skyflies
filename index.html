@@ -2095,33 +2095,67 @@ async function loadPendingFromSheet(){
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;
   var con=document.getElementById('pendingContainer');
   if(con) con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);">⏳ Loading pending registrations...</div>';
-  try{
-    var r=await fetch(wh,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action:'getPending'})
-    });
-    var res=await r.json();
-    if(res.status==='success'&&res.pending&&res.pending.length){
-      // Merge sheet data with localStorage
-      var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
-      var localIds=local.map(function(p){return p.regId||p.id;});
-      res.pending.forEach(function(p){
-        if(!localIds.includes(p.regId)){
-          local.push({
-            id:p.regId||('REG-'+Date.now()),
-            name:p.name, phone:p.phone, email:p.email,
-            city:p.city, pwd:p.password,
-            status:'pending',
-            submittedAt:p.submittedAt||new Date().toISOString()
-          });
-        }
-      });
-      localStorage.setItem('sf_pending',JSON.stringify(local));
-    }
-  }catch(e){
-    // If sheet fails, just use localStorage
+
+  var found = false;
+
+  // 1. Try Firebase first (fastest)
+  if(FIREBASE_ENABLED && db){
+    try{
+      var snap = await db.collection('register')
+        .where('status','==','Pending Approval').get();
+      if(!snap.empty){
+        var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+        var localIds=local.map(function(p){return p.id||p.regId;});
+        snap.forEach(function(doc){
+          var p=doc.data();
+          if(!localIds.includes(p.regId)){
+            local.push({
+              id:p.regId||doc.id,
+              name:p.name, phone:p.phone,
+              email:p.email, city:p.city,
+              pwd:p.password,
+              status:'pending',
+              submittedAt:p.submittedAt||new Date().toISOString()
+            });
+          }
+        });
+        localStorage.setItem('sf_pending',JSON.stringify(local));
+        found = true;
+        console.log('✅ Loaded pending from Firebase: '+snap.size);
+      }
+    }catch(fe){ console.log('Firebase pending fetch failed:', fe); }
   }
+
+  // 2. Try Google Sheet as fallback
+  if(!found){
+    try{
+      var r=await fetch(wh,{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify({action:'getPending'})
+      });
+      var res=await r.json();
+      if(res.status==='success'&&res.pending&&res.pending.length){
+        var local=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+        var localIds=local.map(function(p){return p.regId||p.id;});
+        res.pending.forEach(function(p){
+          if(!localIds.includes(p.regId)){
+            local.push({
+              id:p.regId||('REG-'+Date.now()),
+              name:p.name, phone:p.phone,
+              email:p.email, city:p.city,
+              pwd:p.password,
+              status:'pending',
+              submittedAt:p.submittedAt||new Date().toISOString()
+            });
+          }
+        });
+        localStorage.setItem('sf_pending',JSON.stringify(local));
+        console.log('✅ Loaded pending from Google Sheet');
+      }
+    }catch(e){ console.log('Sheet pending fetch failed:', e); }
+  }
+
   renderPending();
 }
 
@@ -2269,12 +2303,27 @@ async function approveReg(regId){
     notes:'Self-registered. Approved '+new Date().toLocaleDateString('en-IN')
   });
 
-  // Mark as approved in pending list
+  // Mark as approved in pending list locally
   var allPending = JSON.parse(localStorage.getItem('sf_pending')||'[]');
   allPending = allPending.map(function(p){
     return p.id===regId ? Object.assign({},p,{status:'approved',customerId:custId}) : p;
   });
   localStorage.setItem('sf_pending', JSON.stringify(allPending));
+
+  // Mark as approved in Firebase
+  if(FIREBASE_ENABLED && db){
+    try{
+      var snap = await db.collection('register')
+        .where('regId','==',regId).get();
+      snap.forEach(function(doc){
+        doc.ref.update({status:'Approved', customerId:custId, approvedAt:new Date().toISOString()});
+      });
+      // Save customer to Firebase
+      await fbSave('customers', custId, Object.assign({}, newCustomer, {
+        customerId:custId, approvedAt:new Date().toISOString()
+      }));
+    }catch(fe){ console.log('Firebase approve failed:', fe); }
+  }
 
   // Show success
   alert(
