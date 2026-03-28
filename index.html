@@ -638,10 +638,11 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" name="name" placeholder="Your full name" required></div>
         <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
         <div class="fi"><label class="lb">Email</label><input type="email" name="email" placeholder="your@email.com"></div>
-        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required onchange="handleOtherCity(this)"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select>
+            <input type="text" name="cityOther" placeholder="Enter your city name" style="display:none;margin-top:8px;" class="other-city-input"></div>
         <div class="fi"><label class="lb">Property Type</label><select name="propertyType"><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
         <div class="fi"><label class="lb">Source</label><select name="source"><option value="">How did you find us?</option><option>Google Search</option><option>WhatsApp</option><option>Email</option><option>Referral</option><option>Social Media</option><option>YouTube</option><option>Other</option></select></div>
-        <div class="fi full"><label class="lb">Message <span>*</span></label><textarea name="message" placeholder="Your question or requirement..." required></textarea></div>
+        <div class="fi full"><label class="lb">Message <span>*</span></label><textarea name="message" placeholder="Your question or requirement (optional)"></textarea></div>
       </div>
       <button type="submit" class="sbtn"><span class="bt">SEND ENQUIRY →</span><div class="bll"></div></button>
       <div class="alrt ok" id="e-ok">✅ &nbsp;Enquiry sent! Skyflies Team will contact you within 24 hours.</div>
@@ -662,7 +663,8 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
         <div class="fi"><label class="lb">Email <span>*</span></label><input type="email" name="email" placeholder="your@email.com" required></div>
         <div class="fi"><label class="lb">Company / Business</label><input type="text" name="company" placeholder="Business name (if applicable)"></div>
-        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required onchange="handleOtherCity(this)"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select>
+            <input type="text" name="cityOther" placeholder="Enter your city name" style="display:none;margin-top:8px;" class="other-city-input"></div>
         <div class="fi"><label class="lb">Property Type <span>*</span></label><select name="propertyType" required><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial – Factory/Mill</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
         <div class="fi"><label class="lb">Monthly Electricity Bill</label><select name="bill"><option value="">Select range</option><option>Below ₹2,000</option><option>₹2,000–₹5,000</option><option>₹5,000–₹15,000</option><option>₹15,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>Above ₹1,00,000</option></select></div>
         <div class="fi"><label class="lb">Roof Area (sq ft)</label><input type="text" name="roofArea" placeholder="e.g. 500 sq ft"></div>
@@ -744,7 +746,8 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
         <div class="fi"><label class="lb">Full Name <span>*</span></label><input type="text" name="name" placeholder="Your full name" required></div>
         <div class="fi"><label class="lb">Phone <span>*</span></label><input type="tel" name="phone" placeholder="+91 XXXXX XXXXX" required></div>
         <div class="fi"><label class="lb">Email <span>*</span></label><input type="email" name="email" placeholder="your@email.com" required></div>
-        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select></div>
+        <div class="fi"><label class="lb">City <span>*</span></label><select name="city" required onchange="handleOtherCity(this)"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select>
+            <input type="text" name="cityOther" placeholder="Enter your city name" style="display:none;margin-top:8px;" class="other-city-input"></div>
         <div class="fi"><label class="lb">Property Type <span>*</span></label><select name="propertyType" required><option value="">Select type</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Hospital</option><option>School/College</option><option>Hotel</option><option>Other</option></select></div>
         <div class="fi"><label class="lb">System Size Needed</label><select name="systemSize"><option value="">Select size</option><option>1–2 kW (Starter)</option><option>3–5 kW (Home)</option><option>5–10 kW (Commercial)</option><option>10 kW+ (Industrial)</option></select></div>
         <div class="fi"><label class="lb">Monthly Income Range</label><select name="income"><option value="">Select range</option><option>₹10,000–₹25,000</option><option>₹25,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>Above ₹1,00,000</option></select></div>
@@ -949,7 +952,8 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
           <div class="fi"><label class="lb">Phone Number <span>*</span></label><input type="tel" id="regPhone" placeholder="+91 XXXXX XXXXX" required></div>
           <div class="fi"><label class="lb">Email Address <span>*</span></label><input type="email" id="regEmail" placeholder="your@email.com" required></div>
           <div class="fi"><label class="lb">City <span>*</span></label>
-            <select id="regCity"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option>Other</option></select>
+            <select id="regCity" onchange="handleOtherCity(this)"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select>
+            <input type="text" id="regCityOther" placeholder="Enter your city name" style="display:none;margin-top:8px;">
           </div>
           <div class="fi full"><label class="lb">Set Your Password <span>*</span></label><input type="password" id="regPwd" placeholder="Choose a strong password (min 6 characters)" required></div>
           <div class="fi full"><label class="lb">Confirm Password <span>*</span></label><input type="password" id="regPwd2" placeholder="Re-enter your password" required></div>
@@ -1193,6 +1197,33 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <h3>🔐 Change Admin Password</h3>
     <div class="wrow" style="max-width:400px;"><input type="password" id="newPwd" placeholder="Enter new admin password"><button class="svbtn" onclick="savePwd()">💾 Save</button></div>
     <div class="wst" id="pwdSt"></div>
+  </div>
+
+  <!-- BACKUP APPROVAL GUIDE -->
+  <div class="scard2" style="border-color:rgba(0,230,118,0.3);">
+    <h3>✅ Approve Customers via Firebase / Google Sheet</h3>
+    <p style="font-size:12px;color:var(--soft);margin-bottom:16px;line-height:1.8;">If admin login fails, you can approve customers directly from Firebase or Google Sheet:</p>
+    <div class="slist">
+      <div class="srow">
+        <div class="sno" style="background:linear-gradient(135deg,#FF9800,#F44336);">F</div>
+        <div class="stxt">
+          <strong style="color:#fff;">Via Firebase:</strong> Go to <strong>console.firebase.google.com → skyflies-solar → Firestore → register collection</strong> → find the customer → change <strong>status</strong> from <strong>"Pending Approval"</strong> to <strong>"Approved"</strong>
+        </div>
+      </div>
+      <div class="srow">
+        <div class="sno" style="background:linear-gradient(135deg,#2E7D32,#00E676);">G</div>
+        <div class="stxt">
+          <strong style="color:#fff;">Via Google Sheet:</strong> Open <strong>Skyflies Solar CRM sheet → Pending Registrations tab</strong> → find the customer row → change column I <strong>"Pending Approval"</strong> to <strong>"Approved"</strong>
+        </div>
+      </div>
+      <div class="srow">
+        <div class="sno">+</div>
+        <div class="stxt">
+          <strong style="color:#fff;">Then manually add to Customer Logins:</strong> Go to <strong>Customer Logins tab</strong> → add a new row with: Customer ID (SKY-001), Name, Password (hashed), Phone, Email, City, and other details
+        </div>
+      </div>
+    </div>
+    <button onclick="showPage('admin',null)" style="margin-top:16px;padding:10px 20px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">🔐 Go to Admin Login</button>
   </div>
   <div class="scard2">
     <h3>📄 Google Apps Script Code</h3>
@@ -1688,6 +1719,26 @@ function quickHash(str){
 }
 
 // ─── NAV ───────────────────────────────────────────────────
+// ── CITY DROPDOWN — OTHER OPTION ──────────────────
+function handleOtherCity(select){
+  var input=select.nextElementSibling;
+  if(!input||input.tagName!=='INPUT')return;
+  if(select.value==='Other'){
+    input.style.display='block';input.required=true;input.focus();
+  }else{
+    input.style.display='none';input.required=false;input.value='';
+  }
+}
+function getCityValue(select){
+  if(!select)return'';
+  if(select.value==='Other'){
+    var input=select.nextElementSibling;
+    if(input&&input.value.trim())return input.value.trim();
+    return'Other';
+  }
+  return select.value;
+}
+
 function showPage(id,btn){
   document.querySelectorAll('.page,.hpage').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nl').forEach(n=>n.classList.remove('on'));
@@ -2029,6 +2080,10 @@ async function registerCustomer(){
   var phone = document.getElementById('regPhone').value.trim();
   var email = document.getElementById('regEmail').value.trim();
   var city  = document.getElementById('regCity').value;
+  if(city==='Other'){
+    var otherInput=document.getElementById('regCityOther');
+    city=otherInput&&otherInput.value.trim()?otherInput.value.trim():'Other';
+  }
   var pwd   = document.getElementById('regPwd').value;
   var pwd2  = document.getElementById('regPwd2').value;
   var okEl  = document.getElementById('reg-ok');
