@@ -298,6 +298,16 @@ pre{font-family:monospace;font-size:11px;color:#a8d8a8;white-space:pre-wrap;line
 .cpok{font-size:12px;color:var(--success);margin-top:6px;display:none;}
 
 /* CUSTOMER PORTAL */
+/* ── AMAZON-STYLE LOGIN ── */
+.amazon-login{max-width:380px;margin:0 auto;}
+.amazon-login .fc{border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:28px;}
+.amazon-login .ft{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;}
+.amazon-login .fs{font-size:13px;color:var(--soft);margin-bottom:20px;line-height:1.6;}
+.login-divider{display:flex;align-items:center;gap:12px;margin:16px 0;}
+.login-divider span{flex:1;height:1px;background:var(--border2);}
+.login-divider p{font-size:11px;color:var(--soft);white-space:nowrap;}
+.login-terms{font-size:11px;color:var(--soft);text-align:center;margin-top:16px;line-height:1.6;}
+.login-terms a{color:var(--sun);text-decoration:none;}
 .clogin{max-width:420px;margin:0 auto;}
 .cportal{display:none;}
 .cportal.on{display:block;animation:fup 0.4s ease;}
@@ -869,76 +879,97 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
       <button id="tabRegBtn" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border-radius:7px;border:none;cursor:pointer;font-weight:600;font-size:13px;background:transparent;color:var(--soft);transition:all 0.2s;">New Registration</button>
     </div>
 
-    <!-- LOGIN FORM -->
-    <div id="authLogin">
-      <div class="fc">
-        <div class="ft">Customer Login</div>
-
-        <!-- STEP 1: Enter Email -->
-        <div id="otpStep1">
-          <div class="fs">Enter your registered email to receive a 6-digit OTP.</div>
+    <!-- LOGIN FORM — Amazon Style -->
+      <div class="fc amazon-login">
+        <!-- MAIN LOGIN FORM -->
+        <div id="mainLoginForm">
+          <div class="ft">Sign In</div>
           <div class="fi" style="margin-bottom:14px;">
-            <label class="lb">Registered Email <span>*</span></label>
-            <input type="email" id="otpEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')sendOTP()">
+            <label class="lb">Phone number, email or Customer ID</label>
+            <input type="text" id="cuid" placeholder="+91 XXXXX or email@example.com" 
+              style="font-size:14px;" onkeydown="if(event.key==='Enter')cLogin()">
           </div>
-          <button onclick="sendOTP()" class="sbtn" style="margin-top:8px;">
-            <span id="otpSendTxt">📧 Send OTP →</span>
-            <div class="bll" id="otpSendLoader"></div>
-          </button>
-          <div class="alrt er" id="otpStep1Err" style="margin-top:12px;"></div>
-          <p style="font-size:11px;color:var(--soft);margin-top:14px;text-align:center;">
-            Prefer password login? 
-            <span onclick="toggleLoginMode()" style="color:var(--sun);cursor:pointer;text-decoration:underline;">Click here</span>
-          </p>
-        </div>
-
-        <!-- STEP 2: Enter OTP -->
-        <div id="otpStep2" style="display:none;">
-          <div class="fs">OTP sent to <strong id="otpEmailShow" style="color:var(--sun);"></strong></div>
-          <div style="margin:16px 0;padding:14px;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);border-radius:10px;font-size:12px;color:var(--soft);">
-            📧 Check your email inbox. OTP expires in <strong id="otpTimer" style="color:#00E676;">5:00</strong>
+          <div class="fi" style="margin-bottom:6px;">
+            <label class="lb" style="display:flex;justify-content:space-between;">
+              <span>Password</span>
+              <span onclick="showForgotPassword()" style="color:var(--sun);cursor:pointer;font-weight:400;font-size:12px;">Forgot password?</span>
+            </label>
+            <input type="password" id="cpwd" placeholder="Your password"
+              style="font-size:14px;" onkeydown="if(event.key==='Enter')cLogin()">
           </div>
-          <div class="fi" style="margin-bottom:14px;">
-            <label class="lb">Enter 6-Digit OTP <span>*</span></label>
-            <input type="text" id="otpCode" placeholder="Enter OTP" maxlength="6" 
-              style="font-size:22px;letter-spacing:8px;text-align:center;font-weight:700;"
-              onkeydown="if(event.key==='Enter')verifyOTP()">
-          </div>
-          <button onclick="verifyOTP()" class="sbtn" style="margin-top:8px;background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;">
-            <span id="otpVerifyTxt">✅ Verify OTP & Login →</span>
-            <div class="bll" id="otpVerifyLoader"></div>
-          </button>
-          <div class="alrt er" id="otpStep2Err" style="margin-top:12px;"></div>
-          <p style="font-size:12px;color:var(--soft);margin-top:12px;text-align:center;">
-            Didn't receive? 
-            <span onclick="sendOTP()" style="color:var(--sun);cursor:pointer;text-decoration:underline;">Resend OTP</span>
-            &nbsp;|&nbsp;
-            <span onclick="resetOTPLogin()" style="color:var(--soft);cursor:pointer;text-decoration:underline;">Change email</span>
-          </p>
-        </div>
-
-        <!-- PASSWORD LOGIN (fallback) -->
-        <div id="pwdLoginMode" style="display:none;">
-          <div class="fs">Login with your phone/email and password.</div>
-          <div class="fi" style="margin-bottom:14px;">
-            <label class="lb">Phone or Email <span>*</span></label>
-            <input type="text" id="cuid" placeholder="+91 XXXXX XXXXX or email@example.com">
-          </div>
-          <div class="fi" style="margin-bottom:8px;">
-            <label class="lb">Password <span>*</span></label>
-            <input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()">
-          </div>
-          <button onclick="cLogin()" class="sbtn" style="margin-top:8px;">
-            <span id="loginBtnTxt">LOGIN →</span>
+          <button onclick="cLogin()" class="sbtn" style="margin-top:14px;border-radius:8px;">
+            <span id="loginBtnTxt">Sign In →</span>
             <div class="bll" id="loginLoader"></div>
           </button>
-          <p style="font-size:11px;color:var(--soft);margin-top:14px;text-align:center;">
-            Use OTP login instead? 
-            <span onclick="toggleLoginMode()" style="color:var(--sun);cursor:pointer;text-decoration:underline;">Click here</span>
-          </p>
+          <div class="alrt er" id="cloginErr" style="margin-top:12px;"></div>
+          <div class="login-terms">
+            By signing in, you agree to Skyflies Solar's<br>
+            <a href="https://skyflies.in" target="_blank">Terms of Service</a> and <a href="https://skyflies.in" target="_blank">Privacy Policy</a>
+          </div>
+          <div class="login-divider"><span></span><p>New to Skyflies Solar?</p><span></span></div>
+          <button onclick="switchAuthTab('register')" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.09)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            Create your account
+          </button>
         </div>
 
-        <div class="alrt er" id="cloginErr" style="margin-top:12px;"></div>
+        <!-- FORGOT PASSWORD FLOW -->
+        <div id="forgotPwdSection" style="display:none;">
+
+          <!-- Step 1: Enter email -->
+          <div id="fpStep1">
+            <div class="ft">Password assistance</div>
+            <div class="fs">Enter the email address associated with your Skyflies Solar account.</div>
+            <div class="fi" style="margin-bottom:14px;">
+              <label class="lb">Email address</label>
+              <input type="email" id="fpEmail" placeholder="your@email.com" 
+                style="font-size:14px;" onkeydown="if(event.key==='Enter')sendResetOTP()">
+            </div>
+            <button onclick="sendResetOTP()" class="sbtn" style="margin-top:8px;border-radius:8px;">
+              <span id="fpSendTxt">Continue →</span>
+              <div class="bll" id="fpSendLoader"></div>
+            </button>
+            <div class="alrt er" id="fpStep1Err" style="margin-top:12px;"></div>
+            <div class="login-divider"><span></span><p>or</p><span></span></div>
+            <button onclick="showMainLogin()" style="width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--soft);font-weight:600;font-size:13px;cursor:pointer;">
+              ← Back to Sign In
+            </button>
+          </div>
+
+          <!-- Step 2: OTP + new password -->
+          <div id="fpStep2" style="display:none;">
+            <div class="ft">Create new password</div>
+            <div style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);border-radius:10px;padding:14px;margin-bottom:18px;">
+              <div style="font-size:13px;color:#fff;font-weight:600;margin-bottom:4px;">📧 OTP sent to your email</div>
+              <div style="font-size:12px;color:var(--soft);">Check <strong id="fpEmailShow" style="color:var(--sun);"></strong> — expires in <strong id="fpTimer" style="color:#00E676;">5:00</strong></div>
+            </div>
+            <div class="fi" style="margin-bottom:12px;">
+              <label class="lb">Enter OTP</label>
+              <input type="text" id="fpOtpCode" placeholder="6-digit OTP" maxlength="6"
+                style="font-size:24px;letter-spacing:8px;text-align:center;font-weight:700;">
+            </div>
+            <div class="fi" style="margin-bottom:12px;">
+              <label class="lb">New password</label>
+              <input type="password" id="fpNewPwd" placeholder="At least 6 characters" style="font-size:14px;">
+            </div>
+            <div class="fi" style="margin-bottom:14px;">
+              <label class="lb">Re-enter new password</label>
+              <input type="password" id="fpNewPwd2" placeholder="Confirm new password" style="font-size:14px;" onkeydown="if(event.key==='Enter')verifyResetOTP()">
+            </div>
+            <button onclick="verifyResetOTP()" class="sbtn" style="border-radius:8px;background:linear-gradient(135deg,#00E676,#00B0FF);color:#080F1E;">
+              <span id="fpVerifyTxt">Save changes →</span>
+              <div class="bll" id="fpVerifyLoader"></div>
+            </button>
+            <div class="alrt ok" id="fpResetOk" style="margin-top:12px;">✅ Password changed successfully! Redirecting to login...</div>
+            <div class="alrt er" id="fpStep2Err" style="margin-top:12px;"></div>
+            <p style="font-size:12px;color:var(--soft);margin-top:14px;text-align:center;">
+              Didn't receive? <span onclick="sendResetOTP()" style="color:var(--sun);cursor:pointer;">Resend OTP</span>
+              &nbsp;|&nbsp; <span onclick="showMainLogin()" style="color:var(--soft);cursor:pointer;">← Back to Sign In</span>
+            </p>
+          </div>
+
+        </div>
+
+        <div class="alrt er" id="cloginErr2" style="margin-top:12px;display:none;"></div>
       </div>
     </div>
 
@@ -1230,32 +1261,32 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <p style="font-size:12px;color:var(--soft);margin-bottom:6px;">Copy and paste into Apps Script, then deploy as Web App:</p>
     <div class="cb"><button class="cpbtn" onclick="cpCode()">COPY</button>
 <pre id="gasCd">// ════════════════════════════════════════════════════
-// SKYFLIES SOLAR – GOOGLE APPS SCRIPT CRM v5
+// SKYFLIES SOLAR – GOOGLE APPS SCRIPT CRM v7
 // Deploy: Execute as Me | Who has access: Anyone
-// Email alerts → skyfliessolar@gmail.com
 // ════════════════════════════════════════════════════
 
 var ADMIN_EMAIL = 'skyfliessolar@gmail.com';
-
 var COLORS = {
-  orange:{ bg:'#F5A623',fg:'#000000' }, blue:{ bg:'#1565C0',fg:'#FFFFFF' },
-  green:{ bg:'#2E7D32',fg:'#FFFFFF' }, purple:{ bg:'#6A1B9A',fg:'#FFFFFF' },
-  teal:{ bg:'#00695C',fg:'#FFFFFF' }, red:{ bg:'#B71C1C',fg:'#FFFFFF' },
-  grey:{ bg:'#37474F',fg:'#FFFFFF' }, amber:{ bg:'#FF8F00',fg:'#000000' }
+  orange:{bg:'#F5A623',fg:'#000000'}, blue:{bg:'#1565C0',fg:'#FFFFFF'},
+  green:{bg:'#2E7D32',fg:'#FFFFFF'},  purple:{bg:'#6A1B9A',fg:'#FFFFFF'},
+  teal:{bg:'#00695C',fg:'#FFFFFF'},   red:{bg:'#B71C1C',fg:'#FFFFFF'},
+  grey:{bg:'#37474F',fg:'#FFFFFF'},   amber:{bg:'#FF8F00',fg:'#000000'}
 };
 
 function doPost(e) {
   try {
-    // Handle both application/json and text/plain (CORS workaround)
-    var raw = e.postData.contents;
-    var data = JSON.parse(raw);
+    var data = JSON.parse(e.postData.contents);
     var ss   = SpreadsheetApp.getActiveSpreadsheet();
     if (data.action === 'getCustomer')      return respond(getCustomer(ss, data));
     if (data.action === 'addCustomer')      return respond(addCustomer(ss, data));
     if (data.action === 'addQuery')         return respond(addQuery(ss, data));
     if (data.action === 'registerCustomer') return respond(saveRegistration(ss, data));
     if (data.action === 'loginEvent')       return respond(saveLoginEvent(ss, data));
-    if (data.action === 'getPending')        return respond(getPending(ss, data));
+    if (data.action === 'getPending')       return respond(getPending(ss, data));
+    if (data.action === 'sendOTP')          return respond(sendOTP(ss, data));
+    if (data.action === 'getCustomerByEmail') return respond(getCustomerByEmail(ss, data));
+    if (data.action === 'updatePassword')   return respond(updatePassword(ss, data));
+    if (data.action === 'approveCustomer')  return respond(approveCustomer(ss, data));
     return respond(handleForm(ss, data));
   } catch(err) {
     return respond({status:'error', message:err.toString()});
@@ -1263,7 +1294,7 @@ function doPost(e) {
 }
 
 function doGet() {
-  return respond({status:'ok', app:'Skyflies Solar CRM v5'});
+  return respond({status:'ok', app:'Skyflies Solar CRM v7'});
 }
 
 function handleForm(ss, data) {
@@ -1289,10 +1320,9 @@ function handleForm(ss, data) {
       row:function(d,n){return [n,ts,d.name,d.phone,d.email,d.city,d.password,d.regId||'','Pending Approval','Awaiting admin review'];}}
   };
   var cfg=sheets[data.formType];
-  if(!cfg) return {status:'error',message:'Unknown type: '+data.formType};
+  if(!cfg) return {status:'error',message:'Unknown: '+data.formType};
   var sh=getOrCreate(ss,cfg.name,cfg.headers,cfg.color);
-  var rowNum=sh.getLastRow();
-  sh.appendRow(cfg.row(data,rowNum));
+  sh.appendRow(cfg.row(data,sh.getLastRow()));
   sh.autoResizeColumns(1,sh.getLastColumn());
   var subject='🌞 New '+cfg.name+' – '+(data.name||'Unknown')+(data.city?' | '+data.city:'');
   try{MailApp.sendEmail(ADMIN_EMAIL,subject,buildEmail(data,cfg.name));}catch(me){}
@@ -1302,23 +1332,36 @@ function handleForm(ss, data) {
 function saveRegistration(ss, data) {
   var headers=['#','Timestamp','Name','Phone','Email','City','Password','Registration ID','Status','Notes'];
   var sh=getOrCreate(ss,'Pending Registrations',headers,COLORS.amber);
+  var rows=sh.getDataRange().getValues();
+  for(var i=1;i<rows.length;i++){
+    if(String(rows[i][3]).trim()===String(data.phone).trim()&&String(rows[i][8]).trim()==='Pending Approval')
+      return {status:'error',message:'Already registered. Waiting for approval.'};
+  }
   sh.appendRow([sh.getLastRow(),timestamp(),data.name,data.phone,data.email,data.city||'',data.password,data.regId||'','Pending Approval','Awaiting admin review']);
   sh.autoResizeColumns(1,sh.getLastColumn());
-  try{MailApp.sendEmail(ADMIN_EMAIL,'⏳ New Registration – '+data.name+' | '+data.phone,
-    'Name: '+data.name+'
-Phone: '+data.phone+'
-Email: '+data.email+'
-City: '+(data.city||'–')+
-    '
-
-Approve here: https://skyfliessolar.github.io/skyflies
-
-Sheet: '+ss.getUrl());}catch(me){}
+  try{
+    MailApp.sendEmail(ADMIN_EMAIL,'⏳ New Registration – '+data.name+' | '+data.phone,
+      'New customer registered:\n\nName  : '+data.name+'\nPhone : '+data.phone+'\nEmail : '+data.email+'\nCity  : '+(data.city||'–')+'\n\nApprove: https://skyfliessolar.github.io/skyflies\n\nSheet: '+ss.getUrl());
+  }catch(me){}
   return {status:'success'};
 }
 
-// NOTE: Passwords stored as SHA-256 hashes — never plain text
-// The app hashes passwords before sending — this sheet stores hashes only
+function getPending(ss, data) {
+  var sh=ss.getSheetByName('Pending Registrations');
+  if(!sh) return {status:'success',pending:[]};
+  var rows=sh.getDataRange().getValues();
+  var pending=[];
+  for(var i=1;i<rows.length;i++){
+    if(String(rows[i][8]).trim()==='Pending Approval'){
+      pending.push({regId:String(rows[i][7]).trim(),name:String(rows[i][2]).trim(),
+        phone:String(rows[i][3]).trim(),email:String(rows[i][4]).trim(),
+        city:String(rows[i][5]).trim(),password:String(rows[i][6]).trim(),
+        submittedAt:String(rows[i][1]).trim()});
+    }
+  }
+  return {status:'success',pending:pending};
+}
+
 function getCustomer(ss, data) {
   var sh=ss.getSheetByName('Customer Logins');
   if(!sh) return {status:'error',message:'No customer accounts found.'};
@@ -1327,7 +1370,7 @@ function getCustomer(ss, data) {
   var inputPwd=String(data.password||'').trim();
   for(var i=1;i<rows.length;i++){
     var r=rows[i];
-    var match=(String(r[0]).trim()===inputId||String(r[3]).trim()===inputId||String(r[4]).trim()===inputId);
+    var match=(String(r[0]).trim()===inputId||String(r[3]).trim()===inputId||String(r[4]).trim().toLowerCase()===inputId.toLowerCase());
     if(match&&String(r[2]).trim()===inputPwd){
       try{sh.getRange(i+1,18).setValue(timestamp());}catch(le){}
       return {status:'success',customer:{
@@ -1339,7 +1382,27 @@ function getCustomer(ss, data) {
       }};
     }
   }
-  return {status:'error',message:'Wrong phone/email or password.'};
+  return {status:'error',message:'Wrong credentials. Please try again.'};
+}
+
+function getCustomerByEmail(ss, data) {
+  var sh=ss.getSheetByName('Customer Logins');
+  if(!sh) return {status:'error',message:'No accounts found.'};
+  var rows=sh.getDataRange().getValues();
+  for(var i=1;i<rows.length;i++){
+    var r=rows[i];
+    if(String(r[4]).trim().toLowerCase()===String(data.email).trim().toLowerCase()){
+      try{sh.getRange(i+1,18).setValue(timestamp());}catch(le){}
+      return {status:'success',customer:{
+        id:r[0],name:r[1],password:r[2],phone:r[3],email:r[4],
+        city:r[5],address:r[6],systemSize:r[7],panels:r[8],
+        installCost:r[9],amountPaid:r[10],plan:r[11],
+        billingCycle:r[12],nextService:r[13],systemStatus:r[14],
+        installDate:r[15],notes:r[16]||''
+      }};
+    }
+  }
+  return {status:'error',message:'No account with this email.'};
 }
 
 function addCustomer(ss, data) {
@@ -1362,14 +1425,58 @@ function addCustomer(ss, data) {
   sh.autoResizeColumns(1,sh.getLastColumn());
   try{var lr=sh.getLastRow();sh.getRange(lr,15).setBackground(data.systemStatus==='Active'?'#C8E6C9':'#FFE0B2');}catch(fe){}
   try{MailApp.sendEmail(ADMIN_EMAIL,'✅ Customer Approved – '+data.name+' ('+data.customerId+')',
-    'ID: '+data.customerId+'
-Name: '+data.name+'
-Phone: '+data.phone+'
-Status: '+(data.systemStatus||'Pending')+
-    '
-
-Sheet: '+ss.getUrl());}catch(me){}
+    'ID: '+data.customerId+'\nName: '+data.name+'\nPhone: '+data.phone+'\nSheet: '+ss.getUrl());}catch(me){}
   return {status:'success',customerId:data.customerId};
+}
+
+function approveCustomer(ss, data) {
+  var sh=ss.getSheetByName('Pending Registrations');
+  if(sh){
+    var rows=sh.getDataRange().getValues();
+    for(var i=1;i<rows.length;i++){
+      if(String(rows[i][7]).trim()===String(data.regId).trim()){
+        sh.getRange(i+1,9).setValue('Approved');
+        sh.getRange(i+1,10).setValue('Approved as '+data.customerId);
+        break;
+      }
+    }
+  }
+  return addCustomer(ss,data);
+}
+
+function sendOTP(ss, data) {
+  try{
+    MailApp.sendEmail({
+      to: data.email,
+      subject: 'Your Skyflies Solar OTP – ' + data.otp,
+      htmlBody: '<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:20px;">' +
+        '<div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;">' +
+        '<h2 style="color:#080F1E;margin:0;">☀️ Skyflies Solar Solutions</h2></div>' +
+        '<div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;">' +
+        '<p style="font-size:15px;color:#333;">Your One-Time Password (OTP) is:</p>' +
+        '<div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">' +
+        '<h1 style="color:#FF6B00;font-size:40px;letter-spacing:10px;margin:0;">' + data.otp + '</h1></div>' +
+        '<p style="font-size:13px;color:#666;">⏰ Valid for <strong>5 minutes</strong> only.<br>' +
+        '🔒 Do not share this OTP with anyone.<br>' +
+        '📞 +91 93854 49167 | 🌐 www.skyflies.in</p></div></div>'
+    });
+    return {status:'success'};
+  }catch(e){
+    return {status:'error',message:e.toString()};
+  }
+}
+
+function updatePassword(ss, data) {
+  var sh=ss.getSheetByName('Customer Logins');
+  if(!sh) return {status:'error',message:'Sheet not found'};
+  var rows=sh.getDataRange().getValues();
+  for(var i=1;i<rows.length;i++){
+    if(String(rows[i][4]).trim().toLowerCase()===String(data.email).trim().toLowerCase()){
+      sh.getRange(i+1,3).setValue(data.newPassword);
+      return {status:'success'};
+    }
+  }
+  return {status:'error',message:'Email not found'};
 }
 
 function addQuery(ss, data) {
@@ -1379,36 +1486,8 @@ function addQuery(ss, data) {
     data.queryType,data.priority||'Normal',data.message,'Open','']);
   sh.autoResizeColumns(1,sh.getLastColumn());
   try{MailApp.sendEmail(ADMIN_EMAIL,'🔔 Query – '+(data.customerName||data.customerId)+' | '+data.queryType,
-    'Customer: '+(data.customerName||'')+' ('+data.customerId+')
-Type: '+data.queryType+
-    '
-Message: '+data.message+'
-
-Sheet: '+ss.getUrl());}catch(me){}
+    'Customer: '+(data.customerName||'')+' ('+data.customerId+')\nType: '+data.queryType+'\nMessage: '+data.message+'\n\nSheet: '+ss.getUrl());}catch(me){}
   return {status:'success'};
-}
-
-function getPending(ss, data) {
-  var sh = ss.getSheetByName('Pending Registrations');
-  if (!sh) return respond({status:'success', pending:[]});
-  var rows = sh.getDataRange().getValues();
-  var pending = [];
-  for (var i = 1; i < rows.length; i++) {
-    var r = rows[i];
-    if (String(r[8]).trim() === 'Pending Approval') {
-      pending.push({
-        regId:   String(r[7]).trim(),
-        name:    String(r[2]).trim(),
-        phone:   String(r[3]).trim(),
-        email:   String(r[4]).trim(),
-        city:    String(r[5]).trim(),
-        password:String(r[6]).trim(),
-        status:  String(r[8]).trim(),
-        submittedAt: String(r[1]).trim()
-      });
-    }
-  }
-  return respond({status:'success', pending:pending});
 }
 
 function saveLoginEvent(ss, data) {
@@ -1418,49 +1497,6 @@ function saveLoginEvent(ss, data) {
   return {status:'success'};
 }
 
-// ── SEND OTP VIA EMAIL ──────────────────────────────
-function sendOTP(ss, data) {
-  try {
-    MailApp.sendEmail(data.email,
-      'Your Skyflies Solar Login OTP',
-      'Dear Customer,\n\n' +
-      'Your One-Time Password (OTP) for Skyflies Solar App login is:\n\n' +
-      '  ' + data.otp + '\n\n' +
-      'This OTP is valid for 5 minutes.\n' +
-      'Do not share this OTP with anyone.\n\n' +
-      'If you did not request this, please ignore this email.\n\n' +
-      'Regards,\nSkyflies Solar Team\n+91 93854 49167\nwww.skyflies.in'
-    );
-    return {status:'success'};
-  } catch(e) {
-    return {status:'error', message:e.toString()};
-  }
-}
-
-// ── GET CUSTOMER BY EMAIL (for OTP login) ────────────
-function getCustomerByEmail(ss, data) {
-  var sh = ss.getSheetByName('Customer Logins');
-  if (!sh) return {status:'error', message:'No accounts found.'};
-  var rows = sh.getDataRange().getValues();
-  for (var i = 1; i < rows.length; i++) {
-    var r = rows[i];
-    if (String(r[4]).trim().toLowerCase() === String(data.email).trim().toLowerCase()) {
-      try { sh.getRange(i+1, 18).setValue(timestamp()); } catch(le) {}
-      return {
-        status: 'success',
-        customer: {
-          id:r[0], name:r[1], password:r[2], phone:r[3], email:r[4],
-          city:r[5], address:r[6], systemSize:r[7], panels:r[8],
-          installCost:r[9], amountPaid:r[10], plan:r[11],
-          billingCycle:r[12], nextService:r[13], systemStatus:r[14],
-          installDate:r[15], notes:r[16]||''
-        }
-      };
-    }
-  }
-  return {status:'error', message:'No account found with this email.'};
-}
-
 function getOrCreate(ss, name, headers, color) {
   var sh=ss.getSheetByName(name);
   if(!sh){
@@ -1468,8 +1504,7 @@ function getOrCreate(ss, name, headers, color) {
     sh.appendRow(headers);
     var r=sh.getRange(1,1,1,headers.length);
     r.setBackground(color?color.bg:'#F5A623').setFontColor(color?color.fg:'#000000').setFontWeight('bold').setFontSize(10);
-    sh.setFrozenRows(1);
-    sh.setColumnWidth(1,40);sh.setColumnWidth(2,150);
+    sh.setFrozenRows(1);sh.setColumnWidth(1,40);sh.setColumnWidth(2,150);
   }
   return sh;
 }
@@ -1483,11 +1518,11 @@ function respond(obj) {
 }
 
 function buildEmail(data, sheetName) {
-  var lines=['New '+sheetName+' on Skyflies Solar App',''];
-  ['name','phone','email','city','propertyType','plan','emi','queryType','message'].forEach(function(f){
+  var lines=['New '+sheetName+' – Skyflies Solar',''];
+  ['name','phone','email','city','propertyType','plan','queryType','message'].forEach(function(f){
     if(data[f]) lines.push(f[0].toUpperCase()+f.slice(1)+': '+data[f]);
   });
-  lines.push('','Time: '+new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}));
+  lines.push('','Time: '+timestamp());
   return lines.join('\n');
 }</pre></div>
     <p id="cpOk" class="cpok">✅ Code copied!</p>
@@ -2415,156 +2450,6 @@ function rejectReg(regId){
 // ─────────────────────────────────────────────────────────────
 // OTP LOGIN SYSTEM
 // ─────────────────────────────────────────────────────────────
-var otpStore = null;  // {otp, email, expires}
-var otpTimerInterval = null;
-
-function toggleLoginMode(){
-  var otp = document.getElementById('otpStep1');
-  var pwd = document.getElementById('pwdLoginMode');
-  if(otp.style.display === 'none'){
-    otp.style.display = '';
-    pwd.style.display = 'none';
-  } else {
-    otp.style.display = 'none';
-    pwd.style.display = '';
-  }
-}
-
-function resetOTPLogin(){
-  document.getElementById('otpStep1').style.display = '';
-  document.getElementById('otpStep2').style.display = 'none';
-  document.getElementById('otpEmail').value = '';
-  document.getElementById('otpCode').value = '';
-  if(otpTimerInterval) clearInterval(otpTimerInterval);
-  otpStore = null;
-}
-
-async function sendOTP(){
-  var email = document.getElementById('otpEmail').value.trim();
-  var errEl = document.getElementById('otpStep1Err');
-  errEl.classList.remove('show');
-
-  if(!email || !email.includes('@')){
-    errEl.textContent = '❌ Please enter a valid email address.';
-    errEl.classList.add('show');
-    return;
-  }
-
-  var btn = document.getElementById('otpSendTxt');
-  var loader = document.getElementById('otpSendLoader');
-  btn.style.display = 'none'; loader.style.display = 'block';
-
-  // Generate 6-digit OTP
-  var otp = Math.floor(100000 + Math.random() * 900000).toString();
-  var expires = Date.now() + 5 * 60 * 1000; // 5 minutes
-  otpStore = { otp: otp, email: email, expires: expires };
-
-  // Send OTP via Google Apps Script email
-  var wh = localStorage.getItem(WH)||WEBHOOK_URL;
-  try {
-    await fetch(wh, {
-      method: 'POST',
-      headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({
-        action: 'sendOTP',
-        email: email,
-        otp: otp
-      })
-    });
-  } catch(e){}
-
-  btn.style.display = ''; loader.style.display = 'none';
-
-  // Show step 2
-  document.getElementById('otpStep1').style.display = 'none';
-  document.getElementById('otpStep2').style.display = '';
-  document.getElementById('otpEmailShow').textContent = email;
-  document.getElementById('otpCode').focus();
-
-  // Start countdown timer
-  startOTPTimer(expires);
-}
-
-function startOTPTimer(expires){
-  if(otpTimerInterval) clearInterval(otpTimerInterval);
-  var timerEl = document.getElementById('otpTimer');
-  otpTimerInterval = setInterval(function(){
-    var remaining = Math.max(0, expires - Date.now());
-    var mins = Math.floor(remaining / 60000);
-    var secs = Math.floor((remaining % 60000) / 1000);
-    if(timerEl) timerEl.textContent = mins + ':' + String(secs).padStart(2,'0');
-    if(remaining <= 0){
-      clearInterval(otpTimerInterval);
-      if(timerEl) timerEl.textContent = 'Expired';
-      otpStore = null;
-    }
-  }, 1000);
-}
-
-async function verifyOTP(){
-  var entered = document.getElementById('otpCode').value.trim();
-  var errEl = document.getElementById('otpStep2Err');
-  errEl.classList.remove('show');
-
-  if(!entered){ errEl.textContent='❌ Please enter the OTP.'; errEl.classList.add('show'); return; }
-
-  // Rate limit check
-  var rl = checkRateLimit('otp_'+otpStore?.email);
-  if(rl.blocked){ errEl.textContent='❌ '+rl.message; errEl.classList.add('show'); return; }
-
-  if(!otpStore){ errEl.textContent='❌ OTP expired. Please request a new one.'; errEl.classList.add('show'); return; }
-  if(Date.now() > otpStore.expires){ errEl.textContent='❌ OTP expired. Please request a new one.'; errEl.classList.add('show'); otpStore=null; return; }
-
-  if(entered !== otpStore.otp){
-    recordAttempt('otp_'+otpStore.email, false);
-    var rl2=checkRateLimit('otp_'+otpStore.email);
-    var remaining = MAX_LOGIN_ATTEMPTS - (rl2.attempts||0);
-    errEl.textContent='❌ Wrong OTP. '+remaining+' attempts remaining.';
-    errEl.classList.add('show');
-    return;
-  }
-
-  // OTP correct
-  recordAttempt('otp_'+otpStore.email, true);
-  logActivity('OTP_LOGIN', 'Email: '+otpStore.email);
-  var btn = document.getElementById('otpVerifyTxt');
-  var loader = document.getElementById('otpVerifyLoader');
-  btn.style.display = 'none'; loader.style.display = 'block';
-
-  var email = otpStore.email;
-  var customer = null;
-  var wh = localStorage.getItem(WH)||WEBHOOK_URL;
-
-  // Find customer from Google Sheet
-  try{
-    var r = await fetch(wh, {
-      method: 'POST',
-      headers: {'Content-Type':'text/plain'},
-      body: JSON.stringify({action:'getCustomerByEmail', email: email})
-    });
-    var res = await r.json();
-    if(res.status === 'success') customer = res.customer;
-  }catch(e){}
-
-  // Fallback — check localStorage
-  if(!customer){
-    var lc = JSON.parse(localStorage.getItem('sf_customers')||'{}');
-    Object.keys(lc).forEach(function(k){
-      if(lc[k].email === email) customer = Object.assign({},lc[k],{id:k});
-    });
-  }
-
-  btn.style.display = ''; loader.style.display = 'none';
-  if(otpTimerInterval) clearInterval(otpTimerInterval);
-
-  if(customer){
-    otpStore = null;
-    loginSuccess(customer);
-  } else {
-    errEl.textContent = '❌ No account found with this email. Please register first.';
-    errEl.classList.add('show');
-  }
-}
 
 // Shared login success handler
 function loginSuccess(customer){
@@ -2663,7 +2548,7 @@ function cLogout(){
   document.getElementById('cLoginBox').style.display='';
   document.getElementById('cPortal').classList.remove('on');
   currentCustomer=null;
-  resetOTPLogin();
+  showMainLogin();
   var cuid=document.getElementById('cuid'); if(cuid)cuid.value='';
   var cpwd=document.getElementById('cpwd'); if(cpwd)cpwd.value='';
   switchAuthTab('login');
