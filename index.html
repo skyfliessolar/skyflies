@@ -471,8 +471,6 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
 </style>
 </head>
 <body>
-<div id="js-test" style="position:fixed;top:0;left:0;right:0;background:#FF5252;color:#fff;text-align:center;padding:6px;font-size:12px;font-weight:700;z-index:9999;">⚠️ JavaScript not loaded — please hard refresh (Ctrl+Shift+R)</div>
-<script>document.addEventListener('DOMContentLoaded',function(){var t=document.getElementById('js-test');if(t){t.style.background='#00E676';t.style.color='#000';t.textContent='✅ JavaScript loaded OK — app is working!';setTimeout(function(){t.style.display='none';},3000);}});</script>
 <div class="orb orb1"></div><div class="orb orb2"></div><div class="gridlines"></div>
 <div class="wrap">
 
@@ -1745,12 +1743,29 @@ function buildEmail(data, sheetName) {
       </div>
       <a href="https://www.instagram.com/skyflies_solar" target="_blank" style="padding:8px 14px;background:rgba(225,48,108,0.2);border:1px solid rgba(225,48,108,0.4);border-radius:8px;color:#E1306C;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">Follow</a>
     </div>
-    <!-- Real Instagram feed inside app -->
-    <div style="background:#fff;border-radius:16px;overflow:hidden;margin-bottom:16px;">
-      <iframe src="https://www.instagram.com/skyflies_solar/embed/captioned/"
-        style="width:100%;min-height:700px;border:none;display:block;"
-        frameborder="0" scrolling="yes" allowtransparency="true" loading="lazy"></iframe>
+    <!-- Instagram posts - opens in app browser -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:3px;margin-bottom:16px;border-radius:12px;overflow:hidden;">
+      <div onclick="window.open('https://www.instagram.com/skyflies_solar/','_blank')" style="aspect-ratio:1;background:linear-gradient(135deg,rgba(253,89,73,0.3),rgba(214,36,159,0.3),rgba(40,90,235,0.3));display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:8px;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+        <svg width="32" height="32" viewBox="0 0 24 24"><defs><linearGradient id="igTap" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#FD5949"/><stop offset="50%" style="stop-color:#D6249F"/><stop offset="100%" style="stop-color:#285AEB"/></linearGradient></defs><path fill="url(#igTap)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        <div style="font-size:12px;font-weight:700;color:#fff;">Tap to View Feed</div>
+      </div>
+      <div onclick="window.open('https://www.instagram.com/skyflies_solar/','_blank')" style="aspect-ratio:1;background:rgba(255,255,255,0.04);border:1px solid rgba(225,48,108,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:6px;" onmouseover="this.style.background='rgba(225,48,108,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+        <div style="font-size:24px;">☀️</div><div style="font-size:11px;color:var(--soft);">Solar projects</div>
+      </div>
+      <div onclick="window.open('https://www.instagram.com/skyflies_solar/','_blank')" style="aspect-ratio:1;background:rgba(255,255,255,0.04);border:1px solid rgba(225,48,108,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:6px;" onmouseover="this.style.background='rgba(225,48,108,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+        <div style="font-size:24px;">🔧</div><div style="font-size:11px;color:var(--soft);">Installations</div>
+      </div>
+      <div onclick="window.open('https://www.instagram.com/skyflies_solar/','_blank')" style="aspect-ratio:1;background:rgba(255,255,255,0.04);border:1px solid rgba(225,48,108,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:6px;" onmouseover="this.style.background='rgba(225,48,108,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+        <div style="font-size:24px;">⭐</div><div style="font-size:11px;color:var(--soft);">Client reviews</div>
+      </div>
+      <div onclick="window.open('https://www.instagram.com/skyflies_solar/','_blank')" style="aspect-ratio:1;background:rgba(255,255,255,0.04);border:1px solid rgba(225,48,108,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:6px;" onmouseover="this.style.background='rgba(225,48,108,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+        <div style="font-size:24px;">🌱</div><div style="font-size:11px;color:var(--soft);">Green energy</div>
+      </div>
+      <div onclick="window.open('https://www.instagram.com/skyflies_solar/','_blank')" style="aspect-ratio:1;background:linear-gradient(135deg,rgba(253,89,73,0.15),rgba(214,36,159,0.15));border:1px solid rgba(225,48,108,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:6px;" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+        <div style="font-size:20px;color:#E1306C;font-weight:700;">+More</div><div style="font-size:10px;color:var(--soft);">View all posts</div>
+      </div>
     </div>
+    <p style="font-size:12px;color:var(--soft);text-align:center;margin-bottom:12px;">📸 Instagram embeds are blocked by Instagram. Tap any tile or the button below to view our feed directly.</p>
     <a href="https://www.instagram.com/skyflies_solar" target="_blank" style="display:block;text-align:center;padding:14px;background:linear-gradient(135deg,#FD5949,#D6249F);border-radius:10px;color:#fff;font-weight:700;font-size:14px;text-decoration:none;">View All Posts & Reels on Instagram →</a>
   </div>
 
@@ -1958,6 +1973,17 @@ function showPage(id,btn){
   window.scrollTo({top:0,behavior:'smooth'});
   document.querySelectorAll('.mob-nl').forEach(b=>b.classList.remove('on'));
   var mob=document.getElementById('mob-'+id);if(mob)mob.classList.add('on');
+  // Reset admin to login screen each time page is opened (security)
+  if(id==='admin'){
+    var lb=document.getElementById('adminLoginBox');
+    var db=document.getElementById('adminDash');
+    if(lb)lb.style.display='';
+    if(db)db.classList.remove('on');
+  }
+  // Load YouTube when social page opens
+  if(id==='social'){
+    setTimeout(function(){loadYouTubeVideos();},300);
+  }
 }
 function toggleMobNav(){
   var nav=document.getElementById('mobNav');var btn=document.getElementById('hamBtn');
