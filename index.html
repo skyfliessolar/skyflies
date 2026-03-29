@@ -750,6 +750,7 @@ footer{border-top:1px solid var(--border);background:rgba(8,15,30,0.8);}
     <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--soft);line-height:1.7;" id="qnotes"></div>
     <div class="qr-actions">
       <button class="qr-btn main" onclick="sendQuotation()">📧 Send Quote to My Email</button>
+      <button class="qr-btn main" onclick="downloadPDFQuote()" style="background:linear-gradient(135deg,#7C3AED,#4F46E5);">📄 Download PDF Quote</button>
       <button class="qr-btn sec" onclick="showPage('enquiry',null)">📞 Talk to Skyflies Team</button>
       <button class="qr-btn sec" onclick="window.open('https://wa.me/919385449167?text=Hi! I calculated my solar quote on your app. Can you confirm the details?','_blank')">💬 WhatsApp</button>
     </div>
@@ -2578,6 +2579,270 @@ function revealEmails(){
   });
 }
 window.addEventListener('load', revealEmails);
+
+// ── PDF QUOTE GENERATOR ────────────────────────────
+// Generates a branded Skyflies Solar quotation PDF using browser print
+// Zero cost — no third party, works offline too
+
+function downloadPDFQuote(){
+  var nm=document.getElementById('cn').value.trim();
+  var em=document.getElementById('ce').value.trim();
+  var ph=document.getElementById('cp').value.trim();
+  var city=document.getElementById('cc').value||'Tamil Nadu';
+  var pt=document.getElementById('cpt');
+  var sz=document.getElementById('csz');
+  var pl=document.getElementById('cpl');
+  var amc=document.getElementById('camc').value;
+
+  if(!pt.value||!sz.value){
+    alert('Please calculate your quote first!');
+    document.getElementById('qresult').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  if(!nm){alert('Please enter your name at the top of the calculator.');return;}
+
+  // Get calculated values from DOM
+  var totalEl=document.getElementById('qtotal');
+  var sizeEl=document.getElementById('qsize');
+  var panelEl=document.getElementById('qpanel');
+  var panelsEl=document.getElementById('qpanels');
+  var savingEl=document.getElementById('qsaving');
+  var emiEl=document.getElementById('qemi');
+  var roiEl=document.getElementById('qroi');
+  var subsidyEl=document.getElementById('qsubsidy');
+
+  if(!totalEl||!totalEl.textContent||totalEl.textContent==='₹0'){
+    alert('Please calculate your quote first!');return;
+  }
+
+  var total=totalEl.textContent;
+  var size=sizeEl?sizeEl.textContent:'–';
+  var panel=panelEl?panelEl.textContent:'–';
+  var panels=panelsEl?panelsEl.textContent:'–';
+  var saving=savingEl?savingEl.textContent:'–';
+  var emi=emiEl?emiEl.textContent:'–';
+  var roi=roiEl?roiEl.textContent:'–';
+  var subsidy=subsidyEl?subsidyEl.textContent:'';
+  var ptText=pt.options[pt.selectedIndex].text;
+  var amcText=amc==='yes'?'Yes – Included':'No';
+
+  var today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  var quoteNo='SKY-'+Date.now().toString().slice(-6);
+  var validTill=new Date(Date.now()+30*864e5).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+
+  var html=`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Solar Quotation – ${nm} – Skyflies Solar</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:Arial,sans-serif;color:#1a1a1a;background:#fff;font-size:13px;}
+  .page{max-width:794px;margin:0 auto;padding:40px;}
+  /* Header */
+  .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:3px solid #F5A623;}
+  .logo-area{display:flex;flex-direction:column;gap:4px;}
+  .company-name{font-size:26px;font-weight:700;color:#FF6B00;letter-spacing:2px;}
+  .company-tag{font-size:11px;color:#666;letter-spacing:3px;text-transform:uppercase;}
+  .company-contact{margin-top:8px;font-size:11px;color:#444;line-height:1.8;}
+  .quote-info{text-align:right;}
+  .quote-title{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .quote-meta{font-size:11px;color:#666;line-height:2;}
+  .quote-meta strong{color:#1a1a1a;}
+  /* Client section */
+  .section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#F5A623;margin-bottom:8px;margin-top:24px;}
+  .client-box{background:#f8f8f8;border:1px solid #e8e8e8;border-radius:8px;padding:16px 20px;display:flex;gap:40px;}
+  .client-field{flex:1;}
+  .client-label{font-size:10px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+  .client-value{font-size:14px;font-weight:600;color:#1a1a1a;}
+  /* Summary box */
+  .total-box{background:linear-gradient(135deg,#FFF8EE,#FFF3E0);border:2px solid #F5A623;border-radius:12px;padding:24px;text-align:center;margin:24px 0;}
+  .total-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:8px;}
+  .total-amount{font-size:42px;font-weight:700;color:#FF6B00;letter-spacing:2px;}
+  .total-sub{font-size:12px;color:#666;margin-top:6px;}
+  /* Details table */
+  table{width:100%;border-collapse:collapse;margin:8px 0;}
+  table thead tr{background:#F5A623;}
+  table thead th{padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#fff;font-weight:700;}
+  table tbody tr:nth-child(even){background:#fafafa;}
+  table tbody td{padding:10px 14px;border-bottom:1px solid #eee;font-size:12px;color:#333;}
+  table tbody td:first-child{font-weight:600;color:#1a1a1a;width:40%;}
+  /* Savings highlight */
+  .savings-row{background:#F0FFF4 !important;}
+  .savings-row td{color:#1a6e3e !important;}
+  /* Terms */
+  .terms{background:#f8f8f8;border-radius:8px;padding:16px 20px;margin-top:24px;font-size:11px;color:#666;line-height:1.8;}
+  .terms strong{color:#1a1a1a;display:block;margin-bottom:6px;}
+  /* Footer */
+  .footer{margin-top:32px;padding-top:16px;border-top:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:flex-end;}
+  .footer-left{font-size:11px;color:#888;line-height:1.8;}
+  .signature{text-align:center;}
+  .sig-line{width:160px;border-top:1px solid #999;margin:0 auto 6px;}
+  .sig-label{font-size:10px;color:#888;letter-spacing:1px;}
+  .stamp{width:70px;height:70px;border:2px solid #F5A623;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:8px;font-weight:700;color:#FF6B00;letter-spacing:0.5px;line-height:1.4;padding:8px;}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .no-print{display:none;}
+    .page{padding:20px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-area">
+      <div class="company-name">☀ SKYFLIES</div>
+      <div class="company-tag">Solar Solutions</div>
+      <div class="company-contact">
+        📍 1st Floor, No.65/2, Bujannarao Street<br>
+        Walajapet, Tamil Nadu – 632513<br>
+        📞 +91 93854 49167 &nbsp;|&nbsp; 🌐 www.skyflies.in<br>
+        ✉️ info@skyflies.in
+      </div>
+    </div>
+    <div class="quote-info">
+      <div class="quote-title">Quotation</div>
+      <div class="quote-meta">
+        Quote No: <strong>${quoteNo}</strong><br>
+        Date: <strong>${today}</strong><br>
+        Valid Until: <strong>${validTill}</strong><br>
+        Est. Since: <strong>2022</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT INFO -->
+  <div class="section-title">Prepared For</div>
+  <div class="client-box">
+    <div class="client-field">
+      <div class="client-label">Client Name</div>
+      <div class="client-value">${nm}</div>
+    </div>
+    <div class="client-field">
+      <div class="client-label">Phone</div>
+      <div class="client-value">${ph||'–'}</div>
+    </div>
+    <div class="client-field">
+      <div class="client-label">Email</div>
+      <div class="client-value">${em||'–'}</div>
+    </div>
+    <div class="client-field">
+      <div class="client-label">City</div>
+      <div class="client-value">${city}</div>
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="total-box">
+    <div class="total-label">Estimated Total (After Government Subsidy)</div>
+    <div class="total-amount">${total}</div>
+    <div class="total-sub">${subsidy}</div>
+  </div>
+
+  <!-- SYSTEM DETAILS -->
+  <div class="section-title">System Details</div>
+  <table>
+    <thead><tr><th>Item</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td>Property Type</td><td>${ptText}</td></tr>
+      <tr><td>System Size</td><td>${size}</td></tr>
+      <tr><td>Panel Type</td><td>${panel}</td></tr>
+      <tr><td>Number of Panels</td><td>${panels}</td></tr>
+      <tr><td>Annual Maintenance (AMC)</td><td>${amcText}</td></tr>
+    </tbody>
+  </table>
+
+  <!-- FINANCIAL BENEFITS -->
+  <div class="section-title">Financial Benefits</div>
+  <table>
+    <thead><tr><th>Benefit</th><th>Estimated Value</th></tr></thead>
+    <tbody>
+      <tr class="savings-row"><td>Monthly Electricity Savings</td><td>${saving}</td></tr>
+      <tr><td>EMI Option (36 months)</td><td>${emi}</td></tr>
+      <tr><td>Payback Period</td><td>${roi}</td></tr>
+      <tr class="savings-row"><td>25-Year Lifetime Savings</td><td>₹${Math.round(parseInt((saving||'₹0').replace(/[₹,]/g,''))*12*25).toLocaleString('en-IN')}</td></tr>
+    </tbody>
+  </table>
+
+  <!-- INCLUSIONS -->
+  <div class="section-title">What's Included</div>
+  <table>
+    <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+    <tbody>
+      <tr><td>Solar Panels</td><td>${panel} – High efficiency, 25 year warranty</td></tr>
+      <tr><td>Grid-Tied Inverter</td><td>Premium brand, 5 year warranty</td></tr>
+      <tr><td>Mounting Structure</td><td>Hot-dip galvanised, wind resistant</td></tr>
+      <tr><td>DC & AC Wiring</td><td>ISI certified, UV resistant cables</td></tr>
+      <tr><td>MCB & Safety Equipment</td><td>As per DISCOM norms</td></tr>
+      <tr><td>Net Meter Application</td><td>Assistance with TNEB filing</td></tr>
+      <tr><td>Installation</td><td>Professional team, 1–2 days</td></tr>
+      <tr><td>After-Sales Support</td><td>1 year free service visits</td></tr>
+    </tbody>
+  </table>
+
+  <!-- TERMS -->
+  <div class="terms">
+    <strong>Terms & Conditions</strong>
+    • This is an estimated quotation. Final price confirmed after free site survey.<br>
+    • Government subsidy subject to eligibility under PM Surya Ghar Muft Bijli Yojana.<br>
+    • Prices valid for 30 days from quote date. Subject to change based on material costs.<br>
+    • 50% advance at order confirmation. Balance before installation.<br>
+    • EMI available through partner banks. Subject to credit approval.<br>
+    • Skyflies Solar Solutions is an authorised solar installer in Tamil Nadu.
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <strong style="color:#1a1a1a;font-size:12px;">Skyflies Solar Solutions</strong><br>
+      📞 +91 93854 49167<br>
+      🌐 www.skyflies.in<br>
+      ✉️ info@skyflies.in<br>
+      <span style="color:#F5A623;font-weight:700;">3600+ Happy Clients • Est. 2022</span>
+    </div>
+    <div class="signature">
+      <div style="display:flex;gap:24px;align-items:flex-end;">
+        <div>
+          <div class="sig-line"></div>
+          <div class="sig-label">Authorised Signatory</div>
+          <div style="font-size:10px;color:#888;margin-top:2px;">Skyflies Solar Solutions</div>
+        </div>
+        <div class="stamp">SKYFLIES<br>SOLAR<br>SOLUTIONS<br>✓ VERIFIED</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  window.onload = function() {
+    setTimeout(function() { window.print(); }, 500);
+  };
+  window.onafterprint = function() { window.close(); };
+<'+'/script>
+</body>
+</html>`;
+
+  var win=window.open('','_blank','width=900,height=700');
+  if(!win){alert('Please allow popups for this site to generate PDF.');return;}
+  win.document.write(html);
+  win.document.close();
+
+  // Also log this quote
+  sendToSheet({
+    formType:'quotation',
+    name:nm, email:em, phone:ph, city:city,
+    propertyType:ptText,
+    systemType:size+' | '+panel,
+    budget:'PDF Quote downloaded',
+    message:'PDF Quote generated. Quote No: '+quoteNo+' | Total: '+total,
+    submittedAt:new Date().toISOString()
+  });
+
+  showToast('✅ PDF opening... In the print dialog, choose "Save as PDF"!');
+}
 </script>
 </body>
 </html>
