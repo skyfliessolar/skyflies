@@ -2815,13 +2815,6 @@ function downloadPDFQuote(){
   </div>
 
 </div>
-
-<script>
-  window.onload = function() {
-    setTimeout(function() { window.print(); }, 500);
-  };
-  window.onafterprint = function() { window.close(); };
-<'+'/script>
 </body>
 </html>`;
 
@@ -2829,6 +2822,8 @@ function downloadPDFQuote(){
   if(!win){alert('Please allow popups for this site to generate PDF.');return;}
   win.document.write(html);
   win.document.close();
+  win.onload = function(){ setTimeout(function(){ win.print(); }, 500); };
+  win.onafterprint = function(){ win.close(); };
 
   // Also log this quote
   sendToSheet({
