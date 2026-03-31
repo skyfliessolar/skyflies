@@ -484,7 +484,7 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
       <div class="contact-ico" style="background:rgba(245,166,35,0.15);">📞</div>
       <div><div class="contact-lbl">Call Us</div><div class="contact-val">+91 93854 49167</div></div>
     </a>
-    <a class="contact-card" href="mailto:info@skyflies.in">
+    <a class="contact-card" href="/cdn-cgi/l/email-protection#6b02050d042b1800120d07020e18450205">
       <div class="contact-ico" style="background:rgba(59,130,246,0.15);">✉️</div>
       <div><div class="contact-lbl">Email</div><div class="contact-val"><span class="sf-email"></span></div></div>
     </a>
@@ -929,7 +929,15 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
     <div class="yt-scroll" id="ytScrollRow"><div style="min-width:140px;padding:20px;color:var(--soft);font-size:12px;">⏳ Loading...</div></div>
     <div style="font-size:12px;font-weight:600;color:var(--soft);margin:14px 0 8px;">All Videos</div>
     <div class="yt-grid" id="ytGrid"></div>
-    <div style="text-align:center;margin-top:14px;"><a href="https://youtube.com/@skyfliessolar" target="_blank" style="padding:11px 24px;background:linear-gradient(135deg,#FF0000,#CC0000);border-radius:10px;color:#fff;font-weight:700;font-size:13px;text-decoration:none;display:inline-block;">Open YouTube Channel →</a></div>
+    <div style="text-align:center;margin-top:14px;">  <div id="ourWorkSection" style="display:none;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:var(--soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">🔧 Our Installation Videos</div>
+    <div id="ourWorkGrid" class="yt-grid"></div>
+  </div>
+  <div id="photoGallerySection" style="display:none;margin-top:14px;">
+    <div style="font-size:12px;font-weight:700;color:var(--soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">📷 Our Work Photos</div>
+    <div id="photoGallery" class="ig-grid"></div>
+  </div>
+  <a href="https://youtube.com/@skyfliessolar" target="_blank" style="padding:11px 24px;background:linear-gradient(135deg,#FF0000,#CC0000);border-radius:10px;color:#fff;font-weight:700;font-size:13px;text-decoration:none;display:inline-block;">Open YouTube Channel →</a></div>
   </div>
 
   <!-- Instagram -->
@@ -1123,7 +1131,7 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 // Deploy: Execute as Me | Access: Anyone
 // ════════════════════════════════════════
 
-var ADMIN_EMAIL = 'info@skyflies.in';
+var ADMIN_EMAIL = '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7f161119103f0c14061913161a0c511611">[email&#160;protected]</a>';
 
 function doPost(e) {
   try {
@@ -1273,7 +1281,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 </div>
 
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 // ── APP NAVIGATION ──────────────────────────────
 var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup'];
@@ -1465,37 +1473,13 @@ function getCityValue(select){
   return select.value;
 }
 
-function showPage(id,btn){
-  document.querySelectorAll('.page,.hpage').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.nl').forEach(n=>n.classList.remove('on'));
-  var el=document.getElementById('page-'+id);if(el)el.classList.add('on');
-  if(btn)btn.classList.add('on');
-  window.scrollTo({top:0,behavior:'smooth'});
-  document.querySelectorAll('.mob-nl').forEach(b=>b.classList.remove('on'));
-  var mob=document.getElementById('mob-'+id);if(mob)mob.classList.add('on');
-  // Reset admin to login screen each time page is opened (security)
-  if(id==='admin'){
-    var lb=document.getElementById('adminLoginBox');
-    var db=document.getElementById('adminDash');
-    if(lb)lb.style.display='';
-    if(db)db.classList.remove('on');
-  }
-  // Load YouTube when social page opens
-  if(id==='social'){
-    setTimeout(function(){loadYouTubeVideos();},300);
-  }
-}
+// showPage legacy removed
 function toggleMobNav(){
   var nav=document.getElementById('mobNav');var btn=document.getElementById('hamBtn');
+  if(!nav||!btn)return;
   nav.classList.toggle('open');btn.textContent=nav.classList.contains('open')?'✕':'☰';
 }
-function mobPage(id){
-  showPage(id,null);
-  document.querySelectorAll('.mob-nl').forEach(b=>b.classList.remove('on'));
-  var mb=document.getElementById('mob-'+id);if(mb)mb.classList.add('on');
-  document.getElementById('mobNav').classList.remove('open');
-  document.getElementById('hamBtn').textContent='☰';
-}
+// mobPage compat: handled by goScreen
 document.addEventListener('click',function(e){
   var nav=document.getElementById('mobNav');var btn=document.getElementById('hamBtn');
   if(nav&&nav.classList.contains('open')&&!nav.contains(e.target)&&e.target!==btn){nav.classList.remove('open');btn.textContent='☰';}
@@ -1640,7 +1624,7 @@ window.addEventListener('load',function(){
   var wh=localStorage.getItem(WH);var el=document.getElementById('whUrl');
   if(el){el.value=wh;var st=document.getElementById('whSt');if(st){st.textContent='✅ Google Sheet connected.';st.className='wst ok';}}
   var session=getSession();
-  if(session){var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');var customer=lc[session.customerId];if(customer){customer.id=session.customerId;if(document.getElementById('page-portal').classList.contains('on')){loginSuccess(customer);}}}
+  if(session){var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');var customer=lc[session.customerId];if(customer){customer.id=session.customerId;loginSuccess(customer);}}
   refreshDash();logActivity('PAGE_LOAD','App opened');initFirebase();
 });
 function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
@@ -1775,8 +1759,8 @@ function loginSuccess(customer){
   renderTimeline();renderSubs();renderQueries();
 }
 
-function showMainLogin(){var ml=document.getElementById('mainLoginForm'),fp=document.getElementById('forgotPwdSection');if(ml)ml.style.display='';if(fp)fp.style.display='none';var s1=document.getElementById('fpStep1'),s2=document.getElementById('fpStep2');if(s1)s1.style.display='';if(s2)s2.style.display='none';if(resetOtpTimerInterval)clearInterval(resetOtpTimerInterval);}
-function showForgotPassword(){var ml=document.getElementById('mainLoginForm'),fp=document.getElementById('forgotPwdSection');if(ml)ml.style.display='none';if(fp)fp.style.display='';var em=document.getElementById('fpEmail');if(em)em.focus();}
+function showMainLogin(){var ml=document.getElementById('authLogin'),fp=document.getElementById('forgotPwdSection');if(ml)ml.style.display='';if(fp)fp.style.display='none';var s1=document.getElementById('fpStep1'),s2=document.getElementById('fpStep2');if(s1)s1.style.display='';if(s2)s2.style.display='none';if(resetOtpTimerInterval)clearInterval(resetOtpTimerInterval);}
+function showForgotPassword(){var ml=document.getElementById('authLogin'),fp=document.getElementById('forgotPwdSection');if(ml)ml.style.display='none';if(fp)fp.style.display='';var em=document.getElementById('fpEmail');if(em)em.focus();}
 
 var resetOtpStore=null,resetOtpTimerInterval=null;
 async function sendResetOTP(){
@@ -2092,17 +2076,16 @@ var isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
 
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault(); deferredPrompt = e;
-  var banner = document.getElementById('installBanner'), heroBtn = document.getElementById('heroInstallBtn');
+  var banner = document.getElementById('installBanner');
   if (banner && !localStorage.getItem('pwa_dismissed')) banner.style.display = 'block';
-  if (heroBtn) heroBtn.style.display = 'inline-flex';
 });
 window.addEventListener('appinstalled', function() {
-  var banner = document.getElementById('installBanner'), heroBtn = document.getElementById('heroInstallBtn');
-  if (banner) banner.style.display = 'none'; if (heroBtn) heroBtn.style.display = 'none'; deferredPrompt = null;
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'none'; deferredPrompt = null;
 });
 function installApp() {
   if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { deferredPrompt = null; }); }
-  else if (isIOS && !isInStandaloneMode) { var box = document.getElementById('iosInstallBox'); if (box) { box.style.display = 'block'; box.scrollIntoView({ behavior: 'smooth' }); } }
+  else if (isIOS && !isInStandaloneMode) { showToast('iPhone: Safari → Share ⬆️ → Add to Home Screen'); }
   else { alert('To install:\n\nAndroid: Open in Chrome → tap menu ⋮ → "Add to Home Screen"\n\niPhone: Open in Safari → tap Share ⬆️ → "Add to Home Screen"'); }
 }
 function dismissBanner() { var banner = document.getElementById('installBanner'); if (banner) banner.style.display = 'none'; localStorage.setItem('pwa_dismissed', '1'); }
@@ -2546,28 +2529,21 @@ function closeFullPhoto() {
   if(overlay) overlay.style.display = 'none';
 }
 
-// ── SWIPE NAVIGATION (slide left/right between screens) ──────────
+// ── SWIPE NAVIGATION ─────────────────────────────────────────────
 (function(){
-  var SA = document.getElementById('screen-area');
-  if(!SA) return;
-  var startX = 0, startY = 0, moved = false;
-  SA.addEventListener('touchstart', function(e){
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    moved = false;
-  }, {passive:true});
-  SA.addEventListener('touchend', function(e){
-    var dx = e.changedTouches[0].clientX - startX;
-    var dy = Math.abs(e.changedTouches[0].clientY - startY);
-    if(Math.abs(dx) > 60 && dy < 80) {
-      // Swipe right = go back (previous screen in history)
-      if(dx > 0 && screenHistory.length > 1) {
-        screenHistory.pop(); // remove current
-        var prev = screenHistory.pop(); // get previous
-        if(prev) goScreen(prev, true);
-      }
+  var sa = document.getElementById('screen-area');
+  if(!sa) return;
+  var sx=0, sy=0;
+  sa.addEventListener('touchstart',function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  sa.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    var dy=Math.abs(e.changedTouches[0].clientY-sy);
+    if(Math.abs(dx)>60&&dy<80&&dx>0&&screenHistory.length>1){
+      screenHistory.pop();
+      var prev=screenHistory[screenHistory.length-1];
+      if(prev) goScreen(prev,true);
     }
-  }, {passive:true});
+  },{passive:true});
 })();
 
 </script>
