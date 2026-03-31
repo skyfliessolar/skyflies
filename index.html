@@ -368,6 +368,8 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
   <button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">
     🔔<span class="notif-dot" id="notifDot" style="display:none;"></span>
   </button>
+  <button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button>
+  <button class="tb-btn" onclick="goScreen('social')" title="Social Media">📱</button>
   <button class="tb-btn" onclick="installApp()">📲</button>
 </div>
 
@@ -1036,7 +1038,30 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
       <div style="text-align:center;padding:24px;color:var(--soft);font-size:13px;">No accounts yet.</div>
     </div>
     <!-- ADD CUSTOMER -->
-    <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">➕ Add Customer Manually</div>
+    <!-- MEDIA UPLOAD SECTION -->
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🎬 Upload Installation Videos & Photos</div>
+  <div class="form-card" style="border-color:rgba(245,166,35,0.2);">
+    <div style="font-size:12px;color:var(--soft);margin-bottom:14px;line-height:1.6;">Add your installation videos (YouTube links) and photos — they appear in the Social Media tab for customers to see.</div>
+    
+    <div style="font-size:13px;font-weight:700;color:var(--sun);margin-bottom:8px;">▶ Add YouTube Video</div>
+    <div class="row2" style="margin-bottom:8px;">
+      <div class="field"><label>YouTube URL *</label><input type="url" id="adminVideoUrl" placeholder="https://youtu.be/xxx or youtube.com/watch?v=xxx"></div>
+      <div class="field"><label>Caption</label><input type="text" id="adminVideoCaption" placeholder="e.g. 5kW Installation Chennai"></div>
+    </div>
+    <button onclick="addAdminVideo()" class="admin-btn primary" style="width:100%;padding:11px;margin-bottom:14px;">➕ Add Video</button>
+
+    <div style="font-size:13px;font-weight:700;color:var(--sun);margin-bottom:8px;">📷 Add Photo</div>
+    <div class="row2" style="margin-bottom:8px;">
+      <div class="field"><label>Image URL *</label><input type="url" id="adminPhotoUrl" placeholder="https://... (direct image link)"></div>
+      <div class="field"><label>Caption</label><input type="text" id="adminPhotoCaption" placeholder="e.g. Rooftop Install Vellore"></div>
+    </div>
+    <button onclick="addAdminPhoto()" class="admin-btn primary" style="width:100%;padding:11px;margin-bottom:14px;">➕ Add Photo</button>
+
+    <div style="font-size:12px;font-weight:600;color:var(--soft);margin-bottom:8px;">📁 Uploaded Media</div>
+    <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
+  </div>
+
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">➕ Add Customer Manually</div>
     <div class="form-card">
       <form id="addCustForm">
         <div class="row2">
@@ -1240,6 +1265,13 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
   </div>
 </div>
 
+<!-- PHOTO FULL VIEW OVERLAY -->
+<div id="photoOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:center;justify-content:center;flex-direction:column;" onclick="closeFullPhoto()">
+  <img id="photoOverlayImg" src="" style="max-width:95vw;max-height:80vh;object-fit:contain;border-radius:12px;">
+  <div id="photoOverlayCaption" style="color:#fff;font-size:13px;margin-top:12px;text-align:center;padding:0 20px;"></div>
+  <button onclick="closeFullPhoto()" style="margin-top:16px;padding:10px 24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;">Close</button>
+</div>
+
 
 <script>
 
@@ -1247,7 +1279,20 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup'];
 var currentScreen = 'home';
 
-function goScreen(id) {
+var screenHistory = ['home'];
+
+function goBack() {
+  if(screenHistory.length > 1) {
+    screenHistory.pop(); // remove current
+    var prev = screenHistory[screenHistory.length-1];
+    goScreen(prev || 'home', true);
+  } else {
+    goScreen('home', true);
+  }
+}
+
+
+function goScreen(id, isBack) {
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('on'); });
   var el = document.getElementById('screen-'+id);
@@ -1258,19 +1303,30 @@ function goScreen(id) {
     var bnMore = document.getElementById('bn-more');
     if(bnMore) bnMore.classList.add('on');
   }
+  // Track history for swipe-back
+  if(!isBack) {
+    if(screenHistory[screenHistory.length-1] !== id) screenHistory.push(id);
+    if(screenHistory.length > 20) screenHistory.shift();
+  }
   currentScreen = id;
-  document.getElementById('screen-area').scrollTo({top:0,behavior:'smooth'});
-  // Update top bar title
+  var sa = document.getElementById('screen-area');
+  if(sa) sa.scrollTo({top:0,behavior:'smooth'});
+  // Update top bar
   var titles = {home:'Skyflies Solar',calculator:'Quote Calculator',portal:'My Account',plans:'AMC Plans',more:'More',enquiry:'Enquiry',quotation:'Quotation',subscribe:'Subscribe',emi:'EMI / Loan',social:'Social Media',admin:'Admin',setup:'Setup'};
   var tb = document.getElementById('tbTitle');
   if(tb) tb.textContent = titles[id] || 'Skyflies Solar';
-  // Admin security: reset to login each time
-  if(id==='admin'){
+  // Show/hide back button
+  var backBtn = document.getElementById('backBtn');
+  if(backBtn) backBtn.style.display = (screenHistory.length > 1 && id !== 'home') ? 'flex' : 'none';
+  // Admin security
+  if(id==='admin' && !isBack){
     var lb=document.getElementById('adminLoginBox'); var db=document.getElementById('adminDash');
     if(lb) lb.style.display=''; if(db) db.style.display='none';
   }
-  // Auto-load YouTube when social opens
+  // Auto-load YouTube
   if(id==='social') setTimeout(loadYouTubeVideos, 300);
+  // Load admin media gallery
+  if(id==='social') setTimeout(loadAdminMedia, 500);
 }
 
 // Legacy compat
@@ -1327,7 +1383,7 @@ function adminLogin(){
     if(pwd===correct||hashedPwd===correct){
       document.getElementById('adminLoginBox').style.display='none';
       document.getElementById('adminDash').style.display='block';
-      refreshDash();renderCustList();
+      refreshDash();renderCustList();renderAdminMediaList();
       loadPendingFromSheet().then(function(){renderPending();});
       loadCustomersFromSheet();
     }else{
@@ -1349,7 +1405,7 @@ var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
-var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbzYqh8LGljWJiTMzMA2lG6Zy2YOLKmemgetnmmI133eXcM8QjHvKK9Kf0ccDC89qKx3/exec';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbzu3C0YmcrAfF9HDaRn2mqtKDTAPt1jSC5et-yC24f4eSUYIr9XCIfHKvERr-e5uHfq/exec';
 
 var RAZORPAY_KEY = 'YOUR_RAZORPAY_KEY';
 var RAZORPAY_ENABLED = false;
@@ -1653,52 +1709,6 @@ async function verifyRegOTP(){
   setTimeout(function(){loginSuccess(Object.assign({},newCustomer,{id:custId}));},2000);
 }
 
-function adminLogin(){
-  var pwd=document.getElementById('adminPwd').value.trim(),correct=localStorage.getItem(PW)||'skyflies2024';
-  hashPassword(pwd).then(function(hashedPwd){
-    if(pwd===correct||hashedPwd===correct){
-      document.getElementById('adminLoginBox').style.display='none';document.getElementById('adminDash').classList.add('on');
-      refreshDash();renderCustList();
-      loadPendingFromSheet().then(function(){renderPending();});
-      loadCustomersFromSheet();
-    }else{var e=document.getElementById('loginErr');e.classList.add('show');setTimeout(function(){e.classList.remove('show');},4000);}
-  });
-}
-function adminLogout(){document.getElementById('adminLoginBox').style.display='';document.getElementById('adminDash').classList.remove('on');document.getElementById('adminPwd').value='';}
-
-async function loadCustomersFromSheet(){
-  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
-  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
-  if(FIREBASE_ENABLED&&db){
-    try{
-      var snap=await db.collection('customers').get();
-      if(!snap.empty){
-        snap.forEach(function(doc){
-          var d=doc.data();
-          var id=d.customerId||d.id||doc.id;
-          if(id&&id.startsWith('SKY')){
-            lc[id]=lc[id]||{};
-            Object.assign(lc[id],{name:d.name||'',phone:d.phone||'',email:d.email||'',city:d.city||'',pwd:d.pwd||d.password||'',systemSize:d.systemSize||'Pending',panels:d.panels||'Pending',installCost:d.installCost||'Pending',amountPaid:d.amountPaid||'Pending',plan:d.plan||'Pending',billingCycle:d.billingCycle||'Monthly',nextService:d.nextService||'TBD',systemStatus:d.systemStatus||'Pending Installation',installDate:d.installDate||'',address:d.address||'',notes:d.notes||''});
-          }
-        });
-      }
-    }catch(fe){}
-  }
-  try{
-    var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getAllCustomers'})});
-    var res=await r.json();
-    if(res.status==='success'&&res.customers&&res.customers.length){
-      res.customers.forEach(function(c){
-        if(!c.id)return;
-        lc[c.id]=lc[c.id]||{};
-        Object.assign(lc[c.id],{name:c.name||'',phone:c.phone||'',email:c.email||'',city:c.city||'',pwd:c.password||lc[c.id].pwd||'',systemSize:c.systemSize||'Pending',panels:c.panels||'Pending',installCost:c.installCost||'Pending',amountPaid:c.amountPaid||'Pending',plan:c.plan||'Pending',billingCycle:c.billingCycle||'Monthly',nextService:c.nextService||'TBD',systemStatus:c.systemStatus||'Pending Installation',installDate:c.installDate||'',address:c.address||'',notes:c.notes||''});
-      });
-    }
-  }catch(e){}
-  localStorage.setItem('sf_customers',JSON.stringify(lc));
-  renderCustList();
-  refreshDash();
-}
 
 async function loadPendingFromSheet(){
   var wh=localStorage.getItem(WH)||WEBHOOK_URL,con=document.getElementById('pendingContainer');
@@ -2374,6 +2384,191 @@ function downloadPDFQuote(){
 
   showToast('✅ PDF opening... In the print dialog, choose "Save as PDF"!');
 }
+
+
+// ── ADMIN MEDIA UPLOAD & GALLERY ─────────────────────────────────
+// Admin can add YouTube video URLs and photo URLs
+// These show in Social → Videos tab as "Our Work" section
+
+function saveAdminMedia(type, url, caption) {
+  var media = JSON.parse(localStorage.getItem('sf_media') || '[]');
+  media.unshift({
+    type: type,        // 'video' or 'photo'
+    url: url,
+    caption: caption || '',
+    date: new Date().toLocaleDateString('en-IN'),
+    id: Date.now().toString()
+  });
+  if(media.length > 50) media = media.slice(0, 50);
+  localStorage.setItem('sf_media', JSON.stringify(media));
+}
+
+function getAdminMedia() {
+  return JSON.parse(localStorage.getItem('sf_media') || '[]');
+}
+
+function deleteAdminMedia(id) {
+  var media = getAdminMedia().filter(function(m){ return m.id !== id; });
+  localStorage.setItem('sf_media', JSON.stringify(media));
+  renderAdminMediaList();
+  loadAdminMedia();
+}
+
+function addAdminVideo() {
+  var url = document.getElementById('adminVideoUrl').value.trim();
+  var caption = document.getElementById('adminVideoCaption').value.trim();
+  if(!url){ showToast('❌ Please enter a YouTube URL'); return; }
+  
+  // Extract video ID from various YouTube URL formats
+  var videoId = '';
+  var patterns = [
+    /youtube[.]com\/watch[?]v=([^&]+)/,
+    /youtu[.]be\/([^?]+)/,
+    /youtube[.]com\/shorts\/([^?]+)/,
+  ];
+  for(var i=0; i<patterns.length; i++){
+    var m = url.match(patterns[i]);
+    if(m){ videoId = m[1]; break; }
+  }
+  if(!videoId){ showToast('❌ Invalid YouTube URL. Use youtube.com/watch?v=... or youtu.be/...'); return; }
+  
+  saveAdminMedia('video', videoId, caption || 'Installation Video');
+  document.getElementById('adminVideoUrl').value = '';
+  document.getElementById('adminVideoCaption').value = '';
+  showToast('✅ Video added!');
+  renderAdminMediaList();
+  loadAdminMedia();
+}
+
+function addAdminPhoto() {
+  var url = document.getElementById('adminPhotoUrl').value.trim();
+  var caption = document.getElementById('adminPhotoCaption').value.trim();
+  if(!url){ showToast('❌ Please enter an image URL'); return; }
+  saveAdminMedia('photo', url, caption || 'Installation Photo');
+  document.getElementById('adminPhotoUrl').value = '';
+  document.getElementById('adminPhotoCaption').value = '';
+  showToast('✅ Photo added!');
+  renderAdminMediaList();
+  loadAdminMedia();
+}
+
+function renderAdminMediaList() {
+  var container = document.getElementById('adminMediaList');
+  if(!container) return;
+  var media = getAdminMedia();
+  if(!media.length){
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--soft);font-size:13px;">No media added yet.</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<media.length;i++){
+    var m = media[i];
+    var isVid = (m.type === 'video');
+    var thumb = isVid ? ('https://img.youtube.com/vi/' + m.url + '/mqdefault.jpg') : m.url;
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--card2);border-radius:10px;margin-bottom:8px;">';
+    html += '<img src="' + thumb + '" style="width:64px;height:44px;object-fit:cover;border-radius:7px;background:#111;">';
+    html += '<div style="flex:1;min-width:0;">';
+    html += '<div style="font-size:12px;font-weight:600;color:#fff;">' + m.caption + '</div>';
+    html += '<div style="font-size:10px;color:var(--soft);">' + (isVid ? 'Video' : 'Photo') + ' - ' + m.date + '</div>';
+    html += '</div>';
+    html += '<button data-mid="' + m.id + '" class="dmb" style="padding:5px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:7px;color:#EF4444;font-size:11px;cursor:pointer;flex-shrink:0;">Del</button>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+  var btns = container.querySelectorAll('.dmb');
+  for(var j=0;j<btns.length;j++){
+    btns[j].onclick = (function(id){ return function(){ deleteAdminMedia(id); }; })(btns[j].getAttribute('data-mid'));
+  }
+}
+
+function loadAdminMedia() {
+  var media = getAdminMedia();
+  var videos = media.filter(function(m){ return m.type === 'video'; });
+  var photos = media.filter(function(m){ return m.type === 'photo'; });
+
+  var ourWork = document.getElementById('ourWorkSection');
+  var ourGrid = document.getElementById('ourWorkGrid');
+  if(ourWork && ourGrid) {
+    if(videos.length) {
+      ourWork.style.display = 'block';
+      var vh = '';
+      for(var i=0;i<videos.length;i++){
+        var v = videos[i];
+        vh += '<div class="yt-card" data-vid="'+v.url+'" data-cap="'+v.caption+'">';
+        vh += '<div style="position:relative;"><img src="https://img.youtube.com/vi/'+v.url+'/mqdefault.jpg" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#111;">';
+        vh += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><div style="width:44px;height:44px;background:rgba(255,0,0,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;">▶</div></div></div>';
+        vh += '<div style="padding:9px;"><div class="yt-card-title">'+v.caption+'</div><div class="yt-card-meta">Our Installation</div></div>';
+        vh += '</div>';
+      }
+      ourGrid.innerHTML = vh;
+      ourGrid.querySelectorAll('.yt-card').forEach(function(card){
+        card.onclick = function(){ playYtVideo(this.getAttribute('data-vid'), this.getAttribute('data-cap')); };
+      });
+    } else {
+      ourWork.style.display = 'none';
+    }
+  }
+
+  var photoSec = document.getElementById('photoGallerySection');
+  var photoGal = document.getElementById('photoGallery');
+  if(photoSec && photoGal) {
+    if(photos.length) {
+      photoSec.style.display = 'block';
+      var ph = '';
+      for(var j=0;j<photos.length;j++){
+        var p = photos[j];
+        ph += '<div class="ig-tile" style="background:#111;" data-purl="'+p.url+'" data-pcap="'+p.caption+'">';
+        ph += '<img src="'+p.url+'" style="width:100%;height:100%;object-fit:cover;">';
+        ph += '</div>';
+      }
+      photoGal.innerHTML = ph;
+      photoGal.querySelectorAll('.ig-tile').forEach(function(tile){
+        tile.onclick = function(){ showFullPhoto(this.getAttribute('data-purl'), this.getAttribute('data-pcap')); };
+      });
+    } else {
+      photoSec.style.display = 'none';
+    }
+  }
+}
+
+function showFullPhoto(url, caption) {
+  var overlay = document.getElementById('photoOverlay');
+  var img = document.getElementById('photoOverlayImg');
+  var cap = document.getElementById('photoOverlayCaption');
+  if(overlay && img){ 
+    img.src = url;
+    if(cap) cap.textContent = caption;
+    overlay.style.display = 'flex';
+  }
+}
+function closeFullPhoto() {
+  var overlay = document.getElementById('photoOverlay');
+  if(overlay) overlay.style.display = 'none';
+}
+
+// ── SWIPE NAVIGATION (slide left/right between screens) ──────────
+(function(){
+  var SA = document.getElementById('screen-area');
+  if(!SA) return;
+  var startX = 0, startY = 0, moved = false;
+  SA.addEventListener('touchstart', function(e){
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    moved = false;
+  }, {passive:true});
+  SA.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - startX;
+    var dy = Math.abs(e.changedTouches[0].clientY - startY);
+    if(Math.abs(dx) > 60 && dy < 80) {
+      // Swipe right = go back (previous screen in history)
+      if(dx > 0 && screenHistory.length > 1) {
+        screenHistory.pop(); // remove current
+        var prev = screenHistory.pop(); // get previous
+        if(prev) goScreen(prev, true);
+      }
+    }
+  }, {passive:true});
+})();
 
 </script>
 </body>
