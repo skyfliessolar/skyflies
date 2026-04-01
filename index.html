@@ -1342,62 +1342,15 @@ function showPage(id, btn) { goScreen(id); }
 function mobPage(id) { goScreen(id); }
 
 // ── NOTIFICATION PANEL ──────────────────────────
-function showNotifModal() {
-  document.getElementById('notifModal').classList.add('show');
-}
-function closeNotifModal() {
-  document.getElementById('notifModal').classList.remove('show');
-  document.getElementById('notifResult').textContent = '';
-}
-function showNotifPanel() {
-  // For non-admin users show their notifications
-  if(currentCustomer) {
-    showToast('🔔 No new notifications');
-  } else {
-    goScreen('admin');
-  }
-}
+// function moved below
 
-async function sendBulkNotification() {
-  var title = (document.getElementById('notifTitle').value || '').trim();
-  var msg   = (document.getElementById('notifMsg').value   || '').trim();
-  var res   = document.getElementById('notifResult');
-  if (!title || !msg) {
-    res.textContent = '❌ Please enter both title and message.';
-    res.style.color = '#EF4444';
-    return;
-  }
-  res.textContent = '⏳ Sending...';
-  res.style.color = '#F5A623';
-  var wh = localStorage.getItem('sf_wh') || 'https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
-  var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
-  try {
-    var r = await fetch(wh, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: payload });
-    var data = await r.json();
-    if (data.status === 'success') {
-      res.textContent = '✅ Sent to ' + (data.sent || 0) + ' customers!';
-      res.style.color = '#10B981';
-      document.getElementById('notifTitle').value = '';
-      document.getElementById('notifMsg').value = '';
-      setTimeout(closeNotifModal, 2500);
-    } else {
-      res.textContent = '❌ ' + (data.message || 'Script error. Redeploy as New version.');
-      res.style.color = '#EF4444';
-    }
-  } catch(e) {
-    try {
-      fetch(wh, { method:'POST', headers:{'Content-Type':'text/plain'}, body:payload, mode:'no-cors' });
-      res.textContent = '✅ Sent! Check info@skyflies.in for confirmation.';
-      res.style.color = '#10B981';
-      document.getElementById('notifTitle').value = '';
-      document.getElementById('notifMsg').value = '';
-      setTimeout(closeNotifModal, 3000);
-    } catch(e2) {
-      res.textContent = '❌ ' + e.message;
-      res.style.color = '#EF4444';
-    }
-  }
-}
+// function moved below
+
+// function moved below
+
+
+// function moved below
+
 
 // ── ADMIN OVERRIDES ──────────────────────────────
 function adminLogin(){
@@ -1431,6 +1384,74 @@ var currentCustomer=null;
 var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
 
 var RAZORPAY_KEY = 'YOUR_RAZORPAY_KEY';
+
+// ── NOTIFICATION FUNCTIONS ──────────────────────────────────────
+function showNotifModal() {
+  var m = document.getElementById('notifModal');
+  if(m) m.classList.add('show');
+}
+function closeNotifModal() {
+  var m = document.getElementById('notifModal');
+  if(m) m.classList.remove('show');
+  var r = document.getElementById('notifResult');
+  if(r) r.textContent = '';
+}
+function showNotifPanel() {
+  if(currentCustomer) { showToast('🔔 No new notifications'); }
+  else { goScreen('admin'); }
+}
+async function sendBulkNotification() {
+  var title = (document.getElementById('notifTitle').value || '').trim();
+  var msg   = (document.getElementById('notifMsg').value   || '').trim();
+  var res   = document.getElementById('notifResult');
+  if (!title || !msg) {
+    res.textContent = '❌ Please enter both title and message.';
+    res.style.color = '#EF4444';
+    return;
+  }
+  res.textContent = '⏳ Sending...';
+  res.style.color = '#F5A623';
+  var wh = localStorage.getItem(WH) || WEBHOOK_URL;
+  var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
+  try {
+    var r = await fetch(wh, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: payload
+    });
+    var txt = await r.text();
+    var data = JSON.parse(txt);
+    if (data.status === 'success') {
+      res.textContent = '✅ Sent to ' + (data.sent || 0) + ' customers!';
+      res.style.color = '#10B981';
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMsg').value = '';
+      setTimeout(closeNotifModal, 2500);
+    } else {
+      res.textContent = '❌ ' + (data.message || 'Error. Redeploy script as New version.');
+      res.style.color = '#EF4444';
+    }
+  } catch(e) {
+    // CORS blocks reading response — but request still goes through
+    // Use no-cors fallback: emails WILL send, we just can't read the count
+    fetch(wh, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: payload,
+      mode: 'no-cors'
+    }).then(function() {
+      res.textContent = '✅ Sent! Check info@skyflies.in inbox for delivery confirmation.';
+      res.style.color = '#10B981';
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMsg').value = '';
+      setTimeout(closeNotifModal, 3000);
+    }).catch(function(e2) {
+      res.textContent = '❌ Failed: ' + e2.message;
+      res.style.color = '#EF4444';
+    });
+  }
+}
+
 var RAZORPAY_ENABLED = false;
 var MAX_LOGIN_ATTEMPTS = 5;
 var LOCKOUT_DURATION   = 15 * 60 * 1000;
