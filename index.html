@@ -302,6 +302,9 @@ body{font-family:'DM Sans',sans-serif;color:#fff;}
 .copy-btn{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:5px;padding:4px 10px;color:#0A0F1E;font-size:10px;font-weight:700;cursor:pointer;}
 pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line-height:1.6;padding-right:60px;max-height:200px;overflow-y:auto;}
 
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake 0.4s ease;}
+
 /* ── TOAST ── */
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(10,15,30,0.97);color:#fff;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;border:1px solid rgba(245,166,35,0.3);max-width:85vw;text-align:center;opacity:0;transition:opacity 0.3s;pointer-events:none;}
 #toast.show{opacity:1;}
@@ -568,7 +571,10 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
         <div class="field"><label>Phone / Email / Customer ID</label><input type="text" id="cuid" placeholder="+91 XXXXX or email" onkeydown="if(event.key==='Enter')cLogin()"></div>
         <div class="field">
           <label style="display:flex;justify-content:space-between;"><span>Password</span><span onclick="showForgotPassword()" style="color:var(--sun);cursor:pointer;font-weight:400;font-size:11px;text-transform:none;letter-spacing:0;">Forgot password?</span></label>
-          <input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()">
+          <div style="position:relative;">
+          <input type="password" id="cpwd" placeholder="Your password" onkeydown="if(event.key==='Enter')cLogin()" style="padding-right:44px;">
+          <button type="button" onclick="togglePwd('cpwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--soft);font-size:16px;cursor:pointer;padding:4px;">👁</button>
+        </div>
         </div>
         <button class="submit-btn" onclick="cLogin()"><span id="loginBtnTxt">Sign In →</span><div class="spin" id="loginLoader"></div></button>
         <div class="alert er" id="cloginErr" style="margin-top:10px;"></div>
@@ -616,8 +622,8 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
           </div>
           <div class="field"><label>Email *</label><input type="email" id="regEmail" placeholder="your@email.com"></div>
           <div class="field"><label>City *</label><select id="regCity" onchange="handleOtherCity(this)"><option value="">Select city</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select><input type="text" id="regCityOther" placeholder="Enter city name" style="display:none;margin-top:8px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"></div>
-          <div class="field"><label>Password *</label><input type="password" id="regPwd" placeholder="Min 6 characters"></div>
-          <div class="field"><label>Confirm Password *</label><input type="password" id="regPwd2" placeholder="Re-enter password"></div>
+          <div class="field"><label>Password *</label><div style="position:relative;"><input type="password" id="regPwd" placeholder="Min 6 characters" style="padding-right:44px;"><button type="button" onclick="togglePwd('regPwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--soft);font-size:16px;cursor:pointer;padding:4px;">👁</button></div></div>
+          <div class="field"><label>Confirm Password *</label><div style="position:relative;"><input type="password" id="regPwd2" placeholder="Re-enter password" style="padding-right:44px;"><button type="button" onclick="togglePwd('regPwd2',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--soft);font-size:16px;cursor:pointer;padding:4px;">👁</button></div></div>
           <button class="submit-btn" onclick="startRegistration()" style="background:linear-gradient(135deg,var(--success),#059669);color:#fff;"><span id="regStep1Txt">Send Verification OTP →</span><div class="spin" id="regStep1Loader"></div></button>
           <div class="alert er" id="reg-er" style="margin-top:10px;"></div>
           <div class="divider"></div>
@@ -1002,7 +1008,11 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
     <div class="form-card">
       <div class="form-title">Admin Login</div>
       <div class="form-sub">Enter your admin password.</div>
-      <div class="field"><label>Password</label><input type="password" id="adminPwd" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()"></div>
+      <div class="field"><label>Password</label>
+        <div style="position:relative;">
+          <input type="password" id="adminPwd" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()" style="padding-right:44px;">
+          <button type="button" onclick="togglePwd('adminPwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--soft);font-size:16px;cursor:pointer;padding:4px;">👁</button>
+        </div></div>
       <button class="submit-btn" onclick="adminLogin()">Login →</button>
       <div class="alert er" id="loginErr" style="margin-top:10px;display:none;">❌ Wrong password. Default: skyflies2024</div>
     </div>
@@ -1298,6 +1308,20 @@ function goBack() {
     goScreen('home', true);
   }
 }
+// ── PASSWORD SHOW/HIDE ───────────────────────────────────────────
+function togglePwd(inputId, btn) {
+  var inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+
 
 
 function goScreen(id, isBack) {
@@ -1354,18 +1378,29 @@ function mobPage(id) { goScreen(id); }
 
 // ── ADMIN OVERRIDES ──────────────────────────────
 function adminLogin(){
-  var pwd=document.getElementById('adminPwd').value.trim(),correct=localStorage.getItem('sf_pwd')||'skyflies2024';
+  var pwdInput = document.getElementById('adminPwd');
+  var pwd = pwdInput.value.trim();
+  var correct = localStorage.getItem(PW) || 'skyflies2024';
   hashPassword(pwd).then(function(hashedPwd){
     if(pwd===correct||hashedPwd===correct){
       document.getElementById('adminLoginBox').style.display='none';
       document.getElementById('adminDash').style.display='block';
+      pwdInput.value='';
       refreshDash();renderCustList();renderAdminMediaList();
       loadPendingFromSheet().then(function(){renderPending();});
       loadCustomersFromSheet();
     }else{
+      // Shake the input + show error
+      pwdInput.classList.add('shake');
+      pwdInput.style.borderColor='#EF4444';
+      pwdInput.value='';
+      setTimeout(function(){
+        pwdInput.classList.remove('shake');
+        pwdInput.style.borderColor='';
+      },600);
       var e=document.getElementById('loginErr');
       e.style.display='flex';e.classList.add('show');
-      setTimeout(function(){e.style.display='none';e.classList.remove('show');},4000);
+      setTimeout(function(){e.style.display='none';e.classList.remove('show');},3000);
     }
   });
 }
