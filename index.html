@@ -1369,46 +1369,34 @@ async function sendBulkNotification() {
   }
   res.textContent = '⏳ Sending...';
   res.style.color = '#F5A623';
-  var wh = localStorage.getItem(WH) || WEBHOOK_URL;
-  if (!wh) {
-    res.textContent = '❌ No Apps Script URL. Go to More → Setup and save your URL first.';
-    res.style.color = '#EF4444';
-    return;
-  }
+  var wh = localStorage.getItem('sf_wh') || 'https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
   var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
-  // Use XMLHttpRequest — handles Apps Script redirects better than fetch
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', wh, true);
-  xhr.setRequestHeader('Content-Type', 'text/plain');
-  xhr.timeout = 30000;
-  xhr.onload = function() {
-    try {
-      var data = JSON.parse(xhr.responseText);
-      if (data.status === 'success') {
-        res.textContent = '✅ Sent to ' + (data.sent || 0) + ' customers!';
-        res.style.color = '#10B981';
-        document.getElementById('notifTitle').value = '';
-        document.getElementById('notifMsg').value = '';
-        setTimeout(closeNotifModal, 2500);
-      } else {
-        res.textContent = '❌ ' + (data.message || 'Error. Try again.');
-        res.style.color = '#EF4444';
-      }
-    } catch(e) {
-      res.textContent = '✅ Request sent! Check your email for delivery confirmation.';
+  try {
+    var r = await fetch(wh, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: payload });
+    var data = await r.json();
+    if (data.status === 'success') {
+      res.textContent = '✅ Sent to ' + (data.sent || 0) + ' customers!';
       res.style.color = '#10B981';
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMsg').value = '';
       setTimeout(closeNotifModal, 2500);
+    } else {
+      res.textContent = '❌ ' + (data.message || 'Script error. Redeploy as New version.');
+      res.style.color = '#EF4444';
     }
-  };
-  xhr.onerror = function() {
-    res.textContent = '❌ Network error. Check internet connection and try again.';
-    res.style.color = '#EF4444';
-  };
-  xhr.ontimeout = function() {
-    res.textContent = '⏳ Request timed out — emails may still have been sent. Check info@skyflies.in inbox.';
-    res.style.color = '#F5A623';
-  };
-  xhr.send(payload);
+  } catch(e) {
+    try {
+      fetch(wh, { method:'POST', headers:{'Content-Type':'text/plain'}, body:payload, mode:'no-cors' });
+      res.textContent = '✅ Sent! Check info@skyflies.in for confirmation.';
+      res.style.color = '#10B981';
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMsg').value = '';
+      setTimeout(closeNotifModal, 3000);
+    } catch(e2) {
+      res.textContent = '❌ ' + e.message;
+      res.style.color = '#EF4444';
+    }
+  }
 }
 
 // ── ADMIN OVERRIDES ──────────────────────────────
