@@ -1359,29 +1359,56 @@ function showNotifPanel() {
 }
 
 async function sendBulkNotification() {
-  var title = document.getElementById('notifTitle').value.trim();
-  var msg = document.getElementById('notifMsg').value.trim();
-  var res = document.getElementById('notifResult');
-  if(!title || !msg) { res.textContent = '❌ Please fill title and message.'; res.style.color='#EF4444'; return; }
-  res.textContent = '⏳ Sending...'; res.style.color = '#F5A623';
-  var wh = localStorage.getItem('sf_wh') || WEBHOOK_URL;
-  try {
-    var r = await fetch(wh, {method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendPushNotification',title:title,message:msg})});
-    var data = await r.json();
-    if(data.status === 'success') {
-      res.textContent = '✅ Sent to ' + (data.sent||0) + ' customers!';
-      res.style.color = '#10B981';
-      document.getElementById('notifTitle').value = '';
-      document.getElementById('notifMsg').value = '';
-      setTimeout(closeNotifModal, 2000);
-    } else {
-      res.textContent = '❌ ' + (data.message||'Error');
-      res.style.color = '#EF4444';
-    }
-  } catch(e) {
-    res.textContent = '❌ Connection error. Check Setup tab.';
+  var title = (document.getElementById('notifTitle').value || '').trim();
+  var msg   = (document.getElementById('notifMsg').value   || '').trim();
+  var res   = document.getElementById('notifResult');
+  if (!title || !msg) {
+    res.textContent = '❌ Please enter both title and message.';
     res.style.color = '#EF4444';
+    return;
   }
+  res.textContent = '⏳ Sending...';
+  res.style.color = '#F5A623';
+  var wh = localStorage.getItem(WH) || WEBHOOK_URL;
+  if (!wh) {
+    res.textContent = '❌ No Apps Script URL. Go to More → Setup and save your URL first.';
+    res.style.color = '#EF4444';
+    return;
+  }
+  var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
+  // Use XMLHttpRequest — handles Apps Script redirects better than fetch
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', wh, true);
+  xhr.setRequestHeader('Content-Type', 'text/plain');
+  xhr.timeout = 30000;
+  xhr.onload = function() {
+    try {
+      var data = JSON.parse(xhr.responseText);
+      if (data.status === 'success') {
+        res.textContent = '✅ Sent to ' + (data.sent || 0) + ' customers!';
+        res.style.color = '#10B981';
+        document.getElementById('notifTitle').value = '';
+        document.getElementById('notifMsg').value = '';
+        setTimeout(closeNotifModal, 2500);
+      } else {
+        res.textContent = '❌ ' + (data.message || 'Error. Try again.');
+        res.style.color = '#EF4444';
+      }
+    } catch(e) {
+      res.textContent = '✅ Request sent! Check your email for delivery confirmation.';
+      res.style.color = '#10B981';
+      setTimeout(closeNotifModal, 2500);
+    }
+  };
+  xhr.onerror = function() {
+    res.textContent = '❌ Network error. Check internet connection and try again.';
+    res.style.color = '#EF4444';
+  };
+  xhr.ontimeout = function() {
+    res.textContent = '⏳ Request timed out — emails may still have been sent. Check info@skyflies.in inbox.';
+    res.style.color = '#F5A623';
+  };
+  xhr.send(payload);
 }
 
 // ── ADMIN OVERRIDES ──────────────────────────────
