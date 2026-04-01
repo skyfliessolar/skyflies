@@ -1057,28 +1057,48 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
     </div>
     <!-- ADD CUSTOMER -->
     <!-- MEDIA UPLOAD SECTION -->
-  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🎬 Upload Installation Videos & Photos</div>
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🎬 Upload Videos & Photos</div>
   <div class="form-card" style="border-color:rgba(245,166,35,0.2);">
-    <div style="font-size:12px;color:var(--soft);margin-bottom:14px;line-height:1.6;">Add your installation videos (YouTube links) and photos — they appear in the Social Media tab for customers to see.</div>
-    
-    <div style="font-size:13px;font-weight:700;color:var(--sun);margin-bottom:8px;">▶ Add YouTube Video</div>
-    <div class="row2" style="margin-bottom:8px;">
-      <div class="field"><label>YouTube URL *</label><input type="url" id="adminVideoUrl" placeholder="https://youtu.be/xxx or youtube.com/watch?v=xxx"></div>
-      <div class="field"><label>Caption</label><input type="text" id="adminVideoCaption" placeholder="e.g. 5kW Installation Chennai"></div>
-    </div>
-    <button onclick="addAdminVideo()" class="admin-btn primary" style="width:100%;padding:11px;margin-bottom:14px;">➕ Add Video</button>
+    <div style="font-size:12px;color:var(--soft);margin-bottom:14px;line-height:1.6;">Upload from your phone gallery or paste a YouTube link — they appear in Social Media tab for customers.</div>
 
-    <div style="font-size:13px;font-weight:700;color:var(--sun);margin-bottom:8px;">📷 Add Photo</div>
-    <div class="row2" style="margin-bottom:8px;">
-      <div class="field"><label>Image URL *</label><input type="url" id="adminPhotoUrl" placeholder="https://... (direct image link)"></div>
-      <div class="field"><label>Caption</label><input type="text" id="adminPhotoCaption" placeholder="e.g. Rooftop Install Vellore"></div>
+    <!-- TAB SWITCHER -->
+    <div style="display:flex;background:rgba(255,255,255,0.04);border-radius:10px;padding:3px;gap:3px;margin-bottom:14px;">
+      <button id="mediaTabPhoto" onclick="switchMediaTab('photo')" style="flex:1;padding:8px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--sun),var(--solar));color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">📷 Upload Photo</button>
+      <button id="mediaTabVideo" onclick="switchMediaTab('video')" style="flex:1;padding:8px;border-radius:8px;border:none;background:transparent;color:var(--soft);font-weight:600;font-size:13px;cursor:pointer;">▶ YouTube Link</button>
     </div>
-    <button onclick="addAdminPhoto()" class="admin-btn primary" style="width:100%;padding:11px;margin-bottom:14px;">➕ Add Photo</button>
 
-    <div style="font-size:12px;font-weight:600;color:var(--soft);margin-bottom:8px;">📁 Uploaded Media</div>
+    <!-- PHOTO UPLOAD TAB -->
+    <div id="mediaPhotoTab">
+      <div onclick="document.getElementById('photoFileInput').click()" style="border:2px dashed rgba(245,166,35,0.4);border-radius:12px;padding:24px;text-align:center;cursor:pointer;margin-bottom:10px;transition:all 0.2s;" id="photoDropZone">
+        <div style="font-size:32px;margin-bottom:8px;">📷</div>
+        <div style="font-size:14px;font-weight:600;color:var(--sun);">Tap to pick photos</div>
+        <div style="font-size:11px;color:var(--soft);margin-top:4px;">From gallery, camera or files · JPG, PNG, WebP</div>
+      </div>
+      <input type="file" id="photoFileInput" accept="image/*" multiple style="display:none;" onchange="handlePhotoSelect(this)">
+      <div id="photoPreviewArea" style="display:none;margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--soft);margin-bottom:6px;">Preview:</div>
+        <div id="photoPreviewGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+      </div>
+      <div class="field"><label>Caption (optional)</label><input type="text" id="adminPhotoCaption" placeholder="e.g. 5kW Rooftop Install Vellore"></div>
+      <button onclick="uploadPhotosFromGallery()" class="submit-btn" id="uploadPhotoBtn" style="display:none;">
+        <span id="uploadPhotoBtnTxt">📤 Upload to App</span>
+        <div class="spin" id="uploadPhotoLoader" style="display:none;"></div>
+      </button>
+      <div id="photoUploadResult" style="font-size:12px;margin-top:8px;"></div>
+    </div>
+
+    <!-- YOUTUBE TAB -->
+    <div id="mediaVideoTab" style="display:none;">
+      <div class="row2" style="margin-bottom:8px;">
+        <div class="field"><label>YouTube URL *</label><input type="url" id="adminVideoUrl" placeholder="https://youtu.be/xxx or youtube.com/watch?v=xxx"></div>
+        <div class="field"><label>Caption</label><input type="text" id="adminVideoCaption" placeholder="e.g. 5kW Installation Chennai"></div>
+      </div>
+      <button onclick="addAdminVideo()" class="admin-btn primary" style="width:100%;padding:11px;margin-bottom:4px;">➕ Add YouTube Video</button>
+    </div>
+
+    <div style="font-size:12px;font-weight:600;color:var(--soft);margin:12px 0 8px;">📁 Uploaded Media</div>
     <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
   </div>
-
   <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">➕ Add Customer Manually</div>
     <div class="form-card">
       <form id="addCustForm">
@@ -2569,6 +2589,120 @@ function loadAdminMedia() {
     }
   }
 }
+
+// ── MEDIA TAB SWITCHER ───────────────────────────────────────────
+function switchMediaTab(tab) {
+  var photoTab  = document.getElementById('mediaPhotoTab');
+  var videoTab  = document.getElementById('mediaVideoTab');
+  var photoBtn  = document.getElementById('mediaTabPhoto');
+  var videoBtn  = document.getElementById('mediaTabVideo');
+  if (tab === 'photo') {
+    if(photoTab) photoTab.style.display = '';
+    if(videoTab) videoTab.style.display = 'none';
+    if(photoBtn) { photoBtn.style.background = 'linear-gradient(135deg,var(--sun),var(--solar))'; photoBtn.style.color = '#080F1E'; }
+    if(videoBtn) { videoBtn.style.background = 'transparent'; videoBtn.style.color = 'var(--soft)'; }
+  } else {
+    if(photoTab) photoTab.style.display = 'none';
+    if(videoTab) videoTab.style.display = '';
+    if(videoBtn) { videoBtn.style.background = 'linear-gradient(135deg,var(--sun),var(--solar))'; videoBtn.style.color = '#080F1E'; }
+    if(photoBtn) { photoBtn.style.background = 'transparent'; photoBtn.style.color = 'var(--soft)'; }
+  }
+}
+
+// ── PHOTO GALLERY UPLOAD ─────────────────────────────────────────
+// Reads photos from phone gallery as base64, stores locally
+// Shows preview grid before saving
+function handlePhotoSelect(input) {
+  var files = Array.from(input.files);
+  if (!files.length) return;
+
+  var previewArea = document.getElementById('photoPreviewArea');
+  var previewGrid = document.getElementById('photoPreviewGrid');
+  var uploadBtn   = document.getElementById('uploadPhotoBtn');
+  var result      = document.getElementById('photoUploadResult');
+
+  previewGrid.innerHTML = '';
+  result.textContent = '';
+  previewArea.style.display = 'block';
+  uploadBtn.style.display = 'flex';
+
+  // Highlight drop zone
+  var dz = document.getElementById('photoDropZone');
+  if(dz) { dz.style.borderColor = 'var(--sun)'; dz.style.background = 'rgba(245,166,35,0.05)'; }
+
+  files.forEach(function(file, idx) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var div = document.createElement('div');
+      div.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;';
+      div.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">' +
+        '<div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;" onclick="removePhotoPreview(this,' + idx + ')">✕</div>';
+      div.setAttribute('data-src', e.target.result);
+      div.setAttribute('data-idx', idx);
+      previewGrid.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('uploadPhotoBtnTxt').textContent = '📤 Upload ' + files.length + ' photo' + (files.length > 1 ? 's' : '') + ' to App';
+}
+
+function removePhotoPreview(btn, idx) {
+  btn.parentElement.remove();
+  var remaining = document.getElementById('photoPreviewGrid').children.length;
+  if (remaining === 0) {
+    document.getElementById('photoPreviewArea').style.display = 'none';
+    document.getElementById('uploadPhotoBtn').style.display = 'none';
+    document.getElementById('photoFileInput').value = '';
+  } else {
+    document.getElementById('uploadPhotoBtnTxt').textContent = '📤 Upload ' + remaining + ' photo' + (remaining > 1 ? 's' : '') + ' to App';
+  }
+}
+
+function uploadPhotosFromGallery() {
+  var grid    = document.getElementById('photoPreviewGrid');
+  var caption = (document.getElementById('adminPhotoCaption').value || '').trim();
+  var result  = document.getElementById('photoUploadResult');
+  var btnTxt  = document.getElementById('uploadPhotoBtnTxt');
+  var loader  = document.getElementById('uploadPhotoLoader');
+  var imgs    = grid.querySelectorAll('[data-src]');
+
+  if (!imgs.length) { showToast('Please select photos first'); return; }
+
+  btnTxt.style.display = 'none';
+  loader.style.display = 'block';
+  result.textContent = '';
+
+  var saved = 0;
+  imgs.forEach(function(div, i) {
+    var src      = div.getAttribute('data-src');
+    var cap      = caption || ('Installation Photo ' + (getAdminMedia().length + i + 1));
+    saveAdminMedia('photo', src, cap);
+    saved++;
+  });
+
+  btnTxt.style.display = 'flex';
+  loader.style.display = 'none';
+
+  result.textContent = '✅ ' + saved + ' photo' + (saved > 1 ? 's' : '') + ' added to gallery!';
+  result.style.color = '#10B981';
+
+  // Reset
+  document.getElementById('photoFileInput').value = '';
+  document.getElementById('adminPhotoCaption').value = '';
+  document.getElementById('photoPreviewGrid').innerHTML = '';
+  document.getElementById('photoPreviewArea').style.display = 'none';
+  document.getElementById('uploadPhotoBtn').style.display = 'none';
+  var dz = document.getElementById('photoDropZone');
+  if(dz) { dz.style.borderColor = 'rgba(245,166,35,0.4)'; dz.style.background = ''; }
+
+  renderAdminMediaList();
+  loadAdminMedia();
+  showToast('✅ ' + saved + ' photo' + (saved > 1 ? 's' : '') + ' added!');
+  setTimeout(function(){ result.textContent = ''; }, 3000);
+}
+
+
 
 function showFullPhoto(url, caption) {
   var overlay = document.getElementById('photoOverlay');
