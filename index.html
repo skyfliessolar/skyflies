@@ -152,6 +152,25 @@ body{font-family:'DM Sans',sans-serif;color:#fff;}
 .act-btn.pdf{background:linear-gradient(135deg,#7C3AED,#4F46E5);color:#fff;}
 .act-btn.ghost{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;}
 
+/* ── STORE ── */
+.cat-pill{padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--soft);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
+.cat-pill.on{background:rgba(245,166,35,0.15);border-color:var(--sun);color:var(--sun);}
+.prod-card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:transform 0.15s;}
+.prod-card:active{transform:scale(0.97);}
+.prod-img{width:100%;aspect-ratio:1;object-fit:cover;background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(255,107,0,0.05));display:flex;align-items:center;justify-content:center;font-size:40px;}
+.prod-info{padding:10px;}
+.prod-name{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;}
+.prod-brand{font-size:10px;color:var(--soft);margin-bottom:5px;}
+.prod-price{font-size:16px;font-weight:700;color:var(--sun);}
+.prod-orig{font-size:11px;color:var(--soft);text-decoration:line-through;margin-left:4px;}
+.prod-discount{font-size:10px;color:var(--success);font-weight:700;margin-left:4px;}
+.prod-add{width:100%;padding:8px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:12px;cursor:pointer;margin-top:8px;}
+.prod-add:active{opacity:0.8;}
+.prod-badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:9px;font-weight:700;}
+.prod-badge.out{background:rgba(239,68,68,0.15);color:#EF4444;}
+.prod-badge.in{background:rgba(16,185,129,0.15);color:var(--success);}
+.prod-badge.pre{background:rgba(59,130,246,0.15);color:#60A5FA;}
+
 /* ── PLAN CARDS ── */
 .plan-card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);cursor:pointer;}
 .plan-card.hot{border-color:var(--sun);background:linear-gradient(135deg,rgba(245,166,35,0.08),rgba(255,107,0,0.04));}
@@ -711,7 +730,11 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 
   <div class="sec-head"><div class="sec-title">Admin</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+    <div class="social-link-card" onclick="goScreen('plans')"><div class="soc-ico" style="background:rgba(139,92,246,0.15);">📋</div><div><div class="soc-info-name">AMC Plans</div><div class="soc-info-sub">Maintenance subscriptions</div></div><div class="soc-arrow">›</div></div>
+    <div class="social-link-card" onclick="goScreen('store')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛒</div><div><div class="soc-info-name">Solar Store</div><div class="soc-info-sub">Products & appliances</div></div><div class="soc-arrow">›</div></div>
+    <div class="social-link-card" onclick="goScreen('cart')"><div class="soc-ico" style="background:rgba(16,185,129,0.15);">🛍️</div><div><div class="soc-info-name">My Cart</div><div class="soc-info-sub">View & place orders</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(239,68,68,0.15);">🔐</div><div><div class="soc-info-name">Admin Dashboard</div><div class="soc-info-sub">Manage submissions & send notifications</div></div><div class="soc-arrow">›</div></div>
+    <div class="social-link-card" onclick="goScreen('adminstore')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛍️</div><div><div class="soc-info-name">Manage Store</div><div class="soc-info-sub">Add & edit products</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('setup')"><div class="soc-ico" style="background:rgba(59,130,246,0.15);">⚙️</div><div><div class="soc-info-name">Setup</div><div class="soc-info-sub">Google Sheets connection</div></div><div class="soc-arrow">›</div></div>
   </div>
 
@@ -829,6 +852,115 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
     </div>
     <button class="plan-btn outline" onclick="goSub('Industrial Pro')">Get Custom Quote</button>
   </div>
+
+<!-- ══ STORE ══ -->
+<div class="screen" id="screen-store">
+  <div class="tag">🛒 Solar Store</div>
+  <div class="screen-title">Solar Products</div>
+  <div class="screen-sub">Quality solar products & appliances delivered to your door.</div>
+
+  <!-- Search bar -->
+  <div style="position:relative;margin-bottom:14px;">
+    <input type="text" id="storeSearch" placeholder="🔍  Search products..." oninput="filterProducts(this.value)"
+      style="width:100%;background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px 12px 40px;color:#fff;font-size:14px;outline:none;">
+    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;">🔍</span>
+  </div>
+
+  <!-- Category pills -->
+  <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;scrollbar-width:none;" id="catPills">
+    <button class="cat-pill on" onclick="filterCat('all',this)">All</button>
+    <button class="cat-pill" onclick="filterCat('panels',this)">☀️ Panels</button>
+    <button class="cat-pill" onclick="filterCat('inverters',this)">⚡ Inverters</button>
+    <button class="cat-pill" onclick="filterCat('batteries',this)">🔋 Batteries</button>
+    <button class="cat-pill" onclick="filterCat('appliances',this)">🏠 Appliances</button>
+    <button class="cat-pill" onclick="filterCat('accessories',this)">🔧 Accessories</button>
+  </div>
+
+  <!-- Cart bar -->
+  <div id="cartBar" style="display:none;position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:12px;padding:12px 16px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
+    <span style="font-size:18px;">🛒</span>
+    <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#080F1E;" id="cartCount">0 items</div><div style="font-size:11px;color:#080F1E;opacity:0.7;" id="cartTotal">₹0</div></div>
+    <button onclick="goScreen('cart')" style="padding:8px 16px;background:#080F1E;border:none;border-radius:8px;color:var(--sun);font-weight:700;font-size:13px;cursor:pointer;">View Cart →</button>
+  </div>
+
+  <!-- Products grid -->
+  <div id="productsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+  <div id="noProducts" style="display:none;text-align:center;padding:40px 20px;color:var(--soft);">
+    <div style="font-size:40px;margin-bottom:10px;">🔍</div>
+    <div style="font-size:14px;">No products found</div>
+  </div>
+</div>
+
+<!-- ══ CART ══ -->
+<div class="screen" id="screen-cart">
+  <div class="tag">🛒 My Cart</div>
+  <div class="screen-title">Your Cart</div>
+  <div id="cartItems" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+  <div id="cartEmpty" style="text-align:center;padding:40px 20px;color:var(--soft);">
+    <div style="font-size:40px;margin-bottom:10px;">🛒</div>
+    <div style="font-size:14px;">Your cart is empty</div>
+    <button onclick="goScreen('store')" style="margin-top:14px;padding:10px 24px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:9px;color:#080F1E;font-weight:700;cursor:pointer;">Browse Products →</button>
+  </div>
+  <div id="cartSummary" style="display:none;">
+    <div style="background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--soft);">
+        <span>Subtotal</span><span id="summarySubtotal">₹0</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--soft);">
+        <span>GST (18%)</span><span id="summaryGst">₹0</span>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 0;"></div>
+      <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;">
+        <span>Total</span><span style="color:var(--sun);" id="summaryTotal">₹0</span>
+      </div>
+    </div>
+    <div class="field"><label>Delivery Address *</label><textarea id="cartAddress" placeholder="Full delivery address..." style="min-height:70px;"></textarea></div>
+    <div class="field"><label>Phone *</label><input type="tel" id="cartPhone" placeholder="+91 XXXXX"></div>
+    <button onclick="placeOrder()" class="submit-btn" id="placeOrderBtn">
+      <span id="placeOrderTxt">🛒 Place Order</span>
+      <div class="spin" id="placeOrderLoader" style="display:none;"></div>
+    </button>
+    <div class="alert ok" id="orderOk" style="margin-top:10px;">✅ Order placed! Admin will contact you within 24 hours.</div>
+    <div class="alert er" id="orderEr" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN STORE ══ -->
+<div class="screen" id="screen-adminstore">
+  <div class="tag">🛍️ Manage Store</div>
+  <div class="screen-title">Product Management</div>
+  <div class="form-card" style="border-color:rgba(245,166,35,0.2);">
+    <div class="form-title" style="margin-bottom:14px;">➕ Add New Product</div>
+    <div class="row2">
+      <div class="field"><label>Product Name *</label><input type="text" id="pName" placeholder="e.g. 5kW Solar Panel"></div>
+      <div class="field"><label>Category *</label>
+        <select id="pCat">
+          <option value="panels">☀️ Solar Panels</option>
+          <option value="inverters">⚡ Inverters</option>
+          <option value="batteries">🔋 Batteries</option>
+          <option value="appliances">🏠 Appliances</option>
+          <option value="accessories">🔧 Accessories</option>
+        </select>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Price (₹) *</label><input type="number" id="pPrice" placeholder="e.g. 25000"></div>
+      <div class="field"><label>Original Price (₹)</label><input type="number" id="pOrigPrice" placeholder="e.g. 30000"></div>
+    </div>
+    <div class="field"><label>Description *</label><textarea id="pDesc" placeholder="Product description..."></textarea></div>
+    <div class="field"><label>Photo URL or leave blank</label><input type="url" id="pImg" placeholder="https://... (optional)"></div>
+    <div class="row2">
+      <div class="field"><label>Brand</label><input type="text" id="pBrand" placeholder="e.g. Luminous"></div>
+      <div class="field"><label>Stock</label><select id="pStock"><option value="in">In Stock</option><option value="out">Out of Stock</option><option value="pre">Pre-order</option></select></div>
+    </div>
+    <button onclick="addProduct()" class="submit-btn">➕ Add Product</button>
+    <div class="alert ok" id="addProductOk" style="margin-top:10px;">✅ Product added!</div>
+    <div class="alert er" id="addProductEr" style="margin-top:10px;"></div>
+  </div>
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">📦 All Products (<span id="productCount">0</span>)</div>
+  <div id="adminProductList" style="display:flex;flex-direction:column;gap:8px;"></div>
+</div>
+
 </div>
 
 <!-- ══ SUBSCRIBE ══ -->
@@ -1267,9 +1399,9 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
     <div class="bnav-icon">👤</div>
     <div class="bnav-label">My Account</div>
   </button>
-  <button class="bnav-item" id="bn-plans" onclick="goScreen('plans')">
-    <div class="bnav-icon">📋</div>
-    <div class="bnav-label">Plans</div>
+  <button class="bnav-item" id="bn-store" onclick="goScreen('store')">
+    <div class="bnav-icon">🛒</div>
+    <div class="bnav-label">Store</div>
   </button>
   <button class="bnav-item" id="bn-more" onclick="goScreen('more')">
     <div class="bnav-icon">☰</div>
@@ -1364,7 +1496,7 @@ function goScreen(id, isBack) {
   var sa = document.getElementById('screen-area');
   if(sa) sa.scrollTo({top:0,behavior:'smooth'});
   // Update top bar
-  var titles = {home:'Skyflies Solar',calculator:'Quote Calculator',portal:'My Account',plans:'AMC Plans',more:'More',enquiry:'Enquiry',quotation:'Quotation',subscribe:'Subscribe',emi:'EMI / Loan',social:'Social Media',admin:'Admin',setup:'Setup'};
+  var titles = {home:'Skyflies Solar',calculator:'Quote Calculator',portal:'My Account',plans:'AMC Plans',more:'More',enquiry:'Enquiry',quotation:'Quotation',subscribe:'Subscribe',emi:'EMI / Loan',social:'Social Media',admin:'Admin',setup:'Setup',store:'Solar Store',cart:'My Cart',adminstore:'Manage Store'};
   var tb = document.getElementById('tbTitle');
   if(tb) tb.textContent = titles[id] || 'Skyflies Solar';
   // Show/hide back button
@@ -1377,8 +1509,11 @@ function goScreen(id, isBack) {
   }
   // Auto-load YouTube
   if(id==='social') setTimeout(loadYouTubeVideos, 300);
-  // Load admin media gallery
   if(id==='social') setTimeout(loadAdminMedia, 500);
+  if(id==='store') setTimeout(initStore, 50);
+  if(id==='cart') setTimeout(renderCart, 50);
+  if(id==='adminstore') setTimeout(initAdminStore, 50);
+  if(id==='portal') setTimeout(ensurePortalVisible, 50);
 }
 
 // Legacy compat
@@ -2717,6 +2852,468 @@ function showFullPhoto(url, caption) {
 function closeFullPhoto() {
   var overlay = document.getElementById('photoOverlay');
   if(overlay) overlay.style.display = 'none';
+}
+
+
+
+// ════════════════════════════════════════════════════════════════
+// SOLAR STORE
+// ════════════════════════════════════════════════════════════════
+
+// Default products (admin can add more)
+var DEFAULT_PRODUCTS = [
+  {id:'p1',name:'Monocrystalline Solar Panel 330W',cat:'panels',price:8500,origPrice:10000,desc:'High efficiency mono panel, 25 year warranty. Ideal for residential rooftops.',brand:'Luminous',img:'',stock:'in'},
+  {id:'p2',name:'Polycrystalline Solar Panel 300W',cat:'panels',price:6500,origPrice:8000,desc:'Durable poly panel suitable for all weather conditions.',brand:'Tata Solar',img:'',stock:'in'},
+  {id:'p3',name:'5kW Solar Hybrid Inverter',cat:'inverters',price:28000,origPrice:35000,desc:'MPPT hybrid inverter with WiFi monitoring. Works with grid and battery.',brand:'Luminous',img:'',stock:'in'},
+  {id:'p4',name:'3kW Solar On-Grid Inverter',cat:'inverters',price:18000,origPrice:22000,desc:'Pure sine wave, grid-tied inverter with anti-islanding protection.',brand:'Growatt',img:'',stock:'in'},
+  {id:'p5',name:'150Ah Tall Tubular Solar Battery',cat:'batteries',price:14000,origPrice:16000,desc:'Deep cycle battery optimised for solar. 5 year warranty.',brand:'Exide',img:'',stock:'in'},
+  {id:'p6',name:'Solar DC Fan 25W',cat:'appliances',price:2200,origPrice:3000,desc:'Runs directly on solar panel. No inverter needed. 3 speed settings.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p7',name:'Solar LED Bulb Pack (10)',cat:'appliances',price:1200,origPrice:1800,desc:'9W solar LED bulbs. 10 pack. Compatible with 12V DC solar system.',brand:'Syska',img:'',stock:'in'},
+  {id:'p8',name:'Solar Panel Mounting Structure',cat:'accessories',price:3500,origPrice:4500,desc:'GI mounting structure for 4 panels. Hot-dip galvanised for rust resistance.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p9',name:'Solar Wire 4mm² (50m)',cat:'accessories',price:1800,origPrice:2200,desc:'UV resistant DC solar cable. 4mm² cross section. 50 metre roll.',brand:'Polycab',img:'',stock:'in'},
+  {id:'p10',name:'MC4 Connector Set (10 pairs)',cat:'accessories',price:450,origPrice:600,desc:'Weatherproof MC4 solar connectors. IP67 rated. 10 male + 10 female.',brand:'Generic',img:'',stock:'in'},
+];
+
+var currentCat = 'all';
+var cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
+
+function getProducts() {
+  var saved = localStorage.getItem('sf_products');
+  if (saved) {
+    try {
+      var p = JSON.parse(saved);
+      if (p && p.length) return p;
+    } catch(e) {}
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+}
+
+function saveProducts(products) {
+  localStorage.setItem('sf_products', JSON.stringify(products));
+}
+
+// ── RENDER PRODUCTS ──────────────────────────────────────────────
+function renderProducts(products) {
+  var grid = document.getElementById('productsGrid');
+  var none = document.getElementById('noProducts');
+  if (!grid) return;
+  if (!products || !products.length) {
+    grid.innerHTML = '';
+    if(none) none.style.display = 'block';
+    return;
+  }
+  if(none) none.style.display = 'none';
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  grid.innerHTML = '';
+  products.forEach(function(p) {
+    var discount = p.origPrice && p.origPrice > p.price
+      ? Math.round((1 - p.price/p.origPrice)*100) + '% off' : '';
+    var card = document.createElement('div');
+    card.className = 'prod-card';
+    card.setAttribute('data-id', p.id);
+    var icon = catIcons[p.cat] || '📦';
+    var imgEl = p.img
+      ? '<img src="' + p.img + '" style="width:100%;aspect-ratio:1;object-fit:cover;">'
+      : '<div style="width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;background:rgba(245,166,35,0.08);">' + icon + '</div>';
+    var stockBadge = p.stock==='out'
+      ? '<span class="prod-badge out">Out of Stock</span>'
+      : p.stock==='pre' ? '<span class="prod-badge pre">Pre-order</span>'
+      : '<span class="prod-badge in">In Stock</span>';
+    var priceHtml = '<span class="prod-price">₹' + Number(p.price).toLocaleString('en-IN') + '</span>';
+    if(p.origPrice && p.origPrice > p.price) {
+      priceHtml += '<span class="prod-orig">₹' + Number(p.origPrice).toLocaleString('en-IN') + '</span>';
+      priceHtml += '<span class="prod-discount">' + discount + '</span>';
+    }
+    card.innerHTML =
+      imgEl +
+      '<div class="prod-info">' +
+        stockBadge +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-brand">' + p.brand + '</div>' +
+        '<div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;">' + priceHtml + '</div>' +
+        (p.stock !== 'out'
+          ? '<button class="prod-add" data-add="'+p.id+'">🛒 Add to Cart</button>'
+          : '<button class="prod-add" style="opacity:0.4;cursor:not-allowed;" disabled>Out of Stock</button>'
+        ) +
+      '</div>';
+    card.querySelector('.prod-card') ; // dummy
+    card.onclick = function(e) {
+      if(e.target.getAttribute('data-add')) { addToCart(e.target.getAttribute('data-add'), e); }
+      else { showProductDetail(this.getAttribute('data-id')); }
+    };
+    grid.appendChild(card);
+  });
+}
+
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(function(b){ b.classList.remove('on'); });
+  if(btn) btn.classList.add('on');
+  var search = (document.getElementById('storeSearch') || {}).value || '';
+  applyFilters(search, cat);
+}
+
+function filterProducts(query) {
+  applyFilters(query, currentCat);
+}
+
+function applyFilters(query, cat) {
+  var products = getProducts();
+  var q = (query || '').toLowerCase();
+  var filtered = products.filter(function(p) {
+    var matchCat = cat === 'all' || p.cat === cat;
+    var matchQ   = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  renderProducts(filtered);
+}
+
+// ── CART ─────────────────────────────────────────────────────────
+function addToCart(productId, e) {
+  if(e) e.stopPropagation();
+  var products = getProducts();
+  var product  = products.find(function(p){ return p.id === productId; });
+  if (!product) return;
+
+  var existing = cart.find(function(c){ return c.id === productId; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ id: product.id, name: product.name, price: product.price, qty: 1, img: product.img, cat: product.cat });
+  }
+  localStorage.setItem('sf_cart', JSON.stringify(cart));
+  updateCartBar();
+  showToast('✅ Added: ' + product.name.substring(0,25) + '...');
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(function(c){ return c.id !== productId; });
+  localStorage.setItem('sf_cart', JSON.stringify(cart));
+  updateCartBar();
+  renderCart();
+}
+
+function updateQty(productId, delta) {
+  var item = cart.find(function(c){ return c.id === productId; });
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  localStorage.setItem('sf_cart', JSON.stringify(cart));
+  updateCartBar();
+  renderCart();
+}
+
+function updateCartBar() {
+  var bar   = document.getElementById('cartBar');
+  var count = document.getElementById('cartCount');
+  var total = document.getElementById('cartTotal');
+  if (!bar) return;
+  var totalQty = cart.reduce(function(s,c){ return s+c.qty; }, 0);
+  var totalAmt = cart.reduce(function(s,c){ return s+c.price*c.qty; }, 0);
+  if (totalQty > 0) {
+    bar.style.display = 'flex';
+    if(count) count.textContent = totalQty + ' item' + (totalQty>1?'s':'') + ' in cart';
+    if(total) total.textContent = '₹' + totalAmt.toLocaleString('en-IN');
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function renderCart() {
+  var items   = document.getElementById('cartItems');
+  var empty   = document.getElementById('cartEmpty');
+  var summary = document.getElementById('cartSummary');
+  if (!items) return;
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  if (!cart.length) {
+    items.innerHTML = '';
+    if(empty)   empty.style.display   = 'block';
+    if(summary) summary.style.display = 'none';
+    return;
+  }
+  if(empty)   empty.style.display   = 'none';
+  if(summary) summary.style.display = 'block';
+  items.innerHTML = '';
+  cart.forEach(function(c) {
+    var icon = catIcons[c.cat] || '📦';
+    var row = document.createElement('div');
+    row.style.cssText = 'background:var(--card);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;';
+    row.innerHTML =
+      (c.img
+        ? '<img src="' + c.img + '" style="width:60px;height:60px;object-fit:cover;border-radius:10px;background:#111;flex-shrink:0;">'
+        : '<div style="width:60px;height:60px;border-radius:10px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">' + icon + '</div>') +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;">' + c.name + '</div>' +
+        '<div style="font-size:14px;font-weight:700;color:var(--sun);">₹' + Number(c.price).toLocaleString('en-IN') + '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border-radius:8px;padding:4px 8px;">' +
+          '<button class="qty-minus" data-id="' + c.id + '" style="background:none;border:none;color:var(--sun);font-size:18px;cursor:pointer;padding:0 2px;">−</button>' +
+          '<span style="font-size:14px;font-weight:700;min-width:20px;text-align:center;">' + c.qty + '</span>' +
+          '<button class="qty-plus" data-id="' + c.id + '" style="background:none;border:none;color:var(--sun);font-size:18px;cursor:pointer;padding:0 2px;">+</button>' +
+        '</div>' +
+        '<button class="cart-del" data-id="' + c.id + '" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:7px;padding:4px 10px;color:#EF4444;font-size:11px;cursor:pointer;">Remove</button>' +
+      '</div>';
+    row.querySelector('.qty-minus').onclick = function(){ updateQty(this.getAttribute('data-id'),-1); };
+    row.querySelector('.qty-plus').onclick  = function(){ updateQty(this.getAttribute('data-id'), 1); };
+    row.querySelector('.cart-del').onclick  = function(){ removeFromCart(this.getAttribute('data-id')); };
+    items.appendChild(row);
+  });
+  var subtotal = cart.reduce(function(s,c){ return s+c.price*c.qty; }, 0);
+  var gst      = Math.round(subtotal * 0.18);
+  var total    = subtotal + gst;
+  var sub = document.getElementById('summarySubtotal');
+  var gs  = document.getElementById('summaryGst');
+  var tot = document.getElementById('summaryTotal');
+  if(sub) sub.textContent = '₹' + subtotal.toLocaleString('en-IN');
+  if(gs)  gs.textContent  = '₹' + gst.toLocaleString('en-IN');
+  if(tot) tot.textContent = '₹' + total.toLocaleString('en-IN');
+}
+
+
+async function placeOrder() {
+  var address = (document.getElementById('cartAddress')||{}).value||'';
+  var phone   = (document.getElementById('cartPhone')||{}).value||'';
+  if (!address.trim()) { showToast('Please enter delivery address'); return; }
+  if (!phone.trim())   { showToast('Please enter your phone number'); return; }
+  var btnTxt = document.getElementById('placeOrderTxt');
+  var loader = document.getElementById('placeOrderLoader');
+  var ok     = document.getElementById('orderOk');
+  var er     = document.getElementById('orderEr');
+  if(btnTxt) btnTxt.style.display='none';
+  if(loader) loader.style.display='block';
+  var subtotal = cart.reduce(function(s,c){ return s+c.price*c.qty; },0);
+  var gst      = Math.round(subtotal*0.18);
+  var total    = subtotal+gst;
+  var itemList = cart.map(function(c){ return c.name+' x'+c.qty+' = Rs.'+c.price*c.qty; }).join(', ');
+  var msg = '🛒 STORE ORDER | '+itemList+' | Subtotal: Rs.'+subtotal+' | GST: Rs.'+gst+' | TOTAL: Rs.'+total+' | Address: '+address+' | Phone: '+phone;
+  var orderData = {
+    formType: 'enquiry',
+    name:     currentCustomer ? currentCustomer.name : 'Customer',
+    phone:    phone,
+    email:    currentCustomer ? currentCustomer.email : '',
+    city:     currentCustomer ? currentCustomer.city  : '',
+    source:   'Store Order',
+    message:  msg
+  };
+  var success = await sendToSheet(orderData);
+  if(btnTxt) btnTxt.style.display='';
+  if(loader) loader.style.display='none';
+  if(success){
+    if(ok){ ok.classList.add('show'); ok.style.display='flex'; }
+    cart=[];
+    localStorage.setItem('sf_cart',JSON.stringify(cart));
+    updateCartBar();
+    if(document.getElementById('cartAddress')) document.getElementById('cartAddress').value='';
+    if(document.getElementById('cartPhone'))   document.getElementById('cartPhone').value='';
+    setTimeout(function(){ if(ok){ok.classList.remove('show');ok.style.display='none';} goScreen('store'); },3000);
+  } else {
+    if(er){ er.textContent='❌ Failed. Please call +91 93854 49167'; er.classList.add('show'); er.style.display='flex'; }
+    setTimeout(function(){ if(er){er.classList.remove('show');er.style.display='none';} },4000);
+  }
+}
+
+// ── ADMIN PRODUCT MANAGEMENT ─────────────────────────────────────
+function addProduct() {
+  var name  = (document.getElementById('pName') || {}).value || '';
+  var cat   = (document.getElementById('pCat') || {}).value || 'accessories';
+  var price = parseInt((document.getElementById('pPrice') || {}).value || 0);
+  var orig  = parseInt((document.getElementById('pOrigPrice') || {}).value || 0);
+  var desc  = (document.getElementById('pDesc') || {}).value || '';
+  var img   = (document.getElementById('pImg') || {}).value || '';
+  var brand = (document.getElementById('pBrand') || {}).value || 'Skyflies';
+  var stock = (document.getElementById('pStock') || {}).value || 'in';
+  var ok    = document.getElementById('addProductOk');
+  var er    = document.getElementById('addProductEr');
+
+  if (!name.trim() || !price || !desc.trim()) {
+    if(er){ er.textContent='❌ Name, price and description are required.'; er.style.display='flex'; er.classList.add('show'); }
+    setTimeout(function(){ if(er){er.style.display='none';er.classList.remove('show');} }, 3000);
+    return;
+  }
+
+  var products = getProducts();
+  var newProd  = {
+    id:        'p' + Date.now(),
+    name:      name.trim(),
+    cat:       cat,
+    price:     price,
+    origPrice: orig || 0,
+    desc:      desc.trim(),
+    img:       img.trim(),
+    brand:     brand.trim() || 'Skyflies',
+    stock:     stock
+  };
+  products.unshift(newProd);
+  saveProducts(products);
+
+  if(ok){ ok.style.display='flex'; ok.classList.add('show'); }
+  setTimeout(function(){ if(ok){ok.style.display='none';ok.classList.remove('show');} }, 2500);
+
+  // Clear fields
+  ['pName','pPrice','pOrigPrice','pDesc','pImg','pBrand'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value='';
+  });
+
+  renderAdminProducts();
+  showToast('✅ Product added to store!');
+}
+
+function deleteProduct(id) {
+  var products = getProducts().filter(function(p){ return p.id !== id; });
+  saveProducts(products);
+  renderAdminProducts();
+  showToast('Deleted');
+}
+
+function renderAdminProducts() {
+  var list  = document.getElementById('adminProductList');
+  var count = document.getElementById('productCount');
+  if (!list) return;
+  var products = getProducts();
+  if(count) count.textContent = products.length;
+
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  list.innerHTML = products.map(function(p) {
+    return '<div style="background:var(--card);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;">' +
+      '<div style="width:44px;height:44px;border-radius:10px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">'+(catIcons[p.cat]||'📦')+'</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:13px;font-weight:700;">'+p.name+'</div>' +
+        '<div style="font-size:11px;color:var(--soft);">'+p.brand+' · ₹'+Number(p.price).toLocaleString('en-IN')+'</div>' +
+      '</div>' +
+      '<button data-pid="'+p.id+'" class="delprod-btn" style="padding:5px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:7px;color:#EF4444;font-size:11px;cursor:pointer;flex-shrink:0;">Delete</button>' +
+    '</div>';
+  }).join('');
+
+  list.querySelectorAll('.delprod-btn').forEach(function(btn){
+    btn.onclick = function(){ deleteProduct(this.getAttribute('data-pid')); };
+  });
+}
+
+// ── PRODUCT DETAIL POPUP ─────────────────────────────────────────
+function showProductDetail(id) {
+  var products = getProducts();
+  var p = products.find(function(x){ return x.id===id; });
+  if (!p) return;
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  var icon     = catIcons[p.cat] || '📦';
+  var discount = p.origPrice && p.origPrice>p.price ? Math.round((1-p.price/p.origPrice)*100)+'% off' : '';
+
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:700;display:flex;align-items:flex-end;justify-content:center;';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#1C2333;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;';
+
+  // Handle bar
+  var bar = document.createElement('div');
+  bar.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;';
+  box.appendChild(bar);
+
+  // Image
+  if (p.img) {
+    var img = document.createElement('img');
+    img.src = p.img;
+    img.style.cssText = 'width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:12px;';
+    box.appendChild(img);
+  } else {
+    var iconDiv = document.createElement('div');
+    iconDiv.style.cssText = 'width:100%;height:120px;border-radius:10px;background:rgba(245,166,35,0.08);display:flex;align-items:center;justify-content:center;font-size:50px;margin-bottom:12px;';
+    iconDiv.textContent = icon;
+    box.appendChild(iconDiv);
+  }
+
+  // Name
+  var nameEl = document.createElement('div');
+  nameEl.style.cssText = 'font-size:17px;font-weight:700;margin-bottom:4px;color:#fff;';
+  nameEl.textContent = p.name;
+  box.appendChild(nameEl);
+
+  // Brand
+  var brandEl = document.createElement('div');
+  brandEl.style.cssText = 'font-size:12px;color:var(--soft);margin-bottom:10px;';
+  brandEl.textContent = p.brand;
+  box.appendChild(brandEl);
+
+  // Price row
+  var priceRow = document.createElement('div');
+  priceRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap;';
+  var priceEl = document.createElement('span');
+  priceEl.style.cssText = 'font-size:24px;font-weight:700;color:var(--sun);';
+  priceEl.textContent = '₹' + Number(p.price).toLocaleString('en-IN');
+  priceRow.appendChild(priceEl);
+  if(p.origPrice && p.origPrice>p.price) {
+    var origEl = document.createElement('span');
+    origEl.style.cssText = 'font-size:13px;color:var(--soft);text-decoration:line-through;';
+    origEl.textContent = '₹' + Number(p.origPrice).toLocaleString('en-IN');
+    priceRow.appendChild(origEl);
+    var discEl = document.createElement('span');
+    discEl.style.cssText = 'font-size:11px;color:var(--success);font-weight:700;';
+    discEl.textContent = discount;
+    priceRow.appendChild(discEl);
+  }
+  box.appendChild(priceRow);
+
+  // Description
+  var descEl = document.createElement('div');
+  descEl.style.cssText = 'font-size:13px;color:var(--soft);line-height:1.7;margin-bottom:16px;';
+  descEl.textContent = p.desc;
+  box.appendChild(descEl);
+
+  // Buttons
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px;';
+
+  if (p.stock !== 'out') {
+    var addBtn = document.createElement('button');
+    addBtn.style.cssText = 'flex:2;padding:13px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:10px;color:#080F1E;font-weight:700;font-size:14px;cursor:pointer;';
+    addBtn.textContent = '🛒 Add to Cart';
+    addBtn.onclick = function() { addToCart(p.id); overlay.remove(); };
+    btnRow.appendChild(addBtn);
+  } else {
+    var naBtn = document.createElement('button');
+    naBtn.style.cssText = 'flex:2;padding:13px;background:rgba(255,255,255,0.05);border:none;border-radius:10px;color:var(--soft);font-weight:700;font-size:14px;cursor:not-allowed;';
+    naBtn.textContent = 'Out of Stock';
+    naBtn.disabled = true;
+    btnRow.appendChild(naBtn);
+  }
+
+  var closeBtn = document.createElement('button');
+  closeBtn.style.cssText = 'flex:1;padding:13px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;';
+  closeBtn.textContent = 'Close';
+  closeBtn.onclick = function() { overlay.remove(); };
+  btnRow.appendChild(closeBtn);
+  box.appendChild(btnRow);
+
+  overlay.appendChild(box);
+  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+// ── INIT STORE WHEN SCREEN OPENS ────────────────────────────────
+function initStore() {
+  cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
+  applyFilters('', 'all');
+  updateCartBar();
+}
+
+function initAdminStore() {
+  renderAdminProducts();
+}
+
+// ── FIX PORTAL VISIBILITY ────────────────────────────────────────
+function ensurePortalVisible() {
+  var session = getSession();
+  var loginBox = document.getElementById('cLoginBox');
+  var portal   = document.getElementById('cPortal');
+  if (!loginBox || !portal) return;
+  if (session && currentCustomer) {
+    loginBox.style.display = 'none';
+    portal.style.display   = 'block';
+  } else {
+    loginBox.style.display = '';
+    portal.style.display   = 'none';
+  }
 }
 
 // ── SWIPE NAVIGATION ─────────────────────────────────────────────
