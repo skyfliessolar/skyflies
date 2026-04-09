@@ -13,48 +13,12 @@
 <link rel="apple-touch-icon" href="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;background:#0A0F1E;}
-#app{
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  display:flex;
-  flex-direction:column;
-  background:#0A0F1E;
-  overflow:hidden;
-}
-#topbar{
-  position:relative;
-  flex-shrink:0;
-  height:56px;
-  min-height:56px;
-  background:#111827;
-  display:flex;
-  align-items:center;
-  padding:0 16px;
-  gap:10px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  z-index:100;
-}
-#screen-area{
-  flex:1;
-  overflow-y:auto;
-  overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-  background:#0A0F1E;
-  min-height:0;
-}
-#bottomnav{
-  position:relative;
-  flex-shrink:0;
-  height:64px;
-  min-height:64px;
-  background:#111827;
-  border-top:1px solid rgba(255,255,255,0.08);
-  display:flex;
-  align-items:stretch;
-  z-index:100;
-}
+html{height:100%;}
+body{height:100%;margin:0;padding:0;overflow:hidden;background:#0A0F1E;}
+#app{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;background:#0A0F1E;overflow:hidden;}
+#topbar{flex:0 0 56px;height:56px;background:#111827;display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06);z-index:100;}
+#screen-area{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#0A0F1E;}
+#bottomnav{flex:0 0 64px;height:64px;background:#111827;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:stretch;padding-bottom:env(safe-area-inset-bottom,0px);z-index:100;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
 
@@ -429,18 +393,14 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 var FIREBASE_CONFIG={apiKey:"AIzaSyCjsw3gwtfqSpAGEehtdFSCIpgPlbxnIFM",authDomain:"skyflies-solar.firebaseapp.com",projectId:"skyflies-solar",storageBucket:"skyflies-solar.firebasestorage.app",messagingSenderId:"714418955246",appId:"1:714418955246:web:d8206ea5c0b866faaf64ff",measurementId:"G-2DD4EM94MY"};
 var FIREBASE_ENABLED=true,db=null;
 function initFirebase(){if(!FIREBASE_ENABLED)return;if(typeof firebase==="undefined"){setTimeout(initFirebase,500);return;}try{if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore();db.enablePersistence().catch(function(){});if(typeof firebase.analytics==="function")firebase.analytics();}catch(e){}}
-async function fbSave(col,id,data){if(!db)return false;try{await db.collection(col).doc(id).set(data,{merge:true});return true;}catch(e){return false;}}
-async function fbGet(col,id){if(!db)return null;try{var doc=await db.collection(col).doc(id).get();return doc.exists?doc.data():null;}catch(e){return null;}}
-async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.collection(col).where(field,"==",val).get();var r=[];snap.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
+async function fbSave(c,i,d){if(!db)return false;try{await db.collection(c).doc(i).set(d,{merge:true});return true;}catch(e){return false;}}
+async function fbGet(c,i){if(!db)return null;try{var d=await db.collection(c).doc(i).get();return d.exists?d.data():null;}catch(e){return null;}}
+async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).where(f,"==",v).get();var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
 </script>
 <div id="app">
-<!-- TOP BAR -->
 <div id="topbar">
   <img src="logo.png" class="tb-logo" alt="Skyflies" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;">
-  <div class="tb-title">
-    <div class="tb-nm" id="tbTitle">Skyflies Solar</div>
-    <div class="tb-sub">Tamil Nadu's Solar Partner</div>
-  </div>
+  <div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div>
   <button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button>
   <button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button>
   <button class="tb-btn" onclick="goScreen('social')">📱</button>
@@ -918,7 +878,8 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
     <button class="cat-pill" onclick="filterCat('panels',this)">☀️ Panels</button>
     <button class="cat-pill" onclick="filterCat('inverters',this)">⚡ Inverters</button>
     <button class="cat-pill" onclick="filterCat('batteries',this)">🔋 Batteries</button>
-    <button class="cat-pill" onclick="filterCat('lighting',this)">💡 LED Lights</button>
+    <button class="cat-pill" onclick="filterCat('appliances',this)">🏠 Appliances</button>
+    <button class="cat-pill" onclick="filterCat('lighting',this)">💡 Lights</button>
     <button class="cat-pill" onclick="filterCat('gadgets',this)">📱 Gadgets</button>
     <button class="cat-pill" onclick="filterCat('accessories',this)">🔧 Accessories</button>
   </div>
@@ -985,6 +946,7 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
           <option value="panels">☀️ Solar Panels</option>
           <option value="inverters">⚡ Inverters</option>
           <option value="batteries">🔋 Batteries</option>
+          <option value="appliances">🏠 Appliances</option>
           <option value="lighting">💡 LED Lights</option>
           <option value="gadgets">📱 Gadgets</option>
           <option value="accessories">🔧 Accessories</option>
@@ -999,11 +961,11 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
     <div class="field"><label>Photo URL or leave blank</label><input type="url" id="pImg" placeholder="https://... (optional)"></div>
     <div class="row2">
       <div class="field"><label>Brand</label><input type="text" id="pBrand" placeholder="e.g. Luminous"></div>
-      <div class="field"><label>Stock Status</label><select id="pStock"><option value="in">In Stock</option><option value="out">Out of Stock</option><option value="pre">Pre-order</option></select></div>
+      <div class="field"><label>Stock</label><select id="pStock"><option value="in">In Stock</option><option value="out">Out of Stock</option><option value="pre">Pre-order</option></select></div>
     </div>
     <div class="row2">
-      <div class="field"><label>Quantity Available</label><input type="number" id="pQty" placeholder="e.g. 50" min="0" value="10"></div>
-      <div class="field"><label>Unit</label><select id="pUnit"><option value="piece">Piece</option><option value="pack">Pack</option><option value="set">Set</option><option value="roll">Roll</option><option value="kg">Kg</option></select></div>
+      <div class="field"><label>Quantity</label><input type="number" id="pQty" placeholder="50" min="0" value="10"></div>
+      <div class="field"><label>Unit</label><select id="pUnit"><option value="piece">Piece</option><option value="pack">Pack</option><option value="set">Set</option><option value="roll">Roll</option></select></div>
     </div>
     <button onclick="addProduct()" class="submit-btn">➕ Add Product</button>
     <div class="alert ok" id="addProductOk" style="margin-top:10px;">✅ Product added!</div>
@@ -1217,7 +1179,7 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
       <button class="admin-btn primary" onclick="exportCSV()">📥 Export</button>
       <button class="admin-btn secondary" onclick="loadPendingFromSheet().then(renderPending)">🔄 Refresh</button>
     </div>
-    <div class="admin-action-row">
+    <div class="admin-action-row" style="margin-top:8px;">
       <button class="admin-btn secondary" onclick="showAdminSetup()">⚙️ Setup</button>
       <button class="admin-btn danger" onclick="adminLogout()">🔓 Logout</button>
     </div>
@@ -1287,11 +1249,9 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
     <div style="font-size:12px;font-weight:600;color:var(--soft);margin:12px 0 8px;">📁 Uploaded Media</div>
     <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
   </div>
-  <!-- ADMIN SETUP PANEL -->
   <div id="adminSetupPanel" style="display:none;margin-bottom:14px;">
-    <div style="font-size:15px;font-weight:700;margin-bottom:10px;">⚙️ Setup & Configuration</div>
     <div class="form-card" style="border-color:rgba(245,166,35,0.2);">
-      <div style="font-size:13px;font-weight:700;color:var(--sun);margin-bottom:10px;">📋 Google Apps Script URL</div>
+      <div style="font-size:13px;font-weight:700;color:var(--sun);margin-bottom:10px;">📋 Apps Script URL</div>
       <div class="setup-row"><input type="url" id="whUrl" class="setup-input" placeholder="Paste Apps Script URL..."><button class="save-btn" onclick="saveWh()">Save</button></div>
       <div class="setup-status" id="whSt"></div>
       <button onclick="testConnection()" style="margin-top:8px;padding:9px 16px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:8px;color:#60A5FA;font-size:13px;font-weight:600;cursor:pointer;">🔌 Test Connection</button>
@@ -1301,7 +1261,6 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
       <div class="setup-status" id="pwdSt"></div>
     </div>
   </div>
-
   <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">➕ Add Customer Manually</div>
     <div class="form-card">
       <form id="addCustForm">
@@ -1456,31 +1415,35 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 </div>
-<!-- BOTTOM NAV -->
 <nav id="bottomnav">
-  <button class="bnav-item on" id="bn-home" onclick="goScreen('home')">
-    <div class="bnav-icon">🏠</div><div class="bnav-label">Home</div>
-  </button>
-  <button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')">
-    <div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div>
-  </button>
-  <button class="bnav-item" id="bn-portal" onclick="goScreen('portal')">
-    <div class="bnav-icon">👤</div><div class="bnav-label">My Account</div>
-  </button>
-  <button class="bnav-item" id="bn-store" onclick="goScreen('store')">
-    <div class="bnav-icon">🛒</div><div class="bnav-label">Store</div>
-  </button>
-  <button class="bnav-item" id="bn-more" onclick="goScreen('more')">
-    <div class="bnav-icon">☰</div><div class="bnav-label">More</div>
-    <span class="bnav-badge" id="moreBadge" style="display:none;"></span>
-  </button>
+  <button class="bnav-item on" id="bn-home" onclick="goScreen('home')"><div class="bnav-icon">🏠</div><div class="bnav-label">Home</div></button>
+  <button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')"><div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div></button>
+  <button class="bnav-item" id="bn-portal" onclick="goScreen('portal')"><div class="bnav-icon">👤</div><div class="bnav-label">My Account</div></button>
+  <button class="bnav-item" id="bn-store" onclick="goScreen('store')"><div class="bnav-icon">🛒</div><div class="bnav-label">Store</div></button>
+  <button class="bnav-item" id="bn-more" onclick="goScreen('more')"><div class="bnav-icon">☰</div><div class="bnav-label">More</div><span class="bnav-badge" id="moreBadge" style="display:none;"></span></button>
 </nav>
 </div>
 <div id="toast"></div>
 <div id="wafloat"><a href="https://wa.me/919385449167?text=Hi%20Skyflies%20Solar!" target="_blank">💬</a></div>
 <div class="modal-overlay" id="notifModal">
   <div class="modal">
-    <div class="modal-
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔔 Send Notification to All Users</div>
+    <div class="field"><label>Title</label><input type="text" id="notifTitle" placeholder="e.g. Special Offer!" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"></div>
+    <div class="field" style="margin-top:10px;"><label>Message</label><textarea id="notifMsg" placeholder="Your message..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;min-height:80px;font-family:inherit;resize:vertical;"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button onclick="sendBulkNotification()" style="flex:1;padding:13px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">📧 Send to All Users</button>
+      <button onclick="closeNotifModal()" style="padding:13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--soft);font-size:14px;cursor:pointer;">Cancel</button>
+    </div>
+    <div id="notifResult" style="font-size:12px;color:var(--success);margin-top:8px;text-align:center;"></div>
+  </div>
+</div>
+<div id="photoOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:center;justify-content:center;flex-direction:column;" onclick="closeFullPhoto()">
+  <img id="photoOverlayImg" src="" style="max-width:95vw;max-height:80vh;object-fit:contain;border-radius:12px;">
+  <div id="photoOverlayCaption" style="color:#fff;font-size:13px;margin-top:12px;text-align:center;padding:0 20px;"></div>
+  <button onclick="closeFullPhoto()" style="margin-top:16px;padding:10px 24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;">Close ✕</button>
+</div>
+<script>
 
 
 // ── APP NAVIGATION ──────────────────────────────
@@ -1604,16 +1567,13 @@ function adminLogout(){
 }
 function showAdminSetup() {
   var panel = document.getElementById('adminSetupPanel');
-  if (!panel) return;
-  if (panel.style.display === 'none' || !panel.style.display) {
-    panel.style.display = 'block';
-    panel.scrollIntoView({behavior:'smooth'});
-    // Pre-fill current URL
+  if(!panel) return;
+  panel.style.display = panel.style.display === 'none' || !panel.style.display ? 'block' : 'none';
+  if(panel.style.display === 'block') {
     var wh = localStorage.getItem(WH) || WEBHOOK_URL;
     var el = document.getElementById('whUrl');
     if(el && wh) el.value = wh;
-  } else {
-    panel.style.display = 'none';
+    setTimeout(function(){ panel.scrollIntoView({behavior:'smooth'}); }, 100);
   }
 }
 
@@ -2916,34 +2876,28 @@ function closeFullPhoto() {
 
 // Default products (admin can add more)
 var DEFAULT_PRODUCTS = [
-  // ── Solar Panels ──
-  {id:'p1',name:'Monocrystalline Solar Panel 400W',cat:'panels',price:9500,origPrice:12000,qty:50,unit:'piece',desc:'High efficiency mono panel, 25 year performance warranty. Ideal for residential & commercial rooftops.',brand:'Luminous',img:'',stock:'in'},
-  {id:'p2',name:'Polycrystalline Solar Panel 335W',cat:'panels',price:6800,origPrice:8500,qty:80,unit:'piece',desc:'Durable poly panel, all weather performance. Best value for budget installations.',brand:'Tata Solar',img:'',stock:'in'},
-  {id:'p3',name:'Bifacial Solar Panel 450W',cat:'panels',price:13500,origPrice:16000,qty:30,unit:'piece',desc:'Generates power from both sides. Up to 20% more energy than mono panels.',brand:'Adani Solar',img:'',stock:'in'},
-  // ── Inverters ──
-  {id:'p4',name:'5kW Solar Hybrid Inverter',cat:'inverters',price:28000,origPrice:35000,qty:15,unit:'piece',desc:'MPPT hybrid inverter with WiFi monitoring. Works with grid and battery backup.',brand:'Luminous',img:'',stock:'in'},
+  {id:'p1',name:'Monocrystalline Solar Panel 400W',cat:'panels',price:9500,origPrice:12000,qty:50,unit:'piece',desc:'High efficiency mono panel, 25 year warranty. Ideal for rooftops.',brand:'Luminous',img:'',stock:'in'},
+  {id:'p2',name:'Polycrystalline Solar Panel 335W',cat:'panels',price:6800,origPrice:8500,qty:80,unit:'piece',desc:'Durable poly panel, all weather. Best value for budget installs.',brand:'Tata Solar',img:'',stock:'in'},
+  {id:'p3',name:'Bifacial Solar Panel 450W',cat:'panels',price:13500,origPrice:16000,qty:30,unit:'piece',desc:'Generates power from both sides. 20% more energy than mono.',brand:'Adani Solar',img:'',stock:'in'},
+  {id:'p4',name:'5kW Solar Hybrid Inverter',cat:'inverters',price:28000,origPrice:35000,qty:15,unit:'piece',desc:'MPPT hybrid inverter with WiFi monitoring. Works with grid and battery.',brand:'Luminous',img:'',stock:'in'},
   {id:'p5',name:'3kW On-Grid Solar Inverter',cat:'inverters',price:18000,origPrice:22000,qty:20,unit:'piece',desc:'Pure sine wave grid-tied inverter with anti-islanding protection.',brand:'Growatt',img:'',stock:'in'},
-  {id:'p6',name:'1kW Solar Micro Inverter',cat:'inverters',price:8500,origPrice:10000,qty:25,unit:'piece',desc:'Panel-level MPPT. Perfect for partial shading situations.',brand:'Enphase',img:'',stock:'in'},
-  // ── Batteries ──
-  {id:'p7',name:'150Ah Tall Tubular Solar Battery',cat:'batteries',price:14000,origPrice:16500,qty:40,unit:'piece',desc:'Deep cycle battery optimised for solar. 5 year warranty. Maintenance free.',brand:'Exide',img:'',stock:'in'},
-  {id:'p8',name:'100Ah Lithium Solar Battery',cat:'batteries',price:22000,origPrice:28000,qty:20,unit:'piece',desc:'LiFePO4 lithium battery. 10 year life, 3000 cycles. Lightweight and safe.',brand:'Livfast',img:'',stock:'in'},
-  // ── Solar LED Lights ──
-  {id:'p9',name:'Solar LED Street Light 30W',cat:'lighting',price:3200,origPrice:4000,qty:100,unit:'piece',desc:'All-in-one solar street light with motion sensor. Auto on/off. IP65 waterproof.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p10',name:'Solar LED Bulb 9W (Pack of 10)',cat:'lighting',price:1200,origPrice:1800,qty:200,unit:'pack',desc:'9W solar LED bulbs compatible with 12V DC system. 3 year warranty.',brand:'Syska',img:'',stock:'in'},
-  {id:'p11',name:'Solar Garden Light (Pack of 6)',cat:'lighting',price:1500,origPrice:2000,qty:150,unit:'pack',desc:'Waterproof solar garden stake lights. Auto on at dusk, off at dawn.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p12',name:'Solar Indoor LED Lamp 5W',cat:'lighting',price:650,origPrice:900,qty:300,unit:'piece',desc:'Portable solar lamp with USB charging port. 8 hour backup. Perfect for rural homes.',brand:'Wipro',img:'',stock:'in'},
-  // ── Solar Gadgets ──
-  {id:'p13',name:'Solar Phone Charger 20000mAh',cat:'gadgets',price:1800,origPrice:2500,qty:100,unit:'piece',desc:'Foldable solar power bank. Charges 2 phones simultaneously. Waterproof.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p14',name:'Solar DC Fan 25W',cat:'gadgets',price:2200,origPrice:3000,qty:60,unit:'piece',desc:'Runs directly on solar panel. No inverter needed. 3 speed settings, 18 inch blade.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p15',name:'Solar Water Pump 0.5HP',cat:'gadgets',price:8500,origPrice:10000,qty:25,unit:'piece',desc:'Submersible solar water pump for agriculture and domestic use. 1 year warranty.',brand:'Kirloskar',img:'',stock:'in'},
-  {id:'p16',name:'Solar Radio & Torch Combo',cat:'gadgets',price:850,origPrice:1200,qty:200,unit:'piece',desc:'AM/FM solar radio with built-in torch and phone charger. USB charging backup.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p17',name:'Solar CCTV Camera 2MP',cat:'gadgets',price:4500,origPrice:6000,qty:40,unit:'piece',desc:'Wireless solar CCTV with night vision, motion alerts and 64GB SD card support.',brand:'CP Plus',img:'',stock:'in'},
-  // ── Accessories ──
-  {id:'p18',name:'Solar Panel Mounting Structure (4 panels)',cat:'accessories',price:3500,origPrice:4500,qty:60,unit:'set',desc:'GI mounting structure for 4 panels. Hot-dip galvanised. Adjustable tilt angle.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p19',name:'Solar Wire 4mm² 50m Roll',cat:'accessories',price:1800,origPrice:2200,qty:100,unit:'roll',desc:'UV resistant DC solar cable. 4mm² cross section, TUV certified.',brand:'Polycab',img:'',stock:'in'},
-  {id:'p20',name:'MC4 Solar Connector Set (10 pairs)',cat:'accessories',price:450,origPrice:600,qty:500,unit:'set',desc:'Weatherproof MC4 connectors. IP67 rated. 10 male + 10 female pairs.',brand:'Generic',img:'',stock:'in'},
-  {id:'p21',name:'Solar Charge Controller 40A MPPT',cat:'accessories',price:5500,origPrice:7000,qty:30,unit:'piece',desc:'40A MPPT charge controller with LCD display. Compatible with 12V/24V systems.',brand:'Epever',img:'',stock:'in'},
-  {id:'p22',name:'Junction Box IP67 (Pack of 5)',cat:'accessories',price:800,origPrice:1200,qty:150,unit:'pack',desc:'Weatherproof solar junction boxes. IP67 rated. Essential for safe wiring.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p6',name:'150Ah Tall Tubular Solar Battery',cat:'batteries',price:14000,origPrice:16500,qty:40,unit:'piece',desc:'Deep cycle battery for solar. 5 year warranty.',brand:'Exide',img:'',stock:'in'},
+  {id:'p7',name:'100Ah Lithium Solar Battery',cat:'batteries',price:22000,origPrice:28000,qty:20,unit:'piece',desc:'LiFePO4 lithium, 10 year life, 3000 cycles. Lightweight.',brand:'Livfast',img:'',stock:'in'},
+  {id:'p8',name:'Solar LED Street Light 30W',cat:'lighting',price:3200,origPrice:4000,qty:100,unit:'piece',desc:'All-in-one solar street light with motion sensor. IP65 waterproof.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p9',name:'Solar LED Bulb 9W - Pack of 10',cat:'lighting',price:1200,origPrice:1800,qty:200,unit:'pack',desc:'9W solar LED bulbs for 12V DC system. 3 year warranty.',brand:'Syska',img:'',stock:'in'},
+  {id:'p10',name:'Solar Garden Light - Pack of 6',cat:'lighting',price:1500,origPrice:2000,qty:150,unit:'pack',desc:'Waterproof solar garden stake lights. Auto on at dusk.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p11',name:'Solar Indoor LED Lamp 5W',cat:'lighting',price:650,origPrice:900,qty:300,unit:'piece',desc:'Portable solar lamp with USB charging. 8 hour backup.',brand:'Wipro',img:'',stock:'in'},
+  {id:'p12',name:'Solar Phone Charger 20000mAh',cat:'gadgets',price:1800,origPrice:2500,qty:100,unit:'piece',desc:'Foldable solar power bank. Charges 2 phones. Waterproof.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p13',name:'Solar DC Fan 25W',cat:'gadgets',price:2200,origPrice:3000,qty:60,unit:'piece',desc:'Runs directly on solar. No inverter needed. 3 speeds, 18 inch.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p14',name:'Solar Water Pump 0.5HP',cat:'gadgets',price:8500,origPrice:10000,qty:25,unit:'piece',desc:'Submersible solar pump for agriculture and homes. 1 year warranty.',brand:'Kirloskar',img:'',stock:'in'},
+  {id:'p15',name:'Solar Radio & Torch Combo',cat:'gadgets',price:850,origPrice:1200,qty:200,unit:'piece',desc:'AM/FM solar radio with torch and phone charger. USB backup.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p16',name:'Solar CCTV Camera 2MP',cat:'gadgets',price:4500,origPrice:6000,qty:40,unit:'piece',desc:'Wireless solar CCTV, night vision, motion alerts, 64GB SD.',brand:'CP Plus',img:'',stock:'in'},
+  {id:'p17',name:'Solar Panel Mounting Structure',cat:'accessories',price:3500,origPrice:4500,qty:60,unit:'set',desc:'GI mounting for 4 panels. Hot-dip galvanised. Adjustable tilt.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p18',name:'Solar Wire 4mm 50m Roll',cat:'accessories',price:1800,origPrice:2200,qty:100,unit:'roll',desc:'UV resistant DC solar cable. 4mm cross section, TUV certified.',brand:'Polycab',img:'',stock:'in'},
+  {id:'p19',name:'MC4 Solar Connector 10 Pairs',cat:'accessories',price:450,origPrice:600,qty:500,unit:'set',desc:'Weatherproof MC4 connectors. IP67. 10 male + 10 female pairs.',brand:'Generic',img:'',stock:'in'},
+  {id:'p20',name:'40A MPPT Charge Controller',cat:'accessories',price:5500,origPrice:7000,qty:30,unit:'piece',desc:'40A MPPT with LCD display. Compatible with 12V/24V systems.',brand:'Epever',img:'',stock:'in'},
+  {id:'p21',name:'Solar Charge Controller 20A PWM',cat:'accessories',price:1200,origPrice:1800,qty:80,unit:'piece',desc:'20A PWM charge controller, dual USB, LCD display.',brand:'Phocos',img:'',stock:'in'},
+  {id:'p22',name:'Junction Box IP67 - Pack of 5',cat:'accessories',price:800,origPrice:1200,qty:150,unit:'pack',desc:'Weatherproof solar junction boxes. IP67 rated. Safe wiring.',brand:'Skyflies',img:'',stock:'in'},
 ];
 
 var currentCat = 'all';
@@ -2954,10 +2908,12 @@ function getProducts() {
   if (saved) {
     try {
       var p = JSON.parse(saved);
-      if (p && p.length) return p;
+      if (p && p.length && p[0].qty !== undefined) return p;
     } catch(e) {}
   }
-  return JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+  var defaults = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+  localStorage.setItem('sf_products', JSON.stringify(defaults));
+  return defaults;
 }
 
 function saveProducts(products) {
@@ -3010,7 +2966,8 @@ function renderProducts(products) {
       '</div>';
     card.querySelector('.prod-card') ; // dummy
     card.onclick = function(e) {
-      if(e.target.getAttribute('data-add')) { addToCart(e.target.getAttribute('data-add'), e); }
+      var addBtn = e.target.closest ? e.target.closest('[data-add]') : (e.target.getAttribute('data-add') ? e.target : null);
+      if(addBtn) { addToCart(addBtn.getAttribute('data-add'), e); return; }
       else { showProductDetail(this.getAttribute('data-id')); }
     };
     grid.appendChild(card);
@@ -3205,16 +3162,12 @@ function addProduct() {
   }
 
   var products = getProducts();
-  var qty  = parseInt((document.getElementById('pQty') || {}).value || 10);
-  var unit = (document.getElementById('pUnit') || {}).value || 'piece';
   var newProd  = {
     id:        'p' + Date.now(),
     name:      name.trim(),
     cat:       cat,
     price:     price,
     origPrice: orig || 0,
-    qty:       qty || 10,
-    unit:      unit,
     desc:      desc.trim(),
     img:       img.trim(),
     brand:     brand.trim() || 'Skyflies',
@@ -3227,7 +3180,7 @@ function addProduct() {
   setTimeout(function(){ if(ok){ok.style.display='none';ok.classList.remove('show');} }, 2500);
 
   // Clear fields
-  ['pName','pPrice','pOrigPrice','pDesc','pImg','pBrand','pQty'].forEach(function(id){
+  ['pName','pPrice','pOrigPrice','pDesc','pImg','pBrand'].forEach(function(id){
     var el = document.getElementById(id); if(el) el.value='';
   });
 
@@ -3334,14 +3287,6 @@ function showProductDetail(id) {
   var descEl = document.createElement('div');
   descEl.style.cssText = 'font-size:13px;color:var(--soft);line-height:1.7;margin-bottom:16px;';
   descEl.textContent = p.desc;
-  // Qty badge
-  var qtyEl = document.createElement('div');
-  qtyEl.style.cssText = 'font-size:12px;margin-bottom:12px;';
-  var qtyAvail = (p.qty||0) > 0;
-  qtyEl.innerHTML = qtyAvail
-    ? '<span style="background:rgba(16,185,129,0.15);color:#10B981;padding:3px 10px;border-radius:8px;font-weight:600;">✓ In Stock · '+(p.qty||0)+' '+(p.unit||'pcs')+' available</span>'
-    : '<span style="background:rgba(239,68,68,0.15);color:#EF4444;padding:3px 10px;border-radius:8px;font-weight:600;">Out of Stock</span>';
-  box.insertBefore(qtyEl, descEl);
   box.appendChild(descEl);
 
   // Buttons
@@ -3357,67 +3302,6 @@ function showProductDetail(id) {
   } else {
     var naBtn = document.createElement('button');
     naBtn.style.cssText = 'flex:2;padding:13px;background:rgba(255,255,255,0.05);border:none;border-radius:10px;color:var(--soft);font-weight:700;font-size:14px;cursor:not-allowed;';
-    naBtn.textContent = 'Out of Stock';
-    naBtn.disabled = true;
-    btnRow.appendChild(naBtn);
-  }
-
-  var closeBtn = document.createElement('button');
-  closeBtn.style.cssText = 'flex:1;padding:13px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;';
-  closeBtn.textContent = 'Close';
-  closeBtn.onclick = function() { overlay.remove(); };
-  btnRow.appendChild(closeBtn);
-  box.appendChild(btnRow);
-
-  overlay.appendChild(box);
-  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
-  document.body.appendChild(overlay);
-}
-
-// ── INIT STORE WHEN SCREEN OPENS ────────────────────────────────
-function initStore() {
-  cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
-  applyFilters('', 'all');
-  updateCartBar();
-}
-
-function initAdminStore() {
-  renderAdminProducts();
-}
-
-// ── FIX PORTAL VISIBILITY ────────────────────────────────────────
-function ensurePortalVisible() {
-  var loginBox = document.getElementById('cLoginBox');
-  var portal   = document.getElementById('cPortal');
-  if (!loginBox) return;
-  if (currentCustomer) {
-    loginBox.style.display = 'none';
-    if(portal) portal.style.display = 'block';
-  } else {
-    // Always show login form - force it visible
-    loginBox.style.cssText = 'display:block !important';
-    if(portal) portal.style.display = 'none';
-  }
-}
-
-// ── SWIPE NAVIGATION ─────────────────────────────────────────────
-(function(){
-  var sa = document.getElementById('screen-area');
-  if(!sa) return;
-  var sx=0, sy=0;
-  sa.addEventListener('touchstart',function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
-  sa.addEventListener('touchend',function(e){
-    var dx=e.changedTouches[0].clientX-sx;
-    var dy=Math.abs(e.changedTouches[0].clientY-sy);
-    if(Math.abs(dx)>60&&dy<80&&dx>0&&screenHistory.length>1){
-      screenHistory.pop();
-      var prev=screenHistory[screenHistory.length-1];
-      if(prev) goScreen(prev,true);
-    }
-  },{passive:true});
-})();
-
-:700;font-size:14px;cursor:not-allowed;';
     naBtn.textContent = 'Out of Stock';
     naBtn.disabled = true;
     btnRow.appendChild(naBtn);
