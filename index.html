@@ -2,33 +2,54 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<!-- Skyflies Solar App v13 - Build 20260409-1925 -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Skyflies Solar</title>
-<link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#F5A623">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Skyflies Solar">
-<meta name="google-site-verification" content="nhGoAqpD_FWfUZdgzrdNgVf0Ur2RC1zq5Y5G9gy6N48">
+<title>Skyflies Solar</title>
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
-<script>
-var FIREBASE_CONFIG={apiKey:"AIzaSyCjsw3gwtfqSpAGEehtdFSCIpgPlbxnIFM",authDomain:"skyflies-solar.firebaseapp.com",projectId:"skyflies-solar",storageBucket:"skyflies-solar.firebasestorage.app",messagingSenderId:"714418955246",appId:"1:714418955246:web:d8206ea5c0b866faaf64ff",measurementId:"G-2DD4EM94MY"};
-var FIREBASE_ENABLED=true,db=null;
-function initFirebase(){if(!FIREBASE_ENABLED)return;if(typeof firebase==='undefined'){setTimeout(initFirebase,500);return;}try{if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore();db.enablePersistence().catch(function(){});if(typeof firebase.analytics==='function')firebase.analytics();}catch(e){}}
-async function fbSave(col,id,data){if(!db)return false;try{await db.collection(col).doc(id).set(data,{merge:true});return true;}catch(e){return false;}}
-async function fbGet(col,id){if(!db)return null;try{var doc=await db.collection(col).doc(id).get();return doc.exists?doc.data():null;}catch(e){return null;}}
-async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.collection(col).where(field,'==',val).get();var r=[];snap.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
-</script>
 <style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;background:#000;}
+body{height:100%;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+#app{display:flex;flex-direction:column;height:100vh;height:100svh;width:100%;max-width:480px;overflow:hidden;background:#0A0F1E;position:relative;}
+#topbar{
+  flex:0 0 auto;
+  height:56px;
+  background:#111827;
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:10px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  z-index:100;
+}
+#screen-area{
+  flex:1 1 0;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  background:#0A0F1E;
+}
+#bottomnav{
+  flex:0 0 auto;
+  height:64px;
+  background:#111827;
+  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  align-items:stretch;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  z-index:100;
+}
+
+
+
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --sun:#F5A623;--solar:#FF6B00;--deep:#0A0F1E;--navy:#111827;
@@ -36,15 +57,15 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
   --soft:#8B9CB6;--success:#10B981;--error:#EF4444;--info:#3B82F6;
   --nav-h:64px;--top-h:56px;
 }
-html,body{height:100%;overflow:hidden;background:var(--deep);}
-body{font-family:'DM Sans',sans-serif;color:#fff;}
+
+
 
 /* ── APP SHELL ── */
-#app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
-#topbar{flex-shrink:0;height:var(--top-h);background:var(--navy);display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06);position:relative;z-index:100;}
-#screen-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--deep);}
+
+
+
 #screen-area::-webkit-scrollbar{display:none;}
-#bottomnav{flex-shrink:0;height:var(--nav-h);background:var(--navy);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:stretch;padding-bottom:env(safe-area-inset-bottom);position:relative;z-index:100;}
+
 
 /* ── TOP BAR ── */
 .tb-logo{width:34px;height:34px;border-radius:9px;object-fit:contain;background:rgba(245,166,35,0.15);}
@@ -229,7 +250,7 @@ body{font-family:'DM Sans',sans-serif;color:#fff;}
 .tl-dot.done{background:linear-gradient(135deg,var(--sun),var(--solar));border-color:var(--sun);}
 .tl-dot.active{background:rgba(16,185,129,0.15);border-color:var(--success);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);}50%{box-shadow:0 0 0 8px rgba(16,185,129,0);}}
-.tl-body{flex:1;padding-top:8px;}
+.tl-
 .tl-title{font-size:14px;font-weight:600;margin-bottom:3px;}
 .tl-date{font-size:11px;color:var(--soft);}
 .tl-desc{font-size:12px;color:var(--soft);margin-top:4px;line-height:1.5;}
@@ -381,11 +402,22 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 .soc-arrow{margin-left:auto;color:var(--soft);font-size:14px;}
 .install-bar{background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(255,107,0,0.07));border-bottom:1px solid var(--border);padding:10px 16px;display:none;}
 .install-inner{display:flex;align-items:center;gap:10px;}
+
 </style>
 </head>
 <body>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+<script>
+var FIREBASE_CONFIG={apiKey:"AIzaSyCjsw3gwtfqSpAGEehtdFSCIpgPlbxnIFM",authDomain:"skyflies-solar.firebaseapp.com",projectId:"skyflies-solar",storageBucket:"skyflies-solar.firebasestorage.app",messagingSenderId:"714418955246",appId:"1:714418955246:web:d8206ea5c0b866faaf64ff",measurementId:"G-2DD4EM94MY"};
+var FIREBASE_ENABLED=true,db=null;
+function initFirebase(){if(!FIREBASE_ENABLED)return;if(typeof firebase==='undefined'){setTimeout(initFirebase,500);return;}try{if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);db=firebase.firestore();db.enablePersistence().catch(function(){});if(typeof firebase.analytics==='function')firebase.analytics();}catch(e){}}
+async function fbSave(col,id,data){if(!db)return false;try{await db.collection(col).doc(id).set(data,{merge:true});return true;}catch(e){return false;}}
+async function fbGet(col,id){if(!db)return null;try{var doc=await db.collection(col).doc(id).get();return doc.exists?doc.data():null;}catch(e){return null;}}
+async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.collection(col).where(field,'==',val).get();var r=[];snap.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
+</script>
 <div id="app">
-
 <!-- TOP BAR -->
 <div id="topbar">
   <img src="logo.png" class="tb-logo" alt="Skyflies" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;">
@@ -416,6 +448,7 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 
 <!-- SCREEN AREA -->
 <div id="screen-area">
+
 
 <!-- ══ HOME ══ -->
 <div class="screen on" id="screen-home">
@@ -1389,8 +1422,8 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
   </div>
 </div>
 
-</div><!-- end screen-area -->
 
+</div><!-- end screen-area -->
 <!-- BOTTOM NAV -->
 <nav id="bottomnav">
   <button class="bnav-item on" id="bn-home" onclick="goScreen('home')">
@@ -1416,7 +1449,6 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
   </button>
 </nav>
 </div>
-
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -1450,6 +1482,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 <script>
+
 
 // ── APP NAVIGATION ──────────────────────────────
 var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup'];
@@ -3339,6 +3372,7 @@ function ensurePortalVisible() {
     }
   },{passive:true});
 })();
+
 </script>
 </body>
 </html>
