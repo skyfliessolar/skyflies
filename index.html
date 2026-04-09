@@ -1957,7 +1957,8 @@ function rejectReg(regId){
 }
 
 function loginSuccess(customer){
-  currentCustomer=customer;saveSession(customer);logActivity('LOGIN_SUCCESS','Customer: '+customer.name+' ('+customer.id+')');
+  currentCustomer=customer;saveSession(customer);
+  goScreen('portal');logActivity('LOGIN_SUCCESS','Customer: '+customer.name+' ('+customer.id+')');
   var ld=JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
   document.getElementById('cLoginBox').style.display='none';document.getElementById('cPortal').style.display='block';
   document.getElementById('portalName').textContent='Welcome, '+customer.name+'! ☀️';document.getElementById('portalId').textContent='ID: '+customer.id+' • '+customer.phone;
@@ -3303,7 +3304,7 @@ function initAdminStore() {
 
 // ── FIX PORTAL VISIBILITY ────────────────────────────────────────
 function ensurePortalVisible() {
-  var session = getSession();
+  var session  = getSession();
   var loginBox = document.getElementById('cLoginBox');
   var portal   = document.getElementById('cPortal');
   if (!loginBox || !portal) return;
@@ -3311,7 +3312,7 @@ function ensurePortalVisible() {
     loginBox.style.display = 'none';
     portal.style.display   = 'block';
   } else {
-    loginBox.style.display = '';
+    loginBox.style.display = 'block';
     portal.style.display   = 'none';
   }
 }
