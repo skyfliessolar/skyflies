@@ -13,13 +13,12 @@
 <link rel="apple-touch-icon" href="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:#0A0F1E;overflow:hidden;}
 #app{width:100%;height:100vh;height:100dvh;background:#0A0F1E;display:flex;flex-direction:column;overflow:hidden;}
-#topbar{flex:0 0 auto;height:56px;background:#111827;display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08);z-index:200;}
-#bottomnav{flex:0 0 auto;height:52px;background:#111827;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:stretch;z-index:200;}
-#screen-area{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#0A0F1E;min-height:0;}
+#topbar{flex:0 0 56px;height:56px;min-height:56px;background:#111827;display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08);z-index:200;}
+#bottomnav{flex:0 0 52px;height:52px;min-height:52px;background:#111827;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:stretch;z-index:200;}
+#screen-area{flex:1 1 0;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#0A0F1E;}
 
 
 
@@ -58,11 +57,11 @@ html,body{height:100%;background:#0A0F1E;overflow:hidden;}
 .notif-dot{position:absolute;top:6px;right:5px;width:8px;height:8px;background:#EF4444;border-radius:50%;border:2px solid var(--navy);}
 
 /* ── BOTTOM NAV ── */
-.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:color 0.2s;padding:4px 0;position:relative;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:transparent;color:var(--soft);transition:color 0.2s;padding:6px 0;position:relative;}
 .bnav-item.on{color:var(--sun);}
 .bnav-item.on .bnav-icon{background:rgba(245,166,35,0.12);border-radius:10px;}
-.bnav-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all 0.2s;}
-.bnav-label{font-size:9px;font-weight:500;letter-spacing:0.2px;}
+.bnav-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:19px;transition:all 0.2s;}
+.bnav-label{font-size:10px;font-weight:500;letter-spacing:0.2px;}
 .bnav-badge{position:absolute;top:4px;right:calc(50% - 20px);background:#EF4444;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center;}
 
 /* ── SCREENS ── */
@@ -399,40 +398,9 @@ async function fbGet(c,i){if(!db)return null;try{var d=await db.collection(c).do
 async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).where(f,"==",v).get();var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
 </script>
 <div id="app">
-<div id="topbar">
-  <img src="logo.png" class="tb-logo" alt="Skyflies" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;">
-  <div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div>
-  <button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button>
-  <button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button>
-  <button class="tb-btn" onclick="goScreen('social')">📱</button>
-  <button class="tb-btn" onclick="installApp()">📲</button>
-</div>
-<nav id="bottomnav">
-  <button class="bnav-item on" id="bn-home" onclick="goScreen('home')">
-    <div class="bnav-icon">🏠</div><div class="bnav-label">Home</div>
-  </button>
-  <button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')">
-    <div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div>
-  </button>
-  <button class="bnav-item" id="bn-portal" onclick="goScreen('portal')">
-    <div class="bnav-icon">👤</div><div class="bnav-label">Account</div>
-  </button>
-  <button class="bnav-item" id="bn-store" onclick="goScreen('store')">
-    <div class="bnav-icon">🛒</div><div class="bnav-label">Store</div>
-  </button>
-  <button class="bnav-item" id="bn-more" onclick="goScreen('more')">
-    <div class="bnav-icon">☰</div><div class="bnav-label">More</div>
-    <span class="bnav-badge" id="moreBadge" style="display:none;"></span>
-  </button>
-</nav>
-<div id="installBanner" class="install-bar" style="display:none;">
-  <div class="install-inner">
-    <img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:32px;height:32px;border-radius:8px;" alt="">
-    <div style="flex:1;"><div style="font-size:13px;font-weight:700;">Install Skyflies Solar App</div><div style="font-size:11px;color:var(--soft);">Add to home screen</div></div>
-    <button onclick="installApp()" style="padding:7px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#0A0F1E;font-weight:700;font-size:12px;cursor:pointer;">Install</button>
-    <button onclick="dismissBanner()" style="padding:7px 10px;background:transparent;border:none;color:var(--soft);font-size:14px;cursor:pointer;">✕</button>
-  </div>
-</div>
+<div id="topbar"><img src="logo.png" class="tb-logo" alt="Skyflies" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;"><div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div><button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button><button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button><button class="tb-btn" onclick="goScreen('social')">📱</button><button class="tb-btn" onclick="installApp()">📲</button></div>
+<nav id="bottomnav"><button class="bnav-item on" id="bn-home" onclick="goScreen('home')"><div class="bnav-icon">🏠</div><div class="bnav-label">Home</div></button><button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')"><div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div></button><button class="bnav-item" id="bn-portal" onclick="goScreen('portal')"><div class="bnav-icon">👤</div><div class="bnav-label">Account</div></button><button class="bnav-item" id="bn-store" onclick="goScreen('store')"><div class="bnav-icon">🛒</div><div class="bnav-label">Store</div></button><button class="bnav-item" id="bn-more" onclick="goScreen('more')"><div class="bnav-icon">☰</div><div class="bnav-label">More</div><span class="bnav-badge" id="moreBadge" style="display:none;"></span></button></nav>
+<div id="installBanner" class="install-bar" style="display:none;"><div class="install-inner"><img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:32px;height:32px;border-radius:8px;" alt=""><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Install Skyflies Solar App</div><div style="font-size:11px;color:var(--soft);">Add to home screen</div></div><button onclick="installApp()" style="padding:7px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#0A0F1E;font-weight:700;font-size:12px;cursor:pointer;">Install</button><button onclick="dismissBanner()" style="padding:7px 10px;background:transparent;border:none;color:var(--soft);font-size:14px;cursor:pointer;">✕</button></div></div>
 <div id="screen-area">
 
 
@@ -760,7 +728,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('cart')"><div class="soc-ico" style="background:rgba(16,185,129,0.15);">🛍️</div><div><div class="soc-info-name">My Cart</div><div class="soc-info-sub">View & place orders</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(239,68,68,0.15);">🔐</div><div><div class="soc-info-name">Admin Dashboard</div><div class="soc-info-sub">Manage submissions & send notifications</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('adminstore')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛍️</div><div><div class="soc-info-name">Manage Store</div><div class="soc-info-sub">Add & edit products</div></div><div class="soc-arrow">›</div></div>
-    <div class="social-link-card" onclick="goScreen('setup')"><div class="soc-ico" style="background:rgba(59,130,246,0.15);">⚙️</div><div><div class="soc-info-name">Setup</div><div class="soc-info-sub">Google Sheets connection</div></div><div class="soc-arrow">›</div></div>
+    <div><div class="soc-info-name">Setup</div><div class="soc-info-sub">Google Sheets connection</div></div><div class="soc-arrow">›</div></div>
   </div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
@@ -978,6 +946,10 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
       <div class="field"><label>Brand</label><input type="text" id="pBrand" placeholder="e.g. Luminous"></div>
       <div class="field"><label>Stock</label><select id="pStock"><option value="in">In Stock</option><option value="out">Out of Stock</option><option value="pre">Pre-order</option></select></div>
     </div>
+    <div class="row2">
+      <div class="field"><label>Quantity Available</label><input type="number" id="pQty" placeholder="50" min="0" value="10"></div>
+      <div class="field"><label>Unit</label><select id="pUnit" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"><option value="piece">Piece</option><option value="pack">Pack</option><option value="set">Set</option><option value="roll">Roll</option></select></div>
+    </div>
     <button onclick="addProduct()" class="submit-btn">➕ Add Product</button>
     <div class="alert ok" id="addProductOk" style="margin-top:10px;">✅ Product added!</div>
     <div class="alert er" id="addProductEr" style="margin-top:10px;"></div>
@@ -1185,10 +1157,36 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
       <div class="astat rd"><div class="astat-val" id="pendCount">0</div><div class="astat-lbl">Pending</div></div>
     </div>
     <div class="admin-action-row">
-      <button class="admin-btn notif" onclick="showNotifModal()">🔔 Send Notification</button>
-      <button class="admin-btn primary" onclick="exportCSV()">📥 Export</button>
+      <button class="admin-btn notif" onclick="showNotifModal()">🔔 Notify</button>
+      <button class="admin-btn primary" onclick="goScreen('adminstore')">🛍️ Products</button>
       <button class="admin-btn secondary" onclick="loadPendingFromSheet().then(renderPending)">🔄 Refresh</button>
+      <button class="admin-btn primary" onclick="exportCSV()">📥 Export</button>
+    </div>
+    <div class="admin-action-row" style="margin-top:6px;">
+      <button class="admin-btn secondary" onclick="toggleAdminSetup()">⚙️ Setup</button>
       <button class="admin-btn danger" onclick="adminLogout()">🔓 Logout</button>
+    </div>
+
+    <!-- SETUP PANEL - only visible after admin login -->
+    <div id="adminSetupPanel" style="display:none;margin:10px 0;">
+      <div class="form-card" style="border-color:rgba(245,166,35,0.3);">
+        <div style="font-size:14px;font-weight:700;color:var(--sun);margin-bottom:12px;">⚙️ Setup & Configuration</div>
+        <div style="font-size:12px;font-weight:600;color:var(--sun);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Apps Script URL</div>
+        <div style="display:flex;gap:8px;margin-bottom:6px;">
+          <input type="url" id="whUrl" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:10px 12px;color:#fff;font-size:13px;outline:none;" placeholder="Paste Apps Script URL...">
+          <button onclick="saveWh()" style="padding:10px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:9px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">Save</button>
+        </div>
+        <div class="setup-status" id="whSt"></div>
+        <button onclick="testConnection()" style="padding:9px 16px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:8px;color:#60A5FA;font-size:13px;font-weight:600;cursor:pointer;margin-top:6px;">🔌 Test Connection</button>
+        <div id="testResult" style="margin-top:6px;font-size:12px;"></div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:14px 0;"></div>
+        <div style="font-size:12px;font-weight:600;color:var(--sun);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Change Admin Password</div>
+        <div style="display:flex;gap:8px;">
+          <input type="password" id="newPwd" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:10px 12px;color:#fff;font-size:13px;outline:none;" placeholder="New password">
+          <button onclick="savePwd()" style="padding:10px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:9px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">Save</button>
+        </div>
+        <div class="setup-status" id="pwdSt"></div>
+      </div>
     </div>
     <!-- PENDING -->
     <div style="background:rgba(245,166,35,0.05);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:14px;margin-bottom:14px;">
@@ -1413,24 +1411,8 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 </div>
 <div id="toast"></div>
 <div id="wafloat"><a href="https://wa.me/919385449167?text=Hi%20Skyflies%20Solar!" target="_blank">💬</a></div>
-<div class="modal-overlay" id="notifModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🔔 Send Notification to All Users</div>
-    <div class="field"><label>Title</label><input type="text" id="notifTitle" placeholder="e.g. Special Offer!" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"></div>
-    <div class="field" style="margin-top:10px;"><label>Message</label><textarea id="notifMsg" placeholder="Your message..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;min-height:80px;font-family:inherit;resize:vertical;"></textarea></div>
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button onclick="sendBulkNotification()" style="flex:1;padding:13px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">📧 Send to All Users</button>
-      <button onclick="closeNotifModal()" style="padding:13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--soft);font-size:14px;cursor:pointer;">Cancel</button>
-    </div>
-    <div id="notifResult" style="font-size:12px;color:var(--success);margin-top:8px;text-align:center;"></div>
-  </div>
-</div>
-<div id="photoOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:center;justify-content:center;flex-direction:column;" onclick="closeFullPhoto()">
-  <img id="photoOverlayImg" src="" style="max-width:95vw;max-height:80vh;object-fit:contain;border-radius:12px;">
-  <div id="photoOverlayCaption" style="color:#fff;font-size:13px;margin-top:12px;text-align:center;padding:0 20px;"></div>
-  <button onclick="closeFullPhoto()" style="margin-top:16px;padding:10px 24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;">Close ✕</button>
-</div>
+<div class="modal-overlay" id="notifModal"><div class="modal"><div class="modal-handle"></div><div class="modal-title">🔔 Send Notification to All Users</div><div class="field"><label>Title</label><input type="text" id="notifTitle" placeholder="e.g. Special Offer!" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"></div><div class="field" style="margin-top:10px;"><label>Message</label><textarea id="notifMsg" placeholder="Your message..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;min-height:80px;font-family:inherit;resize:vertical;"></textarea></div><div style="display:flex;gap:8px;margin-top:12px;"><button onclick="sendBulkNotification()" style="flex:1;padding:13px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">📧 Send to All Users</button><button onclick="closeNotifModal()" style="padding:13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--soft);font-size:14px;cursor:pointer;">Cancel</button></div><div id="notifResult" style="font-size:12px;color:var(--success);margin-top:8px;text-align:center;"></div></div></div>
+<div id="photoOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:center;justify-content:center;flex-direction:column;" onclick="closeFullPhoto()"><img id="photoOverlayImg" src="" style="max-width:95vw;max-height:80vh;object-fit:contain;border-radius:12px;"><div id="photoOverlayCaption" style="color:#fff;font-size:13px;margin-top:12px;text-align:center;padding:0 20px;"></div><button onclick="closeFullPhoto()" style="margin-top:16px;padding:10px 24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;">Close ✕</button></div>
 <script>
 
 
@@ -1492,6 +1474,7 @@ function goScreen(id, isBack) {
   var backBtn = document.getElementById('backBtn');
   if(backBtn) backBtn.style.display = (screenHistory.length > 1 && id !== 'home') ? 'flex' : 'none';
   // Admin security
+  if(id==='setup'){goScreen('admin',isBack);return;}
   if(id==='admin' && !isBack){
     var lb=document.getElementById('adminLoginBox'); var db=document.getElementById('adminDash');
     if(lb) lb.style.display=''; if(db) db.style.display='none';
@@ -1531,6 +1514,11 @@ function adminLogin(){
       document.getElementById('adminDash').style.display='block';
       pwdInput.value='';
       refreshDash();renderCustList();renderAdminMediaList();
+      // Pre-fill setup URL
+      var whEl = document.getElementById('whUrl');
+      if(whEl){ var wh=localStorage.getItem(WH)||WEBHOOK_URL; whEl.value=wh||''; }
+      var whSt = document.getElementById('whSt');
+      if(whSt && localStorage.getItem(WH)){ whSt.textContent='✅ Google Sheet connected.'; whSt.className='setup-status ok'; }
       loadPendingFromSheet().then(function(){renderPending();});
       loadCustomersFromSheet();
     }else{
@@ -1553,6 +1541,19 @@ function adminLogout(){
   document.getElementById('adminDash').style.display='none';
   document.getElementById('adminPwd').value='';
 }
+function toggleAdminSetup() {
+  var panel = document.getElementById('adminSetupPanel');
+  if (!panel) return;
+  var isOpen = panel.style.display !== 'none' && panel.style.display !== '';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) {
+    var wh = localStorage.getItem(WH) || WEBHOOK_URL;
+    var el = document.getElementById('whUrl');
+    if (el) el.value = wh;
+    setTimeout(function(){ panel.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 100);
+  }
+}
+
 function showAdminSetup() {
   var panel = document.getElementById('adminSetupPanel');
   if(!panel) return;
@@ -1602,7 +1603,7 @@ async function sendBulkNotification() {
   }
   res.textContent = '⏳ Sending...';
   res.style.color = '#F5A623';
-  var wh = 'https://script.google.com/macros/s/AKfycbzk-z6K6pT2KxajtG4HjCb-XwcjcrNXD8jlOKRWSUVdoS9xeXiMPLt0SBcSEYCbauPD/exec';
+  var wh = 'https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
   var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
   try {
     var r = await fetch(wh, {
@@ -2896,7 +2897,7 @@ function getProducts() {
   if (saved) {
     try {
       var p = JSON.parse(saved);
-      if (p && p.length && p[0].qty !== undefined) return p;
+      if (p && p.length) return p;
     } catch(e) {}
   }
   var defaults = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
@@ -3150,6 +3151,8 @@ function addProduct() {
   }
 
   var products = getProducts();
+  var qty  = parseInt((document.getElementById('pQty')||{}).value||10);
+  var unit = (document.getElementById('pUnit')||{}).value||'piece';
   var newProd  = {
     id:        'p' + Date.now(),
     name:      name.trim(),
@@ -3159,7 +3162,9 @@ function addProduct() {
     desc:      desc.trim(),
     img:       img.trim(),
     brand:     brand.trim() || 'Skyflies',
-    stock:     stock
+    stock:     stock,
+    qty:       qty,
+    unit:      unit
   };
   products.unshift(newProd);
   saveProducts(products);
@@ -3168,7 +3173,7 @@ function addProduct() {
   setTimeout(function(){ if(ok){ok.style.display='none';ok.classList.remove('show');} }, 2500);
 
   // Clear fields
-  ['pName','pPrice','pOrigPrice','pDesc','pImg','pBrand'].forEach(function(id){
+  ['pName','pPrice','pOrigPrice','pDesc','pImg','pBrand','pQty'].forEach(function(id){
     var el = document.getElementById(id); if(el) el.value='';
   });
 
@@ -3310,6 +3315,8 @@ function showProductDetail(id) {
 // ── INIT STORE WHEN SCREEN OPENS ────────────────────────────────
 function initStore() {
   cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
+  var products = getProducts();
+  console.log('Store init: ' + products.length + ' products');
   applyFilters('', 'all');
   updateCartBar();
 }
