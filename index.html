@@ -14,9 +14,9 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{height:100%;background:#000;}
-body{height:100%;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-#app{display:flex;flex-direction:column;height:100vh;height:100svh;width:100%;max-width:480px;overflow:hidden;background:#0A0F1E;position:relative;}
+html{height:100%;}
+body{height:100%;overflow:hidden;background:#0A0F1E;margin:0;padding:0;}
+#app{display:flex;flex-direction:column;height:100vh;height:100svh;width:100%;overflow:hidden;background:#0A0F1E;}
 #topbar{
   flex:0 0 auto;
   height:56px;
@@ -36,16 +36,7 @@ body{height:100%;background:#000;overflow:hidden;display:flex;align-items:center
   -webkit-overflow-scrolling:touch;
   background:#0A0F1E;
 }
-#bottomnav{
-  flex:0 0 auto;
-  height:64px;
-  background:#111827;
-  border-top:1px solid rgba(255,255,255,0.08);
-  display:flex;
-  align-items:stretch;
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  z-index:100;
-}
+#bottomnav{flex:0 0 auto;height:56px;background:#111827;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:stretch;z-index:100;}
 
 
 
@@ -432,6 +423,1959 @@ async function fbQuery(col,field,val){if(!db)return[];try{var snap=await db.coll
   <button class="tb-btn" onclick="goScreen('social')" title="Social Media">📱</button>
   <button class="tb-btn" onclick="installApp()">📲</button>
 </div>
+
+<!-- BOTTOM NAV -->
+<nav id="bottomnav">
+  <button class="bnav-item on" id="bn-home" onclick="goScreen('home')">
+    <div class="bnav-icon">🏠</div>
+    <div class="bnav-label">Home</div>
+  </button>
+  <button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')">
+    <div class="bnav-icon">🧮</div>
+    <div class="bnav-label">Quote</div>
+  </button>
+  <button class="bnav-item" id="bn-portal" onclick="goScreen('portal')">
+    <div class="bnav-icon">👤</div>
+    <div class="bnav-label">My Account</div>
+  </button>
+  <button class="bnav-item" id="bn-store" onclick="goScreen('store')">
+    <div class="bnav-icon">🛒</div>
+    <div class="bnav-label">Store</div>
+  </button>
+  <button class="bnav-item" id="bn-more" onclick="goScreen('more')">
+    <div class="bnav-icon">☰</div>
+    <div class="bnav-label">More</div>
+    <span class="bnav-badge" id="moreBadge" style="display:none;"></span>
+  </button>
+</nav>
+</div>
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- WA FLOAT -->
+<div id="wafloat">
+  <a href="https://wa.me/919385449167?text=Hi%20Skyflies%20Solar!" target="_blank">💬</a>
+</div>
+
+<!-- NOTIFICATION MODAL -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔔 Send Notification to All Users</div>
+    <div class="field"><label>Notification Title</label><input type="text" id="notifTitle" placeholder="e.g. Special Offer!" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"></div>
+    <div class="field" style="margin-top:10px;"><label>Message</label><textarea id="notifMsg" placeholder="Your message to all customers..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;min-height:80px;font-family:'DM Sans',sans-serif;resize:vertical;"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button onclick="sendBulkNotification()" style="flex:1;padding:13px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">📧 Send to All Users</button>
+      <button onclick="closeNotifModal()" style="padding:13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--soft);font-size:14px;cursor:pointer;">Cancel</button>
+    </div>
+    <div id="notifResult" style="font-size:12px;color:var(--success);margin-top:8px;text-align:center;"></div>
+    <p style="font-size:11px;color:var(--soft);text-align:center;margin-top:10px;line-height:1.5;">Sends an email notification to all registered customers via Apps Script.</p>
+  </div>
+</div>
+
+<!-- PHOTO FULL VIEW OVERLAY -->
+<div id="photoOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:600;align-items:center;justify-content:center;flex-direction:column;" onclick="closeFullPhoto()">
+  <img id="photoOverlayImg" src="" style="max-width:95vw;max-height:80vh;object-fit:contain;border-radius:12px;">
+  <div id="photoOverlayCaption" style="color:#fff;font-size:13px;margin-top:12px;text-align:center;padding:0 20px;"></div>
+  <button onclick="closeFullPhoto()" style="margin-top:16px;padding:10px 24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;">Close</button>
+</div>
+
+
+<script>
+
+
+// ── APP NAVIGATION ──────────────────────────────
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup'];
+var currentScreen = 'home';
+
+var screenHistory = ['home'];
+
+function goBack() {
+  if(screenHistory.length > 1) {
+    screenHistory.pop(); // remove current
+    var prev = screenHistory[screenHistory.length-1];
+    goScreen(prev || 'home', true);
+  } else {
+    goScreen('home', true);
+  }
+}
+// ── PASSWORD SHOW/HIDE ───────────────────────────────────────────
+function togglePwd(inputId, btn) {
+  var inp = document.getElementById(inputId);
+  if (!inp) return;
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    btn.textContent = '👁';
+  }
+}
+
+
+
+
+function goScreen(id, isBack) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('on'); });
+  document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('on'); });
+  var el = document.getElementById('screen-'+id);
+  if(el) el.classList.add('on');
+  var bn = document.getElementById('bn-'+id);
+  if(bn) bn.classList.add('on');
+  else {
+    var bnMore = document.getElementById('bn-more');
+    if(bnMore) bnMore.classList.add('on');
+  }
+  // Track history for swipe-back
+  if(!isBack) {
+    if(screenHistory[screenHistory.length-1] !== id) screenHistory.push(id);
+    if(screenHistory.length > 20) screenHistory.shift();
+  }
+  currentScreen = id;
+  var sa = document.getElementById('screen-area');
+  if(sa) sa.scrollTo({top:0,behavior:'smooth'});
+  // Update top bar
+  var titles = {home:'Skyflies Solar',calculator:'Quote Calculator',portal:'My Account',plans:'AMC Plans',more:'More',enquiry:'Enquiry',quotation:'Quotation',subscribe:'Subscribe',emi:'EMI / Loan',social:'Social Media',admin:'Admin',setup:'Setup',store:'Solar Store',cart:'My Cart',adminstore:'Manage Store'};
+  var tb = document.getElementById('tbTitle');
+  if(tb) tb.textContent = titles[id] || 'Skyflies Solar';
+  // Show/hide back button
+  var backBtn = document.getElementById('backBtn');
+  if(backBtn) backBtn.style.display = (screenHistory.length > 1 && id !== 'home') ? 'flex' : 'none';
+  // Admin security
+  if(id==='admin' && !isBack){
+    var lb=document.getElementById('adminLoginBox'); var db=document.getElementById('adminDash');
+    if(lb) lb.style.display=''; if(db) db.style.display='none';
+  }
+  // Auto-load YouTube
+  if(id==='social') setTimeout(loadYouTubeVideos, 300);
+  if(id==='social') setTimeout(loadAdminMedia, 500);
+  if(id==='store') setTimeout(initStore, 50);
+  if(id==='cart') setTimeout(renderCart, 50);
+  if(id==='adminstore') setTimeout(initAdminStore, 50);
+  if(id==='portal') ensurePortalVisible();
+}
+
+// Legacy compat
+function showPage(id, btn) { goScreen(id); }
+function mobPage(id) { goScreen(id); }
+
+// ── NOTIFICATION PANEL ──────────────────────────
+// function moved below
+
+// function moved below
+
+// function moved below
+
+
+// function moved below
+
+
+// ── ADMIN OVERRIDES ──────────────────────────────
+function adminLogin(){
+  var pwdInput = document.getElementById('adminPwd');
+  var pwd = pwdInput.value.trim();
+  var correct = localStorage.getItem(PW) || 'skyflies2024';
+  hashPassword(pwd).then(function(hashedPwd){
+    if(pwd===correct||hashedPwd===correct){
+      document.getElementById('adminLoginBox').style.display='none';
+      document.getElementById('adminDash').style.display='block';
+      pwdInput.value='';
+      refreshDash();renderCustList();renderAdminMediaList();
+      loadPendingFromSheet().then(function(){renderPending();});
+      loadCustomersFromSheet();
+    }else{
+      // Shake the input + show error
+      pwdInput.classList.add('shake');
+      pwdInput.style.borderColor='#EF4444';
+      pwdInput.value='';
+      setTimeout(function(){
+        pwdInput.classList.remove('shake');
+        pwdInput.style.borderColor='';
+      },600);
+      var e=document.getElementById('loginErr');
+      e.style.display='flex';e.classList.add('show');
+      setTimeout(function(){e.style.display='none';e.classList.remove('show');},3000);
+    }
+  });
+}
+function adminLogout(){
+  document.getElementById('adminLoginBox').style.display='';
+  document.getElementById('adminDash').style.display='none';
+  document.getElementById('adminPwd').value='';
+}
+
+
+
+var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
+var curFilter='all';
+var PENDING_LIST=[];
+var currentCustomer=null;
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
+
+var RAZORPAY_KEY = 'YOUR_RAZORPAY_KEY';
+
+// ── NOTIFICATION FUNCTIONS ──────────────────────────────────────
+function showNotifModal() {
+  var m = document.getElementById('notifModal');
+  if(m) m.classList.add('show');
+}
+function closeNotifModal() {
+  var m = document.getElementById('notifModal');
+  if(m) m.classList.remove('show');
+  var r = document.getElementById('notifResult');
+  if(r) r.textContent = '';
+}
+function showNotifPanel() {
+  if(currentCustomer) { showToast('🔔 No new notifications'); }
+  else { goScreen('admin'); }
+}
+async function sendBulkNotification() {
+  var title = (document.getElementById('notifTitle').value || '').trim();
+  var msg   = (document.getElementById('notifMsg').value   || '').trim();
+  var res   = document.getElementById('notifResult');
+  if (!title || !msg) {
+    res.textContent = '❌ Please enter both title and message.';
+    res.style.color = '#EF4444';
+    return;
+  }
+  res.textContent = '⏳ Sending...';
+  res.style.color = '#F5A623';
+  var wh = 'https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
+  var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
+  try {
+    var r = await fetch(wh, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: payload
+    });
+    var txt = await r.text();
+    var data = JSON.parse(txt);
+    if (data.status === 'success') {
+      res.textContent = '✅ Sent to ' + (data.sent||0) + ' customers!';
+      res.style.color = '#10B981';
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMsg').value = '';
+      setTimeout(closeNotifModal, 2500);
+    } else {
+      res.textContent = '❌ ' + (data.message || 'Error');
+      res.style.color = '#EF4444';
+    }
+  } catch(e) {
+    res.textContent = '❌ ' + e.message;
+    res.style.color = '#EF4444';
+  }
+}
+
+var RAZORPAY_ENABLED = false;
+var MAX_LOGIN_ATTEMPTS = 5;
+var LOCKOUT_DURATION   = 15 * 60 * 1000;
+var SESSION_DURATION   = 8 * 60 * 60 * 1000;
+
+function saveSession(customer){
+  var session={customerId:customer.id,name:customer.name,phone:customer.phone,email:customer.email,loginTime:Date.now(),expires:Date.now()+SESSION_DURATION};
+  sessionStorage.setItem('sf_session',JSON.stringify(session));
+}
+function getSession(){
+  try{var s=JSON.parse(sessionStorage.getItem('sf_session')||'null');if(!s)return null;if(Date.now()>s.expires){sessionStorage.removeItem('sf_session');return null;}return s;}catch(e){return null;}
+}
+function clearSession(){sessionStorage.removeItem('sf_session');}
+
+function checkRateLimit(key){
+  var data=JSON.parse(localStorage.getItem('rl_'+key)||'{"attempts":0,"lockedUntil":0}');
+  if(Date.now()<data.lockedUntil){var mins=Math.ceil((data.lockedUntil-Date.now())/60000);return{blocked:true,message:'Too many attempts. Try again in '+mins+' minutes.'};}
+  return{blocked:false,attempts:data.attempts};
+}
+function recordAttempt(key,success){
+  var data=JSON.parse(localStorage.getItem('rl_'+key)||'{"attempts":0,"lockedUntil":0}');
+  if(success){localStorage.removeItem('rl_'+key);return;}
+  data.attempts++;
+  if(data.attempts>=MAX_LOGIN_ATTEMPTS){data.lockedUntil=Date.now()+LOCKOUT_DURATION;data.attempts=0;}
+  localStorage.setItem('rl_'+key,JSON.stringify(data));
+}
+
+function logActivity(action,details){
+  var log=JSON.parse(localStorage.getItem('sf_activity')||'[]');
+  log.unshift({action,details,time:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),ts:Date.now()});
+  if(log.length>100)log=log.slice(0,100);
+  localStorage.setItem('sf_activity',JSON.stringify(log));
+}
+
+async function hashPassword(pwd){
+  var msgBuffer=new TextEncoder().encode(pwd);
+  var hashBuffer=await crypto.subtle.digest('SHA-256',msgBuffer);
+  var hashArray=Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+function quickHash(str){
+  var hash=5381;for(var i=0;i<str.length;i++){hash=((hash<<5)+hash)+str.charCodeAt(i);hash=hash&hash;}
+  return 'h'+Math.abs(hash).toString(16);
+}
+
+function handleOtherCity(select){
+  var input=select.nextElementSibling;
+  if(!input||input.tagName!=='INPUT')return;
+  if(select.value==='Other'){input.style.display='block';input.required=true;input.focus();}
+  else{input.style.display='none';input.required=false;input.value='';}
+}
+function getCityValue(select){
+  if(!select)return'';
+  if(select.value==='Other'){var input=select.nextElementSibling;if(input&&input.value.trim())return input.value.trim();return'Other';}
+  return select.value;
+}
+
+// showPage legacy removed
+function toggleMobNav(){
+  var nav=document.getElementById('mobNav');var btn=document.getElementById('hamBtn');
+  if(!nav||!btn)return;
+  nav.classList.toggle('open');btn.textContent=nav.classList.contains('open')?'✕':'☰';
+}
+// mobPage compat: handled by goScreen
+document.addEventListener('click',function(e){
+  var nav=document.getElementById('mobNav');var btn=document.getElementById('hamBtn');
+  if(nav&&nav.classList.contains('open')&&!nav.contains(e.target)&&e.target!==btn){nav.classList.remove('open');btn.textContent='☰';}
+});
+
+function selPlan(el){document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function goSub(nm){showPage('subscribe',null);document.querySelectorAll('#planSel .po').forEach(o=>{var r=o.querySelector('input');if(r.value===nm){r.checked=true;o.classList.add('sel');}else o.classList.remove('sel');});}
+
+var pricePerKw={residential:55000,commercial:62000,industrial:58000,hospital:65000,school:60000};
+var panelMult={mono:1,poly:0.9,bifacial:1.15};
+var panelTypes={mono:'Monocrystalline',poly:'Polycrystalline',bifacial:'Bifacial'};
+
+function calcQuote(){
+  var pt=document.getElementById('cpt').value,sz=parseFloat(document.getElementById('csz').value||0),pl=document.getElementById('cpl').value,amc=document.getElementById('camc').value;
+  if(!pt||!sz)return;
+  var base=(pricePerKw[pt]||55000)*sz*panelMult[pl];
+  var subsidy=pt==='residential'?Math.min(sz<=3?sz*14588:sz<=10?43764+(sz-3)*7294:43764+7*7294,94822):0;
+  var total=base-subsidy+(amc==='yes'?sz*1200:0);
+  var panels=Math.ceil(sz/0.4),saving=Math.round(sz*850),emi=Math.round(total/36),roi=parseFloat((total/(saving*12)).toFixed(1));
+  document.getElementById('qtotal').textContent='₹'+Math.round(total).toLocaleString('en-IN');
+  document.getElementById('qsubsidy').textContent=subsidy>0?'Govt subsidy of ₹'+Math.round(subsidy).toLocaleString('en-IN')+' already deducted':'Govt subsidy not applicable for this property type';
+  document.getElementById('qsize').textContent=sz+' kW System';document.getElementById('qpanel').textContent=panelTypes[pl];
+  document.getElementById('qpanels').textContent=panels+' panels (400W each)';document.getElementById('qsaving').textContent='₹'+saving.toLocaleString('en-IN')+'/month';
+  document.getElementById('qemi').textContent='₹'+emi.toLocaleString('en-IN')+'/month (36mo)';document.getElementById('qroi').textContent=roi+' years';
+  document.getElementById('qnotes').textContent='📋 This quote includes '+sz+' kW '+panelTypes[pl]+' panels, inverter, mounting structure, wiring, and installation charges'+(amc==='yes'?' + Annual Maintenance Contract':'')+'. Government subsidy (if applicable) has been deducted. Final pricing confirmed after free site survey.';
+}
+function showResult(){
+  var pt=document.getElementById('cpt').value,sz=document.getElementById('csz').value;
+  if(!pt||!sz){alert('Please select property type and system size first!');return;}
+  calcQuote();document.getElementById('qresult').classList.add('show');document.getElementById('qresult').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function sendQuotation(){
+  var nm=document.getElementById('cn').value,em=document.getElementById('ce').value,ph=document.getElementById('cp').value;
+  if(!nm||!em||!ph){alert('Please fill in your Name, Email and Phone at the top first!');return;}
+  var data={formType:'quotation',name:nm,email:em,phone:ph,city:document.getElementById('cc').value,propertyType:document.getElementById('cpt').options[document.getElementById('cpt').selectedIndex].text,systemType:document.getElementById('csz').value+' kW '+document.getElementById('cpl').options[document.getElementById('cpl').selectedIndex].text,budget:'As calculated',message:'Auto quote from calculator. Est total: '+document.getElementById('qtotal').textContent,submittedAt:new Date().toISOString()};
+  await sendToSheet(data);document.getElementById('qsent').classList.add('show');
+}
+
+async function doSubmit(formEl,type,okId,erId){
+  var btn=formEl.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.spin,.spin');
+  document.getElementById(okId).classList.remove('show');document.getElementById(erId).classList.remove('show');
+  var fd=new FormData(formEl),data={formType:type};
+  for(var [k,v] of fd.entries()){if(k==='service')data.services=data.services?data.services+', '+v:v;else data[k]=v;}
+  data.submittedAt=new Date().toISOString();
+  btn.disabled=true;bt.style.display='none';bl.style.display='block';
+  await new Promise(r=>setTimeout(r,800));
+  saveLocal(data);await sendToSheet(data);
+  btn.disabled=false;bt.style.display='';bl.style.display='none';
+  document.getElementById(okId).classList.add('show');
+  formEl.reset();document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));
+  refreshDash();
+}
+(function(){
+  function safeOn(id,type,fn){var el=document.getElementById(id);if(el)el.addEventListener(type,fn);}
+  safeOn('enqForm','submit',function(e){e.preventDefault();doSubmit(e.target,'enquiry','e-ok','e-er');});
+  safeOn('quotForm','submit',function(e){e.preventDefault();doSubmit(e.target,'quotation','q-ok','q-er');});
+  safeOn('subForm','submit',function(e){e.preventDefault();doSubmit(e.target,'subscribe','s-ok','s-er');});
+  safeOn('emiForm','submit',function(e){e.preventDefault();doSubmit(e.target,'emi','em-ok','em-er');});
+})();
+(function(){
+  var qf=document.getElementById('queryForm');if(!qf)return;
+  qf.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var btn=this.querySelector('.sbtn');var bt=btn.querySelector('.bt');var bl=btn.querySelector('.spin,.spin');
+    var fd=new FormData(this),data={formType:'query',action:'addQuery',customerId:currentCustomer?currentCustomer.id:'',customerName:currentCustomer?currentCustomer.name:'',submittedAt:new Date().toISOString()};
+    for(var [k,v] of fd.entries())data[k]=v;
+    btn.disabled=true;bt.style.display='none';bl.style.display='block';
+    await new Promise(r=>setTimeout(r,700));
+    saveLocal(data);await sendToSheet(data);
+    btn.disabled=false;bt.style.display='';bl.style.display='none';
+    document.getElementById('qry-ok').classList.add('show');this.reset();
+    if(currentCustomer){
+      var ld=JSON.parse(localStorage.getItem('cdata_'+currentCustomer.id)||'{}');
+      ld.queries=ld.queries||[];ld.queries.unshift({type:data.queryType,priority:data.priority,message:data.message,date:new Date().toLocaleDateString('en-IN'),status:'open'});
+      localStorage.setItem('cdata_'+currentCustomer.id,JSON.stringify(ld));
+      currentCustomer.queries=[...(ld.queries||[]),...((currentCustomer.queries||[]).filter(q=>!ld.queries.find(lq=>lq.message===q.message)))];
+      renderQueries();
+    }
+  });
+})();
+
+async function requestNotificationPermission(){
+  if(!('Notification' in window)){showToast('Your browser does not support notifications.');return false;}
+  var permission=await Notification.requestPermission();
+  if(permission==='granted'){localStorage.setItem('notif_enabled','1');showToast('✅ Notifications enabled!');return true;}
+  showToast('❌ Notifications blocked. Enable in browser settings.');return false;
+}
+function sendLocalNotification(title,body){
+  if(Notification.permission!=='granted')return;
+  new Notification(title,{body,icon:'https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png',tag:'skyflies-notif'});
+}
+function sendAdminNotification(){
+  var title=prompt('Notification Title:','Skyflies Solar Update');if(!title)return;
+  var body=prompt('Notification Message:','Your solar service is scheduled tomorrow.');if(!body)return;
+  sendLocalNotification(title,body);showToast('✅ Notification sent!');
+}
+function checkServiceNotifications(){
+  if(!currentCustomer||Notification.permission!=='granted')return;
+  var ns=currentCustomer.nextService;if(!ns||ns==='TBD')return;
+  try{var d=new Date(ns);var days=Math.ceil((d-new Date())/(864e5));if(days===1)sendLocalNotification('🔧 Service Tomorrow!','Your solar panel service is scheduled for tomorrow.');else if(days===3)sendLocalNotification('📅 Upcoming Service','Your solar service is in 3 days on '+ns+'.');}catch(e){}
+}
+
+function showToast(msg,duration){
+  var e=document.getElementById('sfToast');if(e)e.remove();
+  var t=document.createElement('div');t.id='sfToast';t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(8,15,30,0.97);color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;border:1px solid rgba(245,166,35,0.3);backdrop-filter:blur(10px);max-width:90vw;text-align:center;';
+  document.body.appendChild(t);
+  setTimeout(function(){t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(function(){t.remove();},300);},(duration||3000));
+}
+
+function loadRazorpay(cb){if(window.Razorpay){cb();return;}var s=document.createElement('script');s.src='https://checkout.razorpay.com/v1/checkout.js';s.onload=cb;document.head.appendChild(s);}
+function payNow(amount,description,planName){
+  if(!RAZORPAY_ENABLED||RAZORPAY_KEY==='YOUR_RAZORPAY_KEY'){showToast('💳 Payment gateway coming soon! Call +91 93854 49167 to pay.');return;}
+}
+
+async function sendToSheet(data){
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;if(!wh)return false;
+  if(FIREBASE_ENABLED&&db){try{var col=data.formType||data.action||'misc';await fbSave(col,'doc_'+Date.now(),Object.assign({},data,{savedAt:new Date().toISOString()}));}catch(fe){}}
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});return true;}
+  catch(e){try{await fetch(wh,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});return true;}catch(e2){return false;}}
+}
+
+function saveLocal(d){var a=JSON.parse(localStorage.getItem(DB)||'[]');a.unshift(d);localStorage.setItem(DB,JSON.stringify(a));}
+function getLocal(){return JSON.parse(localStorage.getItem(DB)||'[]');}
+function getCustomerData(id){return JSON.parse(localStorage.getItem('cdata_'+id)||'{}');}
+function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(d));}
+
+function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);WEBHOOK_URL=u;s.textContent='✅ Webhook saved!';s.className='wst ok';}
+function savePwd(){
+  var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');
+  if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}
+  hashPassword(p).then(function(hashed){localStorage.setItem(PW,hashed);s.textContent='✅ Password updated securely.';s.className='wst ok';});
+}
+async function testConnection(){
+  var res=document.getElementById('testResult');res.textContent='⏳ Testing...';res.style.color='#F5A623';
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;if(!wh){res.textContent='❌ No URL saved.';res.style.color='#FF5252';return;}
+  try{var r=await fetch(wh,{method:'GET'});var data=await r.json();if(data.status==='ok'){res.textContent='✅ Connected! '+data.app;res.style.color='#00E676';}else{res.textContent='⚠️ Connected but unexpected: '+JSON.stringify(data);res.style.color='#F5A623';}}
+  catch(e){try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({formType:'test',name:'Test'})});res.textContent='✅ Connected via POST!';res.style.color='#00E676';}catch(e2){res.textContent='❌ Cannot connect: '+e.message;res.style.color='#FF5252';}}
+}
+window.addEventListener('load',function(){
+  if(!localStorage.getItem(WH))localStorage.setItem(WH,WEBHOOK_URL);
+  var wh=localStorage.getItem(WH);var el=document.getElementById('whUrl');
+  if(el){el.value=wh;var st=document.getElementById('whSt');if(st){st.textContent='✅ Google Sheet connected.';st.className='wst ok';}}
+  var session=getSession();
+  if(session){var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');var customer=lc[session.customerId];if(customer){customer.id=session.customerId;loginSuccess(customer);}}
+  refreshDash();logActivity('PAGE_LOAD','App opened');initFirebase();
+});
+function cpCode(){navigator.clipboard.writeText(document.getElementById('gasCd').textContent).then(()=>{var m=document.getElementById('cpOk');m.style.display='block';setTimeout(()=>m.style.display='none',3000);});}
+
+function switchAuthTab(tab){
+  var loginDiv=document.getElementById('authLogin'),regDiv=document.getElementById('authRegister');
+  var loginBtn=document.getElementById('tabLoginBtn'),regBtn=document.getElementById('tabRegBtn');
+  if(tab==='register'){
+    if(loginDiv)loginDiv.style.display='none';if(regDiv)regDiv.style.display='';
+    if(loginBtn){loginBtn.style.background='transparent';loginBtn.style.color='var(--soft)';}
+    if(regBtn){regBtn.style.background='linear-gradient(135deg,#00E676,#00B0FF)';regBtn.style.color='#080F1E';}
+  }else{
+    if(loginDiv)loginDiv.style.display='';if(regDiv)regDiv.style.display='none';
+    if(loginBtn){loginBtn.style.background='linear-gradient(135deg,var(--sun),var(--solar))';loginBtn.style.color='var(--deep)';}
+    if(regBtn){regBtn.style.background='transparent';regBtn.style.color='var(--soft)';}
+  }
+}
+
+var regOtpStore=null;var regOtpTimerInterval=null;
+function backToRegStep1(){document.getElementById('regStep1').style.display='';document.getElementById('regStep2').style.display='none';if(regOtpTimerInterval)clearInterval(regOtpTimerInterval);}
+
+async function startRegistration(){
+  var name=document.getElementById('regName').value.trim(),phone=document.getElementById('regPhone').value.trim(),email=document.getElementById('regEmail').value.trim(),city=document.getElementById('regCity').value;
+  if(city==='Other'){var oc=document.getElementById('regCityOther');city=oc&&oc.value.trim()?oc.value.trim():'Other';}
+  var pwd=document.getElementById('regPwd').value,pwd2=document.getElementById('regPwd2').value,erEl=document.getElementById('reg-er');
+  erEl.classList.remove('show');
+  if(!name||!phone||!email||!city||!pwd){erEl.textContent='❌ Please fill in all fields.';erEl.classList.add('show');return;}
+  if(!email.includes('@')){erEl.textContent='❌ Enter a valid email.';erEl.classList.add('show');return;}
+  if(pwd.length<6){erEl.textContent='❌ Password must be at least 6 characters.';erEl.classList.add('show');return;}
+  if(pwd!==pwd2){erEl.textContent='❌ Passwords do not match.';erEl.classList.add('show');return;}
+  var btn=document.getElementById('regStep1Txt'),loader=document.getElementById('regStep1Loader');
+  btn.style.display='none';loader.style.display='block';
+  var otp=Math.floor(100000+Math.random()*900000).toString(),expires=Date.now()+5*60*1000,hashedPwd=await hashPassword(pwd);
+  regOtpStore={otp,email,name,phone,city,pwd:hashedPwd,expires};
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendOTP',email,otp,subject:'Verify your Skyflies Solar Account – OTP: '+otp,purpose:'registration',name})});}catch(e){}
+  btn.style.display='';loader.style.display='none';
+  document.getElementById('regStep1').style.display='none';document.getElementById('regStep2').style.display='';
+  document.getElementById('regEmailShow').textContent=email;document.getElementById('regOtpInput').value='';document.getElementById('regOtpInput').focus();
+  if(regOtpTimerInterval)clearInterval(regOtpTimerInterval);
+  var timerEl=document.getElementById('regOtpTimer');
+  regOtpTimerInterval=setInterval(function(){var rem=Math.max(0,expires-Date.now());var m=Math.floor(rem/60000);var s=Math.floor((rem%60000)/1000);if(timerEl)timerEl.textContent=m+':'+String(s).padStart(2,'0');if(rem<=0){clearInterval(regOtpTimerInterval);regOtpStore=null;if(timerEl)timerEl.textContent='Expired';}},1000);
+}
+
+async function verifyRegOTP(){
+  var otp=document.getElementById('regOtpInput').value.trim(),erEl=document.getElementById('reg-er2'),okEl=document.getElementById('reg-ok');
+  erEl.classList.remove('show');okEl.classList.remove('show');
+  if(!otp){erEl.textContent='❌ Please enter the OTP.';erEl.classList.add('show');return;}
+  if(!regOtpStore||Date.now()>regOtpStore.expires){erEl.textContent='❌ OTP expired. Click Resend OTP.';erEl.classList.add('show');regOtpStore=null;return;}
+  if(otp!==regOtpStore.otp){erEl.textContent='❌ Wrong OTP. Please check your email.';erEl.classList.add('show');return;}
+  var btn=document.getElementById('regVerifyTxt'),loader=document.getElementById('regVerifyLoader');
+  btn.style.display='none';loader.style.display='block';
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL,existing=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  var count=Object.keys(existing).length+1,custId='SKY-'+String(count).padStart(3,'0');
+  try{var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getAllCustomers'})});var res=await r.json();if(res.status==='success'&&res.customers){count=res.customers.length+1;custId='SKY-'+String(count).padStart(3,'0');}}catch(e){}
+  var newCustomer={pwd:regOtpStore.pwd,name:regOtpStore.name,phone:regOtpStore.phone,email:regOtpStore.email,city:regOtpStore.city,address:'',systemSize:'Pending',panels:'Pending',installCost:'Pending',amountPaid:'Pending',plan:'Pending – Skyflies Team will contact you',billingCycle:'Monthly',nextService:'TBD',systemStatus:'Pending Installation',installDate:'',notes:'Self-registered via OTP. '+new Date().toLocaleDateString('en-IN'),subscriptions:[],timeline:[{icon:'📝',title:'Account Created',date:new Date().toLocaleDateString('en-IN'),desc:'Account verified via OTP. Customer ID: '+custId,status:'done'},{icon:'📞',title:'Site Survey',date:'TBD',desc:'Skyflies Team will contact you shortly for a free site survey.',status:'active'},{icon:'💰',title:'Quotation',date:'TBD',desc:'Detailed quote sent after site survey.',status:'pending'},{icon:'🔧',title:'Installation',date:'TBD',desc:'Solar system installation.',status:'pending'},{icon:'✅',title:'System Active',date:'TBD',desc:'System live and generating power.',status:'pending'}],queries:[]};
+  existing[custId]=newCustomer;localStorage.setItem('sf_customers',JSON.stringify(existing));
+  await sendToSheet({action:'addCustomer',customerId:custId,name:regOtpStore.name,phone:regOtpStore.phone,email:regOtpStore.email,city:regOtpStore.city,password:regOtpStore.pwd,address:'',systemSize:'Pending',panels:'Pending',installCost:'Pending',amountPaid:'Pending',plan:'Pending – Skyflies Team will contact',billingCycle:'Monthly',nextService:'TBD',systemStatus:'Pending Installation',installDate:new Date().toLocaleDateString('en-IN'),notes:'Self-registered via OTP.'});
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendWelcomeEmail',email:regOtpStore.email,name:regOtpStore.name,customerId:custId,phone:regOtpStore.phone})});}catch(e){}
+  await sendToSheet({action:'adminAlert',subject:'🎉 New Customer Registered – '+regOtpStore.name+' ('+custId+')',message:'New customer registered via OTP.\nName: '+regOtpStore.name+'\nPhone: '+regOtpStore.phone+'\nEmail: '+regOtpStore.email+'\nCity: '+regOtpStore.city+'\nCustomer ID: '+custId});
+  if(FIREBASE_ENABLED&&db){try{await fbSave('customers',custId,Object.assign({},newCustomer,{customerId:custId}));}catch(fe){}}
+  clearInterval(regOtpTimerInterval);regOtpStore=null;
+  btn.style.display='';loader.style.display='none';
+  okEl.textContent='✅ Account created! Your ID: '+custId+' — Signing you in...';okEl.classList.add('show');
+  logActivity('REGISTER_OTP','New customer: '+newCustomer.name+' ('+custId+')');
+  setTimeout(function(){loginSuccess(Object.assign({},newCustomer,{id:custId}));},2000);
+}
+
+
+async function loadPendingFromSheet(){
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL,con=document.getElementById('pendingContainer');
+  if(con)con.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);">⏳ Loading...</div>';
+  var freshPending=[];
+  if(FIREBASE_ENABLED&&db){try{var snap=await db.collection('register').get();snap.forEach(function(doc){var p=doc.data();var st=String(p.status||'').toLowerCase().trim();if(st!=='approved'&&st!=='rejected'){freshPending.push({id:p.regId||doc.id,name:p.name||'',phone:p.phone||'',email:p.email||'',city:p.city||'',pwd:p.password||'',status:'pending',submittedAt:p.submittedAt||''});}});}catch(fe){}}
+  try{var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getPending'})});var res=await r.json();if(res.status==='success'&&res.pending&&res.pending.length){var existingIds=freshPending.map(function(p){return p.id;});res.pending.forEach(function(p){if(!existingIds.includes(p.regId)){freshPending.push({id:p.regId||('ROW-'+Date.now()),name:p.name||'',phone:p.phone||'',email:p.email||'',city:p.city||'',pwd:p.password||'',status:'pending',submittedAt:p.submittedAt||''});}});}}catch(e){}
+  var local=JSON.parse(localStorage.getItem('sf_pending')||'[]'),serverIds=freshPending.map(function(p){return p.id;});
+  local.forEach(function(p){if(p.status==='pending'&&!serverIds.includes(p.id))freshPending.push(p);});
+  localStorage.setItem('sf_pending',JSON.stringify(freshPending));renderPending();
+}
+
+function renderPending(){
+  var all=JSON.parse(localStorage.getItem('sf_pending')||'[]');
+  PENDING_LIST=all.filter(function(p){var st=String(p.status||'').toLowerCase();return st==='pending'||st===''||!st;});
+  var pc=document.getElementById('pendCount'),pb=document.getElementById('pendBadge');
+  if(pc)pc.textContent=PENDING_LIST.length;if(pb)pb.textContent=PENDING_LIST.length>0?PENDING_LIST.length+' waiting':'';
+  var con=document.getElementById('pendingContainer');if(!con)return;
+  if(!PENDING_LIST.length){con.innerHTML='<div style="text-align:center;padding:24px;color:var(--soft);font-size:13px;">✅ No pending registrations.</div>';return;}
+  con.innerHTML='';
+  PENDING_LIST.forEach(function(p,idx){
+    var dt=p.submittedAt?new Date(p.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
+    var card=document.createElement('div');card.style.cssText='background:rgba(255,152,0,0.06);border:1px solid rgba(255,152,0,0.3);border-radius:12px;padding:18px;margin-bottom:12px;';
+    var info=document.createElement('div');info.style.cssText='display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;';
+    var details=document.createElement('div');details.innerHTML='<div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:6px;">👤 '+p.name+'</div><div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📞 '+(p.phone||'–')+'</div><div style="font-size:12px;color:var(--soft);margin-bottom:3px;">✉️ '+(p.email||'–')+'</div><div style="font-size:12px;color:var(--soft);margin-bottom:3px;">📍 '+(p.city||'–')+'</div><div style="font-size:11px;color:rgba(168,192,224,0.4);">🕐 '+dt+'</div>';
+    var btnBox=document.createElement('div');btnBox.style.cssText='display:flex;flex-direction:column;gap:8px;min-width:190px;';
+    var approveBtn=document.createElement('button');approveBtn.textContent='✅ Approve & Activate';approveBtn.style.cssText='padding:12px 16px;background:linear-gradient(135deg,#00E676,#00B0FF);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;width:100%;';approveBtn.setAttribute('data-idx',idx);approveBtn.onclick=function(){var i=parseInt(this.getAttribute('data-idx'));var reg=PENDING_LIST[i];if(!reg){alert('Error: not found.');return;}this.textContent='⏳ Approving...';this.disabled=true;approveReg(reg.id);};
+    var rejectBtn=document.createElement('button');rejectBtn.textContent='❌ Reject';rejectBtn.style.cssText='padding:12px 16px;background:rgba(255,82,82,0.1);border:1px solid rgba(255,82,82,0.3);border-radius:8px;color:#FF5252;font-weight:700;font-size:13px;cursor:pointer;width:100%;';rejectBtn.setAttribute('data-idx',idx);rejectBtn.onclick=function(){var i=parseInt(this.getAttribute('data-idx'));var reg=PENDING_LIST[i];if(!reg){alert('Error.');return;}rejectReg(reg.id);};
+    btnBox.appendChild(approveBtn);btnBox.appendChild(rejectBtn);info.appendChild(details);info.appendChild(btnBox);card.appendChild(info);con.appendChild(card);
+  });
+}
+
+async function approveReg(regId){
+  var reg=null;
+  for(var i=0;i<PENDING_LIST.length;i++){if(PENDING_LIST[i].id===regId){reg=PENDING_LIST[i];break;}}
+  if(!reg){var all=JSON.parse(localStorage.getItem('sf_pending')||'[]');for(var j=0;j<all.length;j++){if(all[j].id===regId){reg=all[j];break;}}}
+  if(!reg){alert('❌ Error: Registration not found. Try refreshing.');return;}
+  var existing=JSON.parse(localStorage.getItem('sf_customers')||'{}'),count=Object.keys(existing).length+1,custId='SKY-'+String(count).padStart(3,'0');
+  var newCustomer={pwd:reg.pwd,name:reg.name,phone:reg.phone,email:reg.email,city:reg.city||'',address:'',systemSize:'Pending',panels:'Pending',installCost:'Pending',amountPaid:'Pending',plan:'Pending – Skyflies Team will contact you',billingCycle:'Monthly',nextService:'TBD',systemStatus:'Pending Installation',installDate:'',notes:'Self-registered. Approved '+new Date().toLocaleDateString('en-IN'),subscriptions:[],timeline:[{icon:'📝',title:'Account Registered',date:new Date().toLocaleDateString('en-IN'),desc:'Customer registered via portal.',status:'done'},{icon:'✅',title:'Account Approved',date:new Date().toLocaleDateString('en-IN'),desc:'Approved by Skyflies Team. ID: '+custId,status:'done'},{icon:'📞',title:'Site Survey',date:'TBD',desc:'Skyflies Team will contact you for site survey.',status:'active'},{icon:'📋',title:'Quotation',date:'TBD',desc:'Quotation will be sent after site survey.',status:'pending'},{icon:'🔧',title:'Installation',date:'TBD',desc:'Solar system installation.',status:'pending'},{icon:'✅',title:'System Active',date:'TBD',desc:'System commissioned and running.',status:'pending'}],queries:[]};
+  existing[custId]=newCustomer;localStorage.setItem('sf_customers',JSON.stringify(existing));
+  await sendToSheet({action:'addCustomer',customerId:custId,name:reg.name,phone:reg.phone,email:reg.email,city:reg.city||'',password:reg.pwd,address:'',systemSize:'Pending',panels:'Pending',installCost:'Pending',amountPaid:'Pending',plan:'Pending – Skyflies Team will contact',billingCycle:'Monthly',nextService:'TBD',systemStatus:'Pending Installation',installDate:new Date().toLocaleDateString('en-IN'),notes:'Self-registered. Approved '+new Date().toLocaleDateString('en-IN')});
+  var allPending=JSON.parse(localStorage.getItem('sf_pending')||'[]');allPending=allPending.map(function(p){return p.id===regId?Object.assign({},p,{status:'approved',customerId:custId}):p;});localStorage.setItem('sf_pending',JSON.stringify(allPending));
+  if(FIREBASE_ENABLED&&db){try{var snap=await db.collection('register').where('regId','==',regId).get();snap.forEach(function(doc){doc.ref.update({status:'Approved',customerId:custId});});await fbSave('customers',custId,Object.assign({},newCustomer,{customerId:custId}));}catch(fe){}}
+  alert('✅ APPROVED!\n\nCustomer: '+reg.name+'\nID: '+custId+'\nPhone: '+reg.phone+'\n\nShare Customer ID '+custId+' with them.');
+  refreshDash();renderPending();renderCustList();
+}
+
+function rejectReg(regId){
+  if(!confirm('Reject this registration?'))return;
+  var all=JSON.parse(localStorage.getItem('sf_pending')||'[]');all=all.map(function(p){return p.id===regId?Object.assign({},p,{status:'rejected'}):p;});localStorage.setItem('sf_pending',JSON.stringify(all));renderPending();
+}
+
+function loginSuccess(customer){
+  currentCustomer=customer;saveSession(customer);
+  goScreen('portal');logActivity('LOGIN_SUCCESS','Customer: '+customer.name+' ('+customer.id+')');
+  var ld=JSON.parse(localStorage.getItem('cdata_'+customer.id)||'{}');if(ld.queries&&ld.queries.length)customer.queries=[...(ld.queries||[]),...(customer.queries||[])];
+  document.getElementById('cLoginBox').style.display='none';document.getElementById('cPortal').style.display='block';
+  document.getElementById('portalName').textContent='Welcome, '+customer.name+'! ☀️';document.getElementById('portalId').textContent='ID: '+customer.id+' • '+customer.phone;
+  document.getElementById('pc-cost').textContent=customer.installCost||'–';document.getElementById('pc-paid').textContent=customer.amountPaid||'–';document.getElementById('pc-plan').textContent=customer.plan||'–';document.getElementById('pc-next').textContent=customer.nextService||'–';
+  var savingsEl=document.getElementById('pc-savings'),statusEl=document.getElementById('pc-status');
+  if(savingsEl)savingsEl.textContent=customer.systemSize&&customer.systemSize!=='Pending'?'~₹'+(parseInt(customer.systemSize)*840).toLocaleString('en-IN')+'/mo':'–';
+  if(statusEl)statusEl.textContent=customer.systemStatus||'–';
+  checkServiceNotifications();
+  sendToSheet({action:'loginEvent',customerId:customer.id,name:customer.name,phone:customer.phone,loginTime:new Date().toISOString()});
+  renderTimeline();renderSubs();renderQueries();
+}
+
+function showMainLogin(){var ml=document.getElementById('authLogin'),fp=document.getElementById('forgotPwdSection');if(ml)ml.style.display='';if(fp)fp.style.display='none';var s1=document.getElementById('fpStep1'),s2=document.getElementById('fpStep2');if(s1)s1.style.display='';if(s2)s2.style.display='none';if(resetOtpTimerInterval)clearInterval(resetOtpTimerInterval);}
+function showForgotPassword(){var ml=document.getElementById('authLogin'),fp=document.getElementById('forgotPwdSection');if(ml)ml.style.display='none';if(fp)fp.style.display='';var em=document.getElementById('fpEmail');if(em)em.focus();}
+
+var resetOtpStore=null,resetOtpTimerInterval=null;
+async function sendResetOTP(){
+  var email=document.getElementById('fpEmail').value.trim(),errEl=document.getElementById('fpStep1Err');errEl.classList.remove('show');
+  if(!email||!email.includes('@')){errEl.textContent='❌ Enter a valid email.';errEl.classList.add('show');return;}
+  var rl=checkRateLimit('fp_'+email);if(rl.blocked){errEl.textContent='❌ '+rl.message;errEl.classList.add('show');return;}
+  var btn=document.getElementById('fpSendTxt'),loader=document.getElementById('fpSendLoader');btn.style.display='none';loader.style.display='block';
+  var otp=Math.floor(100000+Math.random()*900000).toString(),expires=Date.now()+5*60*1000;resetOtpStore={otp,email,expires};
+  var wh=localStorage.getItem(WH)||WEBHOOK_URL;try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'sendOTP',email,otp})});}catch(e){}
+  btn.style.display='';loader.style.display='none';
+  document.getElementById('fpStep1').style.display='none';document.getElementById('fpStep2').style.display='';document.getElementById('fpEmailShow').textContent=email;document.getElementById('fpOtpCode').focus();
+  if(resetOtpTimerInterval)clearInterval(resetOtpTimerInterval);
+  var timerEl=document.getElementById('fpTimer');resetOtpTimerInterval=setInterval(function(){var rem=Math.max(0,expires-Date.now());var m=Math.floor(rem/60000);var s=Math.floor((rem%60000)/1000);if(timerEl)timerEl.textContent=m+':'+String(s).padStart(2,'0');if(rem<=0){clearInterval(resetOtpTimerInterval);resetOtpStore=null;if(timerEl)timerEl.textContent='Expired';}},1000);
+}
+async function verifyResetOTP(){
+  var otp=document.getElementById('fpOtpCode').value.trim(),newPwd=document.getElementById('fpNewPwd').value,newPwd2=document.getElementById('fpNewPwd2').value,errEl=document.getElementById('fpStep2Err'),okEl=document.getElementById('fpResetOk');
+  errEl.classList.remove('show');okEl.classList.remove('show');
+  if(!otp){errEl.textContent='❌ Enter OTP.';errEl.classList.add('show');return;}
+  if(!resetOtpStore||Date.now()>resetOtpStore.expires){errEl.textContent='❌ OTP expired.';errEl.classList.add('show');resetOtpStore=null;return;}
+  if(otp!==resetOtpStore.otp){errEl.textContent='❌ Wrong OTP.';errEl.classList.add('show');return;}
+  if(!newPwd||newPwd.length<6){errEl.textContent='❌ Min 6 characters.';errEl.classList.add('show');return;}
+  if(newPwd!==newPwd2){errEl.textContent='❌ Passwords do not match.';errEl.classList.add('show');return;}
+  var btn=document.getElementById('fpVerifyTxt'),loader=document.getElementById('fpVerifyLoader');btn.style.display='none';loader.style.display='block';
+  var hashedPwd=await hashPassword(newPwd),wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'updatePassword',email:resetOtpStore.email,newPassword:hashedPwd})});}catch(e){}
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');Object.keys(lc).forEach(function(k){if(lc[k].email===resetOtpStore.email)lc[k].pwd=hashedPwd;});localStorage.setItem('sf_customers',JSON.stringify(lc));
+  if(FIREBASE_ENABLED&&db){try{var snap=await db.collection('customers').where('email','==',resetOtpStore.email).get();snap.forEach(function(doc){doc.ref.update({pwd:hashedPwd});});}catch(fe){}}
+  logActivity('PASSWORD_RESET','Email: '+resetOtpStore.email);btn.style.display='';loader.style.display='none';clearInterval(resetOtpTimerInterval);resetOtpStore=null;
+  okEl.classList.add('show');setTimeout(function(){showMainLogin();['fpEmail','fpOtpCode','fpNewPwd','fpNewPwd2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});okEl.classList.remove('show');},3000);
+}
+
+async function cLogin(){
+  var uid=document.getElementById('cuid').value.trim(),pwd=document.getElementById('cpwd').value.trim(),erEl=document.getElementById('cloginErr');
+  erEl.classList.remove('show');
+  if(!uid||!pwd){erEl.textContent='❌ Please enter your phone/email and password.';erEl.classList.add('show');return;}
+  var btn=document.getElementById('loginBtnTxt'),loader=document.getElementById('loginLoader');btn.style.display='none';loader.style.display='block';
+  var hashedPwd=await hashPassword(pwd),customer=null,wh=localStorage.getItem(WH)||WEBHOOK_URL;
+  if(wh){try{var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'getCustomer',customerId:uid,password:hashedPwd})});var res=await r.json();if(res.status==='success'){customer=res.customer;customer.id=res.customer.id;var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');lc[customer.id]=Object.assign({},customer,{pwd:hashedPwd});localStorage.setItem('sf_customers',JSON.stringify(lc));}}catch(e){}}
+  if(!customer){var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');Object.keys(lc).forEach(function(k){var c=lc[k];if((c.phone===uid||c.email===uid||k===uid)&&c.pwd===hashedPwd)customer=Object.assign({},c,{id:k});});}
+  btn.style.display='';loader.style.display='none';
+  if(customer){loginSuccess(customer);}else{erEl.textContent='❌ Wrong phone/email or password. If not registered, click "New Registration" tab.';erEl.classList.add('show');}
+}
+
+function cLogout(){
+  clearSession();logActivity('LOGOUT',currentCustomer?currentCustomer.name:'unknown');
+  document.getElementById('cLoginBox').style.display='';document.getElementById('cPortal').style.display='none';currentCustomer=null;
+  showMainLogin();var cuid=document.getElementById('cuid');if(cuid)cuid.value='';var cpwd=document.getElementById('cpwd');if(cpwd)cpwd.value='';switchAuthTab('login');
+}
+function refreshDash(){
+  var data=getLocal(),counts={all:data.length,enquiry:0,quotation:0,subscribe:0,emi:0};
+  data.forEach(d=>{if(counts[d.formType]!==undefined)counts[d.formType]++;});
+  var tc=document.getElementById('totalCount');if(tc)tc.textContent=counts.all;var ec=document.getElementById('enqCount');if(ec)ec.textContent=counts.enquiry;var qc=document.getElementById('quotCount');if(qc)qc.textContent=counts.quotation;var sc=document.getElementById('subCount');if(sc)sc.textContent=counts.subscribe;var mc=document.getElementById('emiCount');if(mc)mc.textContent=counts.emi;
+  var pending=JSON.parse(localStorage.getItem('sf_pending')||'[]').filter(p=>p.status==='pending');var pc=document.getElementById('pendCount');if(pc)pc.textContent=pending.length;
+  renderTable(curFilter);renderCustList();renderActivityLog();
+}
+function filterTable(f,btn){curFilter=f;document.querySelectorAll('.fb2').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderTable(f);}
+function renderTable(filter){
+  var data=getLocal();if(filter!=='all')data=data.filter(d=>d.formType===filter);
+  var tc=document.getElementById('tableContainer');if(!tc)return;
+  if(!data.length){tc.innerHTML='<div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No submissions yet.</div>';return;}
+  var html='<div style="overflow-x:auto;"><table class="dtbl"><thead><tr><th>Time</th><th>Type</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>Detail</th></tr></thead><tbody>';
+  data.forEach(d=>{var ts=d.submittedAt?new Date(d.submittedAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'–';var detail=d.formType==='subscribe'?'Plan: '+(d.plan||'–'):d.formType==='emi'?'EMI: '+(d.emi||'–'):d.formType==='query'?'Query: '+(d.queryType||'–'):(d.propertyType||'–');var btype=d.formType==='enquiry'?'enq':d.formType==='quotation'?'quot':d.formType==='subscribe'?'sub':'loan';var blabel={'enquiry':'Enquiry','quotation':'Quotation','subscribe':'Subscription','emi':'EMI','query':'Query'}[d.formType]||d.formType;html+=`<tr><td>${ts}</td><td><span class="badge ${btype}">${blabel}</span></td><td>${d.name||d.customerId||'–'}</td><td>${d.phone||'–'}</td><td>${d.email||'–'}</td><td>${d.city||'–'}</td><td>${detail}</td></tr>`;});
+  html+='</tbody></table></div>';tc.innerHTML=html;
+}
+function renderCustList(){
+  var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}'),keys=Object.keys(lc);
+  var cl=document.getElementById('custListContainer');if(!cl)return;
+  if(!keys.length){cl.innerHTML='<div style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">No customer accounts yet.</div>';return;}
+  var html='<div style="overflow-x:auto;"><table class="dtbl"><thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Email</th><th>City</th><th>System</th><th>Plan</th><th>Install Cost</th><th>Status</th></tr></thead><tbody>';
+  keys.forEach(id=>{var c=lc[id];html+=`<tr><td><strong style="color:var(--sun);">${id}</strong></td><td>${c.name||'–'}</td><td>${c.phone||'–'}</td><td>${c.email||'–'}</td><td>${c.city||'–'}</td><td>${c.systemSize||'–'}</td><td style="color:var(--sun);">${c.plan||'–'}</td><td>${c.installCost||'–'}</td><td>${c.systemStatus||'Active'}</td></tr>`;});
+  html+='</tbody></table></div>';cl.innerHTML=html;
+}
+function exportCSV(){
+  var data=getLocal(),lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+  var custRows=Object.keys(lc).map(id=>{var c=lc[id];return{formType:'customer',customerId:id,name:c.name,phone:c.phone,email:c.email,city:c.city,plan:c.plan,installCost:c.installCost};});
+  var allData=[...data,...custRows];if(!allData.length){alert('No data yet.');return;}
+  var cols=['submittedAt','formType','name','phone','email','city','propertyType','plan','emi','installCost','systemStatus','message'];
+  var csv=cols.join(',')+'\n';allData.forEach(function(d){csv+=cols.map(function(c){return JSON.stringify(String(d[c]||''));}).join(',')+'\n';});
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='skyflies_data.csv';a.click();
+}
+function renderActivityLog(){
+  var log=JSON.parse(localStorage.getItem('sf_activity')||'[]'),el=document.getElementById('activityLog');if(!el)return;
+  if(!log.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--soft);font-size:13px;">No activity yet.</div>';return;}
+  var icons={LOGIN_SUCCESS:'✅',LOGOUT:'🔓',PAGE_LOAD:'👁️',APPROVE:'✅',REJECT:'❌',REGISTER_OTP:'📧'};
+  el.innerHTML='<div style="display:flex;flex-direction:column;gap:6px;">'+log.slice(0,50).map(function(l){return'<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.02);border-radius:8px;border:1px solid var(--border2);"><span style="font-size:16px;">'+(icons[l.action]||'📌')+'</span><div style="flex:1;"><div style="font-size:12px;color:#fff;font-weight:500;">'+l.action.replace(/_/g,' ')+'</div><div style="font-size:11px;color:var(--soft);">'+l.details+'</div></div><div style="font-size:10px;color:rgba(168,192,224,0.4);white-space:nowrap;">'+l.time+'</div></div>';}).join('')+'</div>';
+}
+function clearData(){if(confirm('Clear all local submission data? (Google Sheet data is safe)')){localStorage.removeItem(DB);refreshDash();}}
+
+(function(){
+  var frm=document.getElementById('addCustForm');if(!frm)return;
+  frm.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var btn=this.querySelector('.sbtn'),bt=btn.querySelector('.bt'),bl=btn.querySelector('.spin');
+    document.getElementById('ac-ok').classList.remove('show');document.getElementById('ac-er').classList.remove('show');
+    var fd=new FormData(this),data={action:'addCustomer'};for(var [k,v] of fd.entries())data[k]=v;
+    btn.disabled=true;bt.style.display='none';bl.style.display='block';await new Promise(r=>setTimeout(r,800));
+    var success=false,wh=localStorage.getItem(WH)||WEBHOOK_URL;
+    try{var r=await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});var res=await r.json();if(res.status==='success')success=true;}catch(err){success=true;}
+    var lc=JSON.parse(localStorage.getItem('sf_customers')||'{}');
+    lc[data.customerId]={pwd:data.password,name:data.name,phone:data.phone,email:data.email,city:data.city,address:data.address,systemSize:data.systemSize,panels:data.panels,installCost:data.installCost,amountPaid:data.amountPaid,plan:data.plan,billingCycle:data.billingCycle||'Monthly',nextService:data.nextService,systemStatus:data.systemStatus,installDate:data.installDate,notes:data.notes||'',subscriptions:[{name:(data.plan||'').split('–')[0].trim()||'Plan',price:(data.plan||'').split('–')[1]||'',billing:data.billingCycle||'Monthly',since:data.installDate||new Date().toLocaleDateString('en-IN'),status:'Active',features:['Panel cleaning','Inspection','Support']}],timeline:[{icon:'📞',title:'Enquiry Received',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:'Customer enquiry registered.',status:'done'},{icon:'💰',title:'Payment Received',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:'Install cost: '+data.installCost,status:'done'},{icon:'🔧',title:'Installation Completed',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:(data.systemSize||''),status:'done'},{icon:'✅',title:'System Active',date:data.installDate||new Date().toLocaleDateString('en-IN'),desc:'Status: '+(data.systemStatus||'Active'),status:'done'},{icon:'📅',title:'Next Service',date:data.nextService||'TBD',desc:'Scheduled maintenance.',status:'active'}],queries:[]};
+    localStorage.setItem('sf_customers',JSON.stringify(lc));btn.disabled=false;bt.style.display='';bl.style.display='none';
+    if(success){document.getElementById('ac-ok').classList.add('show');this.reset();renderCustList();}else{document.getElementById('ac-er').classList.add('show');}
+  });
+})();
+
+function showPortalTab(tab,btn){
+  document.querySelectorAll('.ptab-content').forEach(function(t){t.classList.remove('on');});
+  document.querySelectorAll('.ptab').forEach(function(t){t.classList.remove('on');});
+  var el=document.getElementById('ptab-'+tab);if(el)el.classList.add('on');
+  if(btn)btn.classList.add('on');
+  var qok=document.getElementById('qry-ok');if(qok)qok.classList.remove('show');
+}
+function renderTimeline(){if(!currentCustomer||!currentCustomer.timeline)return;document.getElementById('timelineContainer').innerHTML=currentCustomer.timeline.map(t=>`<div class="tl-item"><div class="tl-dot ${t.status}">${t.icon}</div><div class="tl-content"><div class="tl-title">${t.title}</div><div class="tl-date">📅 ${t.date}</div><div class="tl-desc">${t.desc}</div><span class="tl-badge ${t.status}">${t.status==='done'?'COMPLETED':t.status==='active'?'IN PROGRESS':'UPCOMING'}</span></div></div>`).join('');}
+function renderSubs(){if(!currentCustomer||!currentCustomer.subscriptions)return;document.getElementById('subContainer').innerHTML=currentCustomer.subscriptions.map(s=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;"><div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;">${s.name}</div><div style="font-size:12px;color:var(--soft);">Since ${s.since} • ${s.billing}</div></div><div style="display:flex;align-items:center;gap:10px;"><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--sun);">${s.price}</div><span style="background:rgba(0,230,118,0.15);color:var(--success);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;">${s.status}</span></div></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:7px;">${(s.features||[]).map(f=>`<div style="font-size:12px;color:var(--soft);"><span style="color:var(--success);">✓</span> ${f}</div>`).join('')}</div></div>`).join('');}
+function renderQueries(){if(!currentCustomer)return;var q=currentCustomer.queries||[];var c=document.getElementById('queriesContainer');if(!q.length){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--soft);font-size:13px;">No queries yet.</div>';return;}c.innerHTML=q.map(qi=>`<div class="query-item"><div class="qi-top"><div class="qi-title">${qi.type}</div><span class="qi-status ${qi.status}">${qi.status.toUpperCase()}</span></div><div class="qi-date">📅 ${qi.date} • Priority: ${qi.priority||'Normal'}</div><div class="qi-msg">${qi.message}</div></div>`).join('');}
+
+// ── SOCIAL MEDIA ──────────────────────────────────
+function showSocTab(tab, btn) {
+  document.querySelectorAll('.soc-content').forEach(function(el) { el.style.display = 'none'; });
+  document.querySelectorAll('.soc-tab').forEach(function(el) { el.classList.remove('on'); });
+  var el = document.getElementById('soc-' + tab);
+  if (el) { el.style.display = ''; el.classList.add('on'); }
+  if (btn) btn.classList.add('on');
+  if (tab === 'youtube') loadYouTubeVideos();
+}
+
+// ── IN-APP YOUTUBE PLAYER ──────────────────────────
+var YT_CHANNEL_ID = 'UCo2y8H6qSRr_TyPX0lilxWQ'; // Skyflies Solar Solutions
+var ytVideosCache = [];
+var ytLoaded = false;
+
+function playYtVideo(videoId, title) {
+  var box = document.getElementById('ytPlayerBox');
+  var frame = document.getElementById('ytPlayerFrame');
+  var titleEl = document.getElementById('ytPlayerTitle');
+  if (!box || !frame) return;
+  frame.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&modestbranding=1';
+  if (titleEl) titleEl.textContent = title || '';
+  box.style.display = 'block';
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeYtPlayer() {
+  var box = document.getElementById('ytPlayerBox');
+  var frame = document.getElementById('ytPlayerFrame');
+  if (frame) frame.src = '';
+  if (box) box.style.display = 'none';
+}
+
+function renderYtVideos(videos) {
+  // --- Horizontal scroll row (small cards) ---
+  var row = document.getElementById('ytScrollRow');
+  if (row) {
+    row.innerHTML = videos.map(function(v) {
+      var thumb = v.thumb || ('https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg');
+      var safeTitle = v.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      return '<div onclick="playYtVideo(\'' + v.id + '\',\'' + safeTitle + '\')" ' +
+        'style="min-width:160px;max-width:160px;cursor:pointer;scroll-snap-align:start;flex-shrink:0;' +
+        'border-radius:10px;overflow:hidden;background:var(--card);border:1px solid var(--border2);' +
+        'transition:transform 0.2s;" onmouseover="this.style.transform=\'translateY(-3px)\'" onmouseout="this.style.transform=\'\'">' +
+        '<div style="position:relative;">' +
+          '<img src="' + thumb + '" style="width:160px;height:90px;object-fit:cover;display:block;" ' +
+            'onerror="this.style.background=\'#1a1a2e\';this.style.height=\'90px\'">' +
+          '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">' +
+            '<div style="width:36px;height:36px;background:rgba(255,0,0,0.85);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">▶</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="padding:7px 8px;">' +
+          '<div style="font-size:11px;color:#fff;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;">' + v.title + '</div>' +
+          '<div style="font-size:10px;color:var(--soft);margin-top:2px;">' + (v.date || '') + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // --- Grid view (larger cards) ---
+  var grid = document.getElementById('ytGrid');
+  if (grid) {
+    grid.innerHTML = videos.map(function(v) {
+      var thumb = v.thumb || ('https://img.youtube.com/vi/' + v.id + '/mqdefault.jpg');
+      var safeTitle = v.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      var isShort = v.title && v.title.toLowerCase().includes('short');
+      return '<div onclick="playYtVideo(\'' + v.id + '\',\'' + safeTitle + '\')" ' +
+        'style="cursor:pointer;border-radius:12px;overflow:hidden;background:var(--card);' +
+        'border:1px solid var(--border2);transition:all 0.3s;" ' +
+        'onmouseover="this.style.transform=\'translateY(-4px)\';this.style.borderColor=\'rgba(255,0,0,0.4)\'" ' +
+        'onmouseout="this.style.transform=\'\';this.style.borderColor=\'var(--border2)\'">' +
+        '<div style="position:relative;">' +
+          '<img src="' + thumb + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" ' +
+            'onerror="this.style.background=\'#1a1a2e\';this.style.aspectRatio=\'16/9\'">' +
+          '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.15);">' +
+            '<div style="width:52px;height:52px;background:rgba(255,0,0,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">▶</div>' +
+          '</div>' +
+          '<div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.75);color:#fff;' +
+            'font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:1px;">' +
+            (isShort ? 'SHORT' : 'VIDEO') + '</div>' +
+        '</div>' +
+        '<div style="padding:12px;">' +
+          '<div style="font-size:13px;color:#fff;font-weight:600;line-height:1.4;margin-bottom:5px;' +
+            'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">' + v.title + '</div>' +
+          '<div style="font-size:11px;color:var(--soft);">' + (v.date || '') + '</div>' +
+          '<div style="margin-top:8px;font-size:11px;color:#FF0000;font-weight:600;">▶ Play in app</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+}
+
+async function loadYouTubeVideos() {
+  if (ytLoaded && ytVideosCache.length) { renderYtVideos(ytVideosCache); return; }
+
+  var row = document.getElementById('ytScrollRow');
+  var grid = document.getElementById('ytGrid');
+  if (row) row.innerHTML = '<div style="min-width:200px;padding:30px;color:var(--soft);font-size:12px;white-space:nowrap;">⏳ Loading videos...</div>';
+  if (grid) grid.innerHTML = '';
+
+  var videos = [];
+  var CHANNEL_ID = 'UCo2y8H6qSRr_TyPX0lilxWQ';
+
+  // Try multiple RSS-to-JSON services
+  var rssUrls = [
+    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID) + '&count=20',
+    'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://www.youtube.com/feeds/videos.xml?user=skyfliessolar') + '&count=20'
+  ];
+
+  for (var i = 0; i < rssUrls.length; i++) {
+    try {
+      var r = await fetch(rssUrls[i]);
+      var data = await r.json();
+      if (data.status === 'ok' && data.items && data.items.length) {
+        videos = data.items.map(function(item) {
+          var vid = '';
+          if (item.link) vid = (item.link.split('v=')[1] || item.link.split('/').pop() || '').split('&')[0];
+          if (!vid && item.guid) vid = (item.guid.split('v=')[1] || '').split('&')[0];
+          return {
+            id: vid,
+            title: item.title || 'Skyflies Solar Video',
+            date: item.pubDate ? new Date(item.pubDate).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) : '',
+            thumb: item.thumbnail || (vid ? 'https://img.youtube.com/vi/' + vid + '/mqdefault.jpg' : '')
+          };
+        }).filter(function(v) { return v.id && v.id.length > 5; });
+        if (videos.length) break;
+      }
+    } catch (e) { console.log('RSS attempt ' + i + ' failed:', e); }
+  }
+
+  // Always show channel embed as primary view regardless of API result
+  if (grid) {
+    if (videos.length) {
+      // API worked - show grid cards
+      ytVideosCache = videos;
+      ytLoaded = true;
+      renderYtVideos(videos);
+      return;
+    } else {
+      // API failed - show YouTube channel embed directly in the app
+      grid.innerHTML =
+        '<div style="grid-column:1/-1;">' +
+          '<div style="background:var(--card);border:1px solid rgba(255,0,0,0.25);border-radius:16px;overflow:hidden;margin-bottom:16px;">' +
+            '<iframe src="https://www.youtube.com/embed?listType=user_uploads&list=skyfliessolar&autoplay=0" ' +
+              'style="width:100%;aspect-ratio:16/9;border:none;display:block;" ' +
+              'allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" ' +
+              'allowfullscreen loading="lazy"></iframe>' +
+          '</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">' +
+            ytChannelCards() +
+          '</div>' +
+        '</div>';
+    }
+  }
+  if (row) row.innerHTML = '<div style="min-width:200px;padding:12px 16px;">' +
+    '<a href="https://youtube.com/@skyfliessolar" target="_blank" ' +
+    'style="display:flex;align-items:center;gap:8px;text-decoration:none;padding:10px 16px;' +
+    'background:rgba(255,0,0,0.15);border:1px solid rgba(255,0,0,0.3);border-radius:10px;">' +
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>' +
+    '<span style="color:#FF0000;font-weight:700;font-size:13px;">@skyfliessolar — Watch all videos →</span></a></div>';
+}
+
+function ytChannelCards() {
+  var topics = [
+    {icon:'☀️', title:'Solar Installation', desc:'Residential & commercial'},
+    {icon:'🧹', title:'Panel Cleaning', desc:'Keep efficiency at 100%'},
+    {icon:'🔧', title:'Solar Repair', desc:'Expert troubleshooting'},
+    {icon:'💡', title:'Energy Savings', desc:'Cut bills by up to 90%'},
+    {icon:'🏭', title:'Industrial Solar', desc:'Factory & mill solutions'},
+    {icon:'📋', title:'AMC Plans', desc:'₹499/month maintenance'}
+  ];
+  return topics.map(function(t) {
+    return '<div onclick="window.open(\'https://youtube.com/@skyfliessolar\',\'_blank\')" ' +
+      'style="cursor:pointer;background:var(--card);border:1px solid rgba(255,0,0,0.2);border-radius:12px;' +
+      'padding:16px;text-align:center;transition:all 0.2s;" ' +
+      'onmouseover="this.style.borderColor=\'rgba(255,0,0,0.5)\';this.style.transform=\'translateY(-2px)\'" ' +
+      'onmouseout="this.style.borderColor=\'rgba(255,0,0,0.2)\';this.style.transform=\'\'">' +
+      '<div style="font-size:28px;margin-bottom:8px;">' + t.icon + '</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">' + t.title + '</div>' +
+      '<div style="font-size:11px;color:var(--soft);">' + t.desc + '</div>' +
+      '<div style="font-size:11px;color:#FF0000;margin-top:8px;font-weight:600;">Watch on YouTube ▶</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── SERVICE WORKER (PWA) ─────────────────────────
+if ('serviceWorker' in navigator && location.hostname !== 'www.claudeusercontent.com') {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function(err) { console.log('SW failed:', err); });
+  });
+}
+
+// ── PWA INSTALL ───────────────────────────────────
+var deferredPrompt = null;
+var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+var isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault(); deferredPrompt = e;
+  var banner = document.getElementById('installBanner');
+  if (banner && !localStorage.getItem('pwa_dismissed')) banner.style.display = 'block';
+});
+window.addEventListener('appinstalled', function() {
+  var banner = document.getElementById('installBanner');
+  if (banner) banner.style.display = 'none'; deferredPrompt = null;
+});
+function installApp() {
+  if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { deferredPrompt = null; }); }
+  else if (isIOS && !isInStandaloneMode) { showToast('iPhone: Safari → Share ⬆️ → Add to Home Screen'); }
+  else { alert('To install:\n\nAndroid: Open in Chrome → tap menu ⋮ → "Add to Home Screen"\n\niPhone: Open in Safari → tap Share ⬆️ → "Add to Home Screen"'); }
+}
+function dismissBanner() { var banner = document.getElementById('installBanner'); if (banner) banner.style.display = 'none'; localStorage.setItem('pwa_dismissed', '1'); }
+window.addEventListener('load', function() { if (isIOS && !isInStandaloneMode) { var heroBtn = document.getElementById('heroInstallBtn'); if (heroBtn) heroBtn.style.display = 'inline-flex'; } });
+
+// ── EMAIL PROTECTION BYPASS ─────────────────────
+// Splits email so scrapers can't harvest it, JS joins on load
+function revealEmails(){
+  var u='info';var d='skyflies.in';var e=u+'@'+d;
+  document.querySelectorAll('.sf-email').forEach(function(el){
+    el.textContent=e;
+    var parent=el.closest('a');
+    if(parent&&parent.href.indexOf('mailto')===-1){
+      parent.href='mailto:'+e;
+    }
+  });
+  // Also fix any mailto: links
+  document.querySelectorAll('a[href="mailto:info@skyflies.in"]').forEach(function(a){
+    a.href='mailto:'+e;
+  });
+}
+window.addEventListener('load', revealEmails);
+
+// ── PDF QUOTE GENERATOR ────────────────────────────
+// Generates a branded Skyflies Solar quotation PDF using browser print
+// Zero cost — no third party, works offline too
+
+function downloadPDFQuote(){
+  var nm=document.getElementById('cn').value.trim();
+  var em=document.getElementById('ce').value.trim();
+  var ph=document.getElementById('cp').value.trim();
+  var city=document.getElementById('cc').value||'Tamil Nadu';
+  var pt=document.getElementById('cpt');
+  var sz=document.getElementById('csz');
+  var pl=document.getElementById('cpl');
+  var amc=document.getElementById('camc').value;
+
+  if(!pt.value||!sz.value){
+    alert('Please calculate your quote first!');
+    document.getElementById('qresult').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  if(!nm){alert('Please enter your name at the top of the calculator.');return;}
+
+  // Get calculated values from DOM
+  var totalEl=document.getElementById('qtotal');
+  var sizeEl=document.getElementById('qsize');
+  var panelEl=document.getElementById('qpanel');
+  var panelsEl=document.getElementById('qpanels');
+  var savingEl=document.getElementById('qsaving');
+  var emiEl=document.getElementById('qemi');
+  var roiEl=document.getElementById('qroi');
+  var subsidyEl=document.getElementById('qsubsidy');
+
+  if(!totalEl||!totalEl.textContent||totalEl.textContent==='₹0'){
+    alert('Please calculate your quote first!');return;
+  }
+
+  var total=totalEl.textContent;
+  var size=sizeEl?sizeEl.textContent:'–';
+  var panel=panelEl?panelEl.textContent:'–';
+  var panels=panelsEl?panelsEl.textContent:'–';
+  var saving=savingEl?savingEl.textContent:'–';
+  var emi=emiEl?emiEl.textContent:'–';
+  var roi=roiEl?roiEl.textContent:'–';
+  var subsidy=subsidyEl?subsidyEl.textContent:'';
+  var ptText=pt.options[pt.selectedIndex].text;
+  var amcText=amc==='yes'?'Yes – Included':'No';
+
+  var today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  var quoteNo='SKY-'+Date.now().toString().slice(-6);
+  var validTill=new Date(Date.now()+30*864e5).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+
+  var html=`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Solar Quotation – ${nm} – Skyflies Solar</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:Arial,sans-serif;color:#1a1a1a;background:#fff;font-size:13px;}
+  .page{max-width:794px;margin:0 auto;padding:40px;}
+  /* Header */
+  .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:3px solid #F5A623;}
+  .logo-area{display:flex;flex-direction:column;gap:4px;}
+  .company-name{font-size:26px;font-weight:700;color:#FF6B00;letter-spacing:2px;}
+  .company-tag{font-size:11px;color:#666;letter-spacing:3px;text-transform:uppercase;}
+  .company-contact{margin-top:8px;font-size:11px;color:#444;line-height:1.8;}
+  .quote-info{text-align:right;}
+  .quote-title{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .quote-meta{font-size:11px;color:#666;line-height:2;}
+  .quote-meta strong{color:#1a1a1a;}
+  /* Client section */
+  .section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#F5A623;margin-bottom:8px;margin-top:24px;}
+  .client-box{background:#f8f8f8;border:1px solid #e8e8e8;border-radius:8px;padding:16px 20px;display:flex;gap:40px;}
+  .client-field{flex:1;}
+  .client-label{font-size:10px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+  .client-value{font-size:14px;font-weight:600;color:#1a1a1a;}
+  /* Summary box */
+  .total-box{background:linear-gradient(135deg,#FFF8EE,#FFF3E0);border:2px solid #F5A623;border-radius:12px;padding:24px;text-align:center;margin:24px 0;}
+  .total-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;margin-bottom:8px;}
+  .total-amount{font-size:42px;font-weight:700;color:#FF6B00;letter-spacing:2px;}
+  .total-sub{font-size:12px;color:#666;margin-top:6px;}
+  /* Details table */
+  table{width:100%;border-collapse:collapse;margin:8px 0;}
+  table thead tr{background:#F5A623;}
+  table thead th{padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#fff;font-weight:700;}
+  table tbody tr:nth-child(even){background:#fafafa;}
+  table tbody td{padding:10px 14px;border-bottom:1px solid #eee;font-size:12px;color:#333;}
+  table tbody td:first-child{font-weight:600;color:#1a1a1a;width:40%;}
+  /* Savings highlight */
+  .savings-row{background:#F0FFF4 !important;}
+  .savings-row td{color:#1a6e3e !important;}
+  /* Terms */
+  .terms{background:#f8f8f8;border-radius:8px;padding:16px 20px;margin-top:24px;font-size:11px;color:#666;line-height:1.8;}
+  .terms strong{color:#1a1a1a;display:block;margin-bottom:6px;}
+  /* Footer */
+  .footer{margin-top:32px;padding-top:16px;border-top:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:flex-end;}
+  .footer-left{font-size:11px;color:#888;line-height:1.8;}
+  .signature{text-align:center;}
+  .sig-line{width:160px;border-top:1px solid #999;margin:0 auto 6px;}
+  .sig-label{font-size:10px;color:#888;letter-spacing:1px;}
+  .stamp{width:70px;height:70px;border:2px solid #F5A623;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:8px;font-weight:700;color:#FF6B00;letter-spacing:0.5px;line-height:1.4;padding:8px;}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .no-print{display:none;}
+    .page{padding:20px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-area">
+      <div class="company-name">☀ SKYFLIES</div>
+      <div class="company-tag">Solar Solutions</div>
+      <div class="company-contact">
+        📍 1st Floor, No.65/2, Bujannarao Street<br>
+        Walajapet, Tamil Nadu – 632513<br>
+        📞 +91 93854 49167 &nbsp;|&nbsp; 🌐 www.skyflies.in<br>
+        ✉️ info@skyflies.in
+      </div>
+    </div>
+    <div class="quote-info">
+      <div class="quote-title">Quotation</div>
+      <div class="quote-meta">
+        Quote No: <strong>${quoteNo}</strong><br>
+        Date: <strong>${today}</strong><br>
+        Valid Until: <strong>${validTill}</strong><br>
+        Est. Since: <strong>2022</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT INFO -->
+  <div class="section-title">Prepared For</div>
+  <div class="client-box">
+    <div class="client-field">
+      <div class="client-label">Client Name</div>
+      <div class="client-value">${nm}</div>
+    </div>
+    <div class="client-field">
+      <div class="client-label">Phone</div>
+      <div class="client-value">${ph||'–'}</div>
+    </div>
+    <div class="client-field">
+      <div class="client-label">Email</div>
+      <div class="client-value">${em||'–'}</div>
+    </div>
+    <div class="client-field">
+      <div class="client-label">City</div>
+      <div class="client-value">${city}</div>
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="total-box">
+    <div class="total-label">Estimated Total (After Government Subsidy)</div>
+    <div class="total-amount">${total}</div>
+    <div class="total-sub">${subsidy}</div>
+  </div>
+
+  <!-- SYSTEM DETAILS -->
+  <div class="section-title">System Details</div>
+  <table>
+    <thead><tr><th>Item</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td>Property Type</td><td>${ptText}</td></tr>
+      <tr><td>System Size</td><td>${size}</td></tr>
+      <tr><td>Panel Type</td><td>${panel}</td></tr>
+      <tr><td>Number of Panels</td><td>${panels}</td></tr>
+      <tr><td>Annual Maintenance (AMC)</td><td>${amcText}</td></tr>
+    </tbody>
+  </table>
+
+  <!-- FINANCIAL BENEFITS -->
+  <div class="section-title">Financial Benefits</div>
+  <table>
+    <thead><tr><th>Benefit</th><th>Estimated Value</th></tr></thead>
+    <tbody>
+      <tr class="savings-row"><td>Monthly Electricity Savings</td><td>${saving}</td></tr>
+      <tr><td>EMI Option (36 months)</td><td>${emi}</td></tr>
+      <tr><td>Payback Period</td><td>${roi}</td></tr>
+      <tr class="savings-row"><td>25-Year Lifetime Savings</td><td>₹${Math.round(parseInt((saving||'₹0').replace(/[₹,]/g,''))*12*25).toLocaleString('en-IN')}</td></tr>
+    </tbody>
+  </table>
+
+  <!-- INCLUSIONS -->
+  <div class="section-title">What's Included</div>
+  <table>
+    <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+    <tbody>
+      <tr><td>Solar Panels</td><td>${panel} – High efficiency, 25 year warranty</td></tr>
+      <tr><td>Grid-Tied Inverter</td><td>Premium brand, 5 year warranty</td></tr>
+      <tr><td>Mounting Structure</td><td>Hot-dip galvanised, wind resistant</td></tr>
+      <tr><td>DC & AC Wiring</td><td>ISI certified, UV resistant cables</td></tr>
+      <tr><td>MCB & Safety Equipment</td><td>As per DISCOM norms</td></tr>
+      <tr><td>Net Meter Application</td><td>Assistance with TNEB filing</td></tr>
+      <tr><td>Installation</td><td>Professional team, 1–2 days</td></tr>
+      <tr><td>After-Sales Support</td><td>1 year free service visits</td></tr>
+    </tbody>
+  </table>
+
+  <!-- TERMS -->
+  <div class="terms">
+    <strong>Terms & Conditions</strong>
+    • This is an estimated quotation. Final price confirmed after free site survey.<br>
+    • Government subsidy subject to eligibility under PM Surya Ghar Muft Bijli Yojana.<br>
+    • Prices valid for 30 days from quote date. Subject to change based on material costs.<br>
+    • 50% advance at order confirmation. Balance before installation.<br>
+    • EMI available through partner banks. Subject to credit approval.<br>
+    • Skyflies Solar Solutions is an authorised solar installer in Tamil Nadu.
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      <strong style="color:#1a1a1a;font-size:12px;">Skyflies Solar Solutions</strong><br>
+      📞 +91 93854 49167<br>
+      🌐 www.skyflies.in<br>
+      ✉️ info@skyflies.in<br>
+      <span style="color:#F5A623;font-weight:700;">3600+ Happy Clients • Est. 2022</span>
+    </div>
+    <div class="signature">
+      <div style="display:flex;gap:24px;align-items:flex-end;">
+        <div>
+          <div class="sig-line"></div>
+          <div class="sig-label">Authorised Signatory</div>
+          <div style="font-size:10px;color:#888;margin-top:2px;">Skyflies Solar Solutions</div>
+        </div>
+        <div class="stamp">SKYFLIES<br>SOLAR<br>SOLUTIONS<br>✓ VERIFIED</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>`;
+
+  var win=window.open('','_blank','width=900,height=700');
+  if(!win){alert('Please allow popups for this site to generate PDF.');return;}
+  win.document.write(html);
+  win.document.close();
+  win.onload = function(){ setTimeout(function(){ win.print(); }, 500); };
+  win.onafterprint = function(){ win.close(); };
+
+  // Also log this quote
+  sendToSheet({
+    formType:'quotation',
+    name:nm, email:em, phone:ph, city:city,
+    propertyType:ptText,
+    systemType:size+' | '+panel,
+    budget:'PDF Quote downloaded',
+    message:'PDF Quote generated. Quote No: '+quoteNo+' | Total: '+total,
+    submittedAt:new Date().toISOString()
+  });
+
+  showToast('✅ PDF opening... In the print dialog, choose "Save as PDF"!');
+}
+
+
+// ── ADMIN MEDIA UPLOAD & GALLERY ─────────────────────────────────
+// Admin can add YouTube video URLs and photo URLs
+// These show in Social → Videos tab as "Our Work" section
+
+function saveAdminMedia(type, url, caption) {
+  var media = JSON.parse(localStorage.getItem('sf_media') || '[]');
+  media.unshift({
+    type: type,        // 'video' or 'photo'
+    url: url,
+    caption: caption || '',
+    date: new Date().toLocaleDateString('en-IN'),
+    id: Date.now().toString()
+  });
+  if(media.length > 50) media = media.slice(0, 50);
+  localStorage.setItem('sf_media', JSON.stringify(media));
+}
+
+function getAdminMedia() {
+  return JSON.parse(localStorage.getItem('sf_media') || '[]');
+}
+
+function deleteAdminMedia(id) {
+  var media = getAdminMedia().filter(function(m){ return m.id !== id; });
+  localStorage.setItem('sf_media', JSON.stringify(media));
+  renderAdminMediaList();
+  loadAdminMedia();
+}
+
+function addAdminVideo() {
+  var url = document.getElementById('adminVideoUrl').value.trim();
+  var caption = document.getElementById('adminVideoCaption').value.trim();
+  if(!url){ showToast('❌ Please enter a YouTube URL'); return; }
+  
+  // Extract video ID from various YouTube URL formats
+  var videoId = '';
+  var patterns = [
+    /youtube[.]com\/watch[?]v=([^&]+)/,
+    /youtu[.]be\/([^?]+)/,
+    /youtube[.]com\/shorts\/([^?]+)/,
+  ];
+  for(var i=0; i<patterns.length; i++){
+    var m = url.match(patterns[i]);
+    if(m){ videoId = m[1]; break; }
+  }
+  if(!videoId){ showToast('❌ Invalid YouTube URL. Use youtube.com/watch?v=... or youtu.be/...'); return; }
+  
+  saveAdminMedia('video', videoId, caption || 'Installation Video');
+  document.getElementById('adminVideoUrl').value = '';
+  document.getElementById('adminVideoCaption').value = '';
+  showToast('✅ Video added!');
+  renderAdminMediaList();
+  loadAdminMedia();
+}
+
+function addAdminPhoto() {
+  var url = document.getElementById('adminPhotoUrl').value.trim();
+  var caption = document.getElementById('adminPhotoCaption').value.trim();
+  if(!url){ showToast('❌ Please enter an image URL'); return; }
+  saveAdminMedia('photo', url, caption || 'Installation Photo');
+  document.getElementById('adminPhotoUrl').value = '';
+  document.getElementById('adminPhotoCaption').value = '';
+  showToast('✅ Photo added!');
+  renderAdminMediaList();
+  loadAdminMedia();
+}
+
+function renderAdminMediaList() {
+  var container = document.getElementById('adminMediaList');
+  if(!container) return;
+  var media = getAdminMedia();
+  if(!media.length){
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--soft);font-size:13px;">No media added yet.</div>';
+    return;
+  }
+  var html = '';
+  for(var i=0;i<media.length;i++){
+    var m = media[i];
+    var isVid = (m.type === 'video');
+    var thumb = isVid ? ('https://img.youtube.com/vi/' + m.url + '/mqdefault.jpg') : m.url;
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--card2);border-radius:10px;margin-bottom:8px;">';
+    html += '<img src="' + thumb + '" style="width:64px;height:44px;object-fit:cover;border-radius:7px;background:#111;">';
+    html += '<div style="flex:1;min-width:0;">';
+    html += '<div style="font-size:12px;font-weight:600;color:#fff;">' + m.caption + '</div>';
+    html += '<div style="font-size:10px;color:var(--soft);">' + (isVid ? 'Video' : 'Photo') + ' - ' + m.date + '</div>';
+    html += '</div>';
+    html += '<button data-mid="' + m.id + '" class="dmb" style="padding:5px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:7px;color:#EF4444;font-size:11px;cursor:pointer;flex-shrink:0;">Del</button>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+  var btns = container.querySelectorAll('.dmb');
+  for(var j=0;j<btns.length;j++){
+    btns[j].onclick = (function(id){ return function(){ deleteAdminMedia(id); }; })(btns[j].getAttribute('data-mid'));
+  }
+}
+
+function loadAdminMedia() {
+  var media = getAdminMedia();
+  var videos = media.filter(function(m){ return m.type === 'video'; });
+  var photos = media.filter(function(m){ return m.type === 'photo'; });
+
+  var ourWork = document.getElementById('ourWorkSection');
+  var ourGrid = document.getElementById('ourWorkGrid');
+  if(ourWork && ourGrid) {
+    if(videos.length) {
+      ourWork.style.display = 'block';
+      var vh = '';
+      for(var i=0;i<videos.length;i++){
+        var v = videos[i];
+        vh += '<div class="yt-card" data-vid="'+v.url+'" data-cap="'+v.caption+'">';
+        vh += '<div style="position:relative;"><img src="https://img.youtube.com/vi/'+v.url+'/mqdefault.jpg" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#111;">';
+        vh += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;"><div style="width:44px;height:44px;background:rgba(255,0,0,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;">▶</div></div></div>';
+        vh += '<div style="padding:9px;"><div class="yt-card-title">'+v.caption+'</div><div class="yt-card-meta">Our Installation</div></div>';
+        vh += '</div>';
+      }
+      ourGrid.innerHTML = vh;
+      ourGrid.querySelectorAll('.yt-card').forEach(function(card){
+        card.onclick = function(){ playYtVideo(this.getAttribute('data-vid'), this.getAttribute('data-cap')); };
+      });
+    } else {
+      ourWork.style.display = 'none';
+    }
+  }
+
+  var photoSec = document.getElementById('photoGallerySection');
+  var photoGal = document.getElementById('photoGallery');
+  if(photoSec && photoGal) {
+    if(photos.length) {
+      photoSec.style.display = 'block';
+      var ph = '';
+      for(var j=0;j<photos.length;j++){
+        var p = photos[j];
+        ph += '<div class="ig-tile" style="background:#111;" data-purl="'+p.url+'" data-pcap="'+p.caption+'">';
+        ph += '<img src="'+p.url+'" style="width:100%;height:100%;object-fit:cover;">';
+        ph += '</div>';
+      }
+      photoGal.innerHTML = ph;
+      photoGal.querySelectorAll('.ig-tile').forEach(function(tile){
+        tile.onclick = function(){ showFullPhoto(this.getAttribute('data-purl'), this.getAttribute('data-pcap')); };
+      });
+    } else {
+      photoSec.style.display = 'none';
+    }
+  }
+}
+
+// ── MEDIA TAB SWITCHER ───────────────────────────────────────────
+function switchMediaTab(tab) {
+  var photoTab  = document.getElementById('mediaPhotoTab');
+  var videoTab  = document.getElementById('mediaVideoTab');
+  var photoBtn  = document.getElementById('mediaTabPhoto');
+  var videoBtn  = document.getElementById('mediaTabVideo');
+  if (tab === 'photo') {
+    if(photoTab) photoTab.style.display = '';
+    if(videoTab) videoTab.style.display = 'none';
+    if(photoBtn) { photoBtn.style.background = 'linear-gradient(135deg,var(--sun),var(--solar))'; photoBtn.style.color = '#080F1E'; }
+    if(videoBtn) { videoBtn.style.background = 'transparent'; videoBtn.style.color = 'var(--soft)'; }
+  } else {
+    if(photoTab) photoTab.style.display = 'none';
+    if(videoTab) videoTab.style.display = '';
+    if(videoBtn) { videoBtn.style.background = 'linear-gradient(135deg,var(--sun),var(--solar))'; videoBtn.style.color = '#080F1E'; }
+    if(photoBtn) { photoBtn.style.background = 'transparent'; photoBtn.style.color = 'var(--soft)'; }
+  }
+}
+
+// ── PHOTO GALLERY UPLOAD ─────────────────────────────────────────
+// Reads photos from phone gallery as base64, stores locally
+// Shows preview grid before saving
+function handlePhotoSelect(input) {
+  var files = Array.from(input.files);
+  if (!files.length) return;
+
+  var previewArea = document.getElementById('photoPreviewArea');
+  var previewGrid = document.getElementById('photoPreviewGrid');
+  var uploadBtn   = document.getElementById('uploadPhotoBtn');
+  var result      = document.getElementById('photoUploadResult');
+
+  previewGrid.innerHTML = '';
+  result.textContent = '';
+  previewArea.style.display = 'block';
+  uploadBtn.style.display = 'flex';
+
+  // Highlight drop zone
+  var dz = document.getElementById('photoDropZone');
+  if(dz) { dz.style.borderColor = 'var(--sun)'; dz.style.background = 'rgba(245,166,35,0.05)'; }
+
+  files.forEach(function(file, idx) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var div = document.createElement('div');
+      div.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;cursor:pointer;';
+      div.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">' +
+        '<div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;" onclick="removePhotoPreview(this,' + idx + ')">✕</div>';
+      div.setAttribute('data-src', e.target.result);
+      div.setAttribute('data-idx', idx);
+      previewGrid.appendChild(div);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('uploadPhotoBtnTxt').textContent = '📤 Upload ' + files.length + ' photo' + (files.length > 1 ? 's' : '') + ' to App';
+}
+
+function removePhotoPreview(btn, idx) {
+  btn.parentElement.remove();
+  var remaining = document.getElementById('photoPreviewGrid').children.length;
+  if (remaining === 0) {
+    document.getElementById('photoPreviewArea').style.display = 'none';
+    document.getElementById('uploadPhotoBtn').style.display = 'none';
+    document.getElementById('photoFileInput').value = '';
+  } else {
+    document.getElementById('uploadPhotoBtnTxt').textContent = '📤 Upload ' + remaining + ' photo' + (remaining > 1 ? 's' : '') + ' to App';
+  }
+}
+
+function uploadPhotosFromGallery() {
+  var grid    = document.getElementById('photoPreviewGrid');
+  var caption = (document.getElementById('adminPhotoCaption').value || '').trim();
+  var result  = document.getElementById('photoUploadResult');
+  var btnTxt  = document.getElementById('uploadPhotoBtnTxt');
+  var loader  = document.getElementById('uploadPhotoLoader');
+  var imgs    = grid.querySelectorAll('[data-src]');
+
+  if (!imgs.length) { showToast('Please select photos first'); return; }
+
+  btnTxt.style.display = 'none';
+  loader.style.display = 'block';
+  result.textContent = '';
+
+  var saved = 0;
+  imgs.forEach(function(div, i) {
+    var src      = div.getAttribute('data-src');
+    var cap      = caption || ('Installation Photo ' + (getAdminMedia().length + i + 1));
+    saveAdminMedia('photo', src, cap);
+    saved++;
+  });
+
+  btnTxt.style.display = 'flex';
+  loader.style.display = 'none';
+
+  result.textContent = '✅ ' + saved + ' photo' + (saved > 1 ? 's' : '') + ' added to gallery!';
+  result.style.color = '#10B981';
+
+  // Reset
+  document.getElementById('photoFileInput').value = '';
+  document.getElementById('adminPhotoCaption').value = '';
+  document.getElementById('photoPreviewGrid').innerHTML = '';
+  document.getElementById('photoPreviewArea').style.display = 'none';
+  document.getElementById('uploadPhotoBtn').style.display = 'none';
+  var dz = document.getElementById('photoDropZone');
+  if(dz) { dz.style.borderColor = 'rgba(245,166,35,0.4)'; dz.style.background = ''; }
+
+  renderAdminMediaList();
+  loadAdminMedia();
+  showToast('✅ ' + saved + ' photo' + (saved > 1 ? 's' : '') + ' added!');
+  setTimeout(function(){ result.textContent = ''; }, 3000);
+}
+
+
+
+function showFullPhoto(url, caption) {
+  var overlay = document.getElementById('photoOverlay');
+  var img = document.getElementById('photoOverlayImg');
+  var cap = document.getElementById('photoOverlayCaption');
+  if(overlay && img){ 
+    img.src = url;
+    if(cap) cap.textContent = caption;
+    overlay.style.display = 'flex';
+  }
+}
+function closeFullPhoto() {
+  var overlay = document.getElementById('photoOverlay');
+  if(overlay) overlay.style.display = 'none';
+}
+
+
+
+// ════════════════════════════════════════════════════════════════
+// SOLAR STORE
+// ════════════════════════════════════════════════════════════════
+
+// Default products (admin can add more)
+var DEFAULT_PRODUCTS = [
+  {id:'p1',name:'Monocrystalline Solar Panel 330W',cat:'panels',price:8500,origPrice:10000,desc:'High efficiency mono panel, 25 year warranty. Ideal for residential rooftops.',brand:'Luminous',img:'',stock:'in'},
+  {id:'p2',name:'Polycrystalline Solar Panel 300W',cat:'panels',price:6500,origPrice:8000,desc:'Durable poly panel suitable for all weather conditions.',brand:'Tata Solar',img:'',stock:'in'},
+  {id:'p3',name:'5kW Solar Hybrid Inverter',cat:'inverters',price:28000,origPrice:35000,desc:'MPPT hybrid inverter with WiFi monitoring. Works with grid and battery.',brand:'Luminous',img:'',stock:'in'},
+  {id:'p4',name:'3kW Solar On-Grid Inverter',cat:'inverters',price:18000,origPrice:22000,desc:'Pure sine wave, grid-tied inverter with anti-islanding protection.',brand:'Growatt',img:'',stock:'in'},
+  {id:'p5',name:'150Ah Tall Tubular Solar Battery',cat:'batteries',price:14000,origPrice:16000,desc:'Deep cycle battery optimised for solar. 5 year warranty.',brand:'Exide',img:'',stock:'in'},
+  {id:'p6',name:'Solar DC Fan 25W',cat:'appliances',price:2200,origPrice:3000,desc:'Runs directly on solar panel. No inverter needed. 3 speed settings.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p7',name:'Solar LED Bulb Pack (10)',cat:'appliances',price:1200,origPrice:1800,desc:'9W solar LED bulbs. 10 pack. Compatible with 12V DC solar system.',brand:'Syska',img:'',stock:'in'},
+  {id:'p8',name:'Solar Panel Mounting Structure',cat:'accessories',price:3500,origPrice:4500,desc:'GI mounting structure for 4 panels. Hot-dip galvanised for rust resistance.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p9',name:'Solar Wire 4mm² (50m)',cat:'accessories',price:1800,origPrice:2200,desc:'UV resistant DC solar cable. 4mm² cross section. 50 metre roll.',brand:'Polycab',img:'',stock:'in'},
+  {id:'p10',name:'MC4 Connector Set (10 pairs)',cat:'accessories',price:450,origPrice:600,desc:'Weatherproof MC4 solar connectors. IP67 rated. 10 male + 10 female.',brand:'Generic',img:'',stock:'in'},
+];
+
+var currentCat = 'all';
+var cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
+
+function getProducts() {
+  var saved = localStorage.getItem('sf_products');
+  if (saved) {
+    try {
+      var p = JSON.parse(saved);
+      if (p && p.length) return p;
+    } catch(e) {}
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+}
+
+function saveProducts(products) {
+  localStorage.setItem('sf_products', JSON.stringify(products));
+}
+
+// ── RENDER PRODUCTS ──────────────────────────────────────────────
+function renderProducts(products) {
+  var grid = document.getElementById('productsGrid');
+  var none = document.getElementById('noProducts');
+  if (!grid) return;
+  if (!products || !products.length) {
+    grid.innerHTML = '';
+    if(none) none.style.display = 'block';
+    return;
+  }
+  if(none) none.style.display = 'none';
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  grid.innerHTML = '';
+  products.forEach(function(p) {
+    var discount = p.origPrice && p.origPrice > p.price
+      ? Math.round((1 - p.price/p.origPrice)*100) + '% off' : '';
+    var card = document.createElement('div');
+    card.className = 'prod-card';
+    card.setAttribute('data-id', p.id);
+    var icon = catIcons[p.cat] || '📦';
+    var imgEl = p.img
+      ? '<img src="' + p.img + '" style="width:100%;aspect-ratio:1;object-fit:cover;">'
+      : '<div style="width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;background:rgba(245,166,35,0.08);">' + icon + '</div>';
+    var stockBadge = p.stock==='out'
+      ? '<span class="prod-badge out">Out of Stock</span>'
+      : p.stock==='pre' ? '<span class="prod-badge pre">Pre-order</span>'
+      : '<span class="prod-badge in">In Stock</span>';
+    var priceHtml = '<span class="prod-price">₹' + Number(p.price).toLocaleString('en-IN') + '</span>';
+    if(p.origPrice && p.origPrice > p.price) {
+      priceHtml += '<span class="prod-orig">₹' + Number(p.origPrice).toLocaleString('en-IN') + '</span>';
+      priceHtml += '<span class="prod-discount">' + discount + '</span>';
+    }
+    card.innerHTML =
+      imgEl +
+      '<div class="prod-info">' +
+        stockBadge +
+        '<div class="prod-name">' + p.name + '</div>' +
+        '<div class="prod-brand">' + p.brand + '</div>' +
+        '<div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;">' + priceHtml + '</div>' +
+        (p.stock !== 'out'
+          ? '<button class="prod-add" data-add="'+p.id+'">🛒 Add to Cart</button>'
+          : '<button class="prod-add" style="opacity:0.4;cursor:not-allowed;" disabled>Out of Stock</button>'
+        ) +
+      '</div>';
+    card.querySelector('.prod-card') ; // dummy
+    card.onclick = function(e) {
+      if(e.target.getAttribute('data-add')) { addToCart(e.target.getAttribute('data-add'), e); }
+      else { showProductDetail(this.getAttribute('data-id')); }
+    };
+    grid.appendChild(card);
+  });
+}
+
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(function(b){ b.classList.remove('on'); });
+  if(btn) btn.classList.add('on');
+  var search = (document.getElementById('storeSearch') || {}).value || '';
+  applyFilters(search, cat);
+}
+
+function filterProducts(query) {
+  applyFilters(query, currentCat);
+}
+
+function applyFilters(query, cat) {
+  var products = getProducts();
+  var q = (query || '').toLowerCase();
+  var filtered = products.filter(function(p) {
+    var matchCat = cat === 'all' || p.cat === cat;
+    var matchQ   = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  renderProducts(filtered);
+}
+
+// ── CART ─────────────────────────────────────────────────────────
+function addToCart(productId, e) {
+  if(e) e.stopPropagation();
+  var products = getProducts();
+  var product  = products.find(function(p){ return p.id === productId; });
+  if (!product) return;
+
+  var existing = cart.find(function(c){ return c.id === productId; });
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ id: product.id, name: product.name, price: product.price, qty: 1, img: product.img, cat: product.cat });
+  }
+  localStorage.setItem('sf_cart', JSON.stringify(cart));
+  updateCartBar();
+  showToast('✅ Added: ' + product.name.substring(0,25) + '...');
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(function(c){ return c.id !== productId; });
+  localStorage.setItem('sf_cart', JSON.stringify(cart));
+  updateCartBar();
+  renderCart();
+}
+
+function updateQty(productId, delta) {
+  var item = cart.find(function(c){ return c.id === productId; });
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  localStorage.setItem('sf_cart', JSON.stringify(cart));
+  updateCartBar();
+  renderCart();
+}
+
+function updateCartBar() {
+  var bar   = document.getElementById('cartBar');
+  var count = document.getElementById('cartCount');
+  var total = document.getElementById('cartTotal');
+  if (!bar) return;
+  var totalQty = cart.reduce(function(s,c){ return s+c.qty; }, 0);
+  var totalAmt = cart.reduce(function(s,c){ return s+c.price*c.qty; }, 0);
+  if (totalQty > 0) {
+    bar.style.display = 'flex';
+    if(count) count.textContent = totalQty + ' item' + (totalQty>1?'s':'') + ' in cart';
+    if(total) total.textContent = '₹' + totalAmt.toLocaleString('en-IN');
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function renderCart() {
+  var items   = document.getElementById('cartItems');
+  var empty   = document.getElementById('cartEmpty');
+  var summary = document.getElementById('cartSummary');
+  if (!items) return;
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  if (!cart.length) {
+    items.innerHTML = '';
+    if(empty)   empty.style.display   = 'block';
+    if(summary) summary.style.display = 'none';
+    return;
+  }
+  if(empty)   empty.style.display   = 'none';
+  if(summary) summary.style.display = 'block';
+  items.innerHTML = '';
+  cart.forEach(function(c) {
+    var icon = catIcons[c.cat] || '📦';
+    var row = document.createElement('div');
+    row.style.cssText = 'background:var(--card);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;';
+    row.innerHTML =
+      (c.img
+        ? '<img src="' + c.img + '" style="width:60px;height:60px;object-fit:cover;border-radius:10px;background:#111;flex-shrink:0;">'
+        : '<div style="width:60px;height:60px;border-radius:10px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">' + icon + '</div>') +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;">' + c.name + '</div>' +
+        '<div style="font-size:14px;font-weight:700;color:var(--sun);">₹' + Number(c.price).toLocaleString('en-IN') + '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">' +
+        '<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border-radius:8px;padding:4px 8px;">' +
+          '<button class="qty-minus" data-id="' + c.id + '" style="background:none;border:none;color:var(--sun);font-size:18px;cursor:pointer;padding:0 2px;">−</button>' +
+          '<span style="font-size:14px;font-weight:700;min-width:20px;text-align:center;">' + c.qty + '</span>' +
+          '<button class="qty-plus" data-id="' + c.id + '" style="background:none;border:none;color:var(--sun);font-size:18px;cursor:pointer;padding:0 2px;">+</button>' +
+        '</div>' +
+        '<button class="cart-del" data-id="' + c.id + '" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:7px;padding:4px 10px;color:#EF4444;font-size:11px;cursor:pointer;">Remove</button>' +
+      '</div>';
+    row.querySelector('.qty-minus').onclick = function(){ updateQty(this.getAttribute('data-id'),-1); };
+    row.querySelector('.qty-plus').onclick  = function(){ updateQty(this.getAttribute('data-id'), 1); };
+    row.querySelector('.cart-del').onclick  = function(){ removeFromCart(this.getAttribute('data-id')); };
+    items.appendChild(row);
+  });
+  var subtotal = cart.reduce(function(s,c){ return s+c.price*c.qty; }, 0);
+  var gst      = Math.round(subtotal * 0.18);
+  var total    = subtotal + gst;
+  var sub = document.getElementById('summarySubtotal');
+  var gs  = document.getElementById('summaryGst');
+  var tot = document.getElementById('summaryTotal');
+  if(sub) sub.textContent = '₹' + subtotal.toLocaleString('en-IN');
+  if(gs)  gs.textContent  = '₹' + gst.toLocaleString('en-IN');
+  if(tot) tot.textContent = '₹' + total.toLocaleString('en-IN');
+}
+
+
+async function placeOrder() {
+  var address = (document.getElementById('cartAddress')||{}).value||'';
+  var phone   = (document.getElementById('cartPhone')||{}).value||'';
+  if (!address.trim()) { showToast('Please enter delivery address'); return; }
+  if (!phone.trim())   { showToast('Please enter your phone number'); return; }
+  var btnTxt = document.getElementById('placeOrderTxt');
+  var loader = document.getElementById('placeOrderLoader');
+  var ok     = document.getElementById('orderOk');
+  var er     = document.getElementById('orderEr');
+  if(btnTxt) btnTxt.style.display='none';
+  if(loader) loader.style.display='block';
+  var subtotal = cart.reduce(function(s,c){ return s+c.price*c.qty; },0);
+  var gst      = Math.round(subtotal*0.18);
+  var total    = subtotal+gst;
+  var itemList = cart.map(function(c){ return c.name+' x'+c.qty+' = Rs.'+c.price*c.qty; }).join(', ');
+  var msg = '🛒 STORE ORDER | '+itemList+' | Subtotal: Rs.'+subtotal+' | GST: Rs.'+gst+' | TOTAL: Rs.'+total+' | Address: '+address+' | Phone: '+phone;
+  var orderData = {
+    formType: 'enquiry',
+    name:     currentCustomer ? currentCustomer.name : 'Customer',
+    phone:    phone,
+    email:    currentCustomer ? currentCustomer.email : '',
+    city:     currentCustomer ? currentCustomer.city  : '',
+    source:   'Store Order',
+    message:  msg
+  };
+  var success = await sendToSheet(orderData);
+  if(btnTxt) btnTxt.style.display='';
+  if(loader) loader.style.display='none';
+  if(success){
+    if(ok){ ok.classList.add('show'); ok.style.display='flex'; }
+    cart=[];
+    localStorage.setItem('sf_cart',JSON.stringify(cart));
+    updateCartBar();
+    if(document.getElementById('cartAddress')) document.getElementById('cartAddress').value='';
+    if(document.getElementById('cartPhone'))   document.getElementById('cartPhone').value='';
+    setTimeout(function(){ if(ok){ok.classList.remove('show');ok.style.display='none';} goScreen('store'); },3000);
+  } else {
+    if(er){ er.textContent='❌ Failed. Please call +91 93854 49167'; er.classList.add('show'); er.style.display='flex'; }
+    setTimeout(function(){ if(er){er.classList.remove('show');er.style.display='none';} },4000);
+  }
+}
+
+// ── ADMIN PRODUCT MANAGEMENT ─────────────────────────────────────
+function addProduct() {
+  var name  = (document.getElementById('pName') || {}).value || '';
+  var cat   = (document.getElementById('pCat') || {}).value || 'accessories';
+  var price = parseInt((document.getElementById('pPrice') || {}).value || 0);
+  var orig  = parseInt((document.getElementById('pOrigPrice') || {}).value || 0);
+  var desc  = (document.getElementById('pDesc') || {}).value || '';
+  var img   = (document.getElementById('pImg') || {}).value || '';
+  var brand = (document.getElementById('pBrand') || {}).value || 'Skyflies';
+  var stock = (document.getElementById('pStock') || {}).value || 'in';
+  var ok    = document.getElementById('addProductOk');
+  var er    = document.getElementById('addProductEr');
+
+  if (!name.trim() || !price || !desc.trim()) {
+    if(er){ er.textContent='❌ Name, price and description are required.'; er.style.display='flex'; er.classList.add('show'); }
+    setTimeout(function(){ if(er){er.style.display='none';er.classList.remove('show');} }, 3000);
+    return;
+  }
+
+  var products = getProducts();
+  var newProd  = {
+    id:        'p' + Date.now(),
+    name:      name.trim(),
+    cat:       cat,
+    price:     price,
+    origPrice: orig || 0,
+    desc:      desc.trim(),
+    img:       img.trim(),
+    brand:     brand.trim() || 'Skyflies',
+    stock:     stock
+  };
+  products.unshift(newProd);
+  saveProducts(products);
+
+  if(ok){ ok.style.display='flex'; ok.classList.add('show'); }
+  setTimeout(function(){ if(ok){ok.style.display='none';ok.classList.remove('show');} }, 2500);
+
+  // Clear fields
+  ['pName','pPrice','pOrigPrice','pDesc','pImg','pBrand'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value='';
+  });
+
+  renderAdminProducts();
+  showToast('✅ Product added to store!');
+}
+
+function deleteProduct(id) {
+  var products = getProducts().filter(function(p){ return p.id !== id; });
+  saveProducts(products);
+  renderAdminProducts();
+  showToast('Deleted');
+}
+
+function renderAdminProducts() {
+  var list  = document.getElementById('adminProductList');
+  var count = document.getElementById('productCount');
+  if (!list) return;
+  var products = getProducts();
+  if(count) count.textContent = products.length;
+
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  list.innerHTML = products.map(function(p) {
+    return '<div style="background:var(--card);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;">' +
+      '<div style="width:44px;height:44px;border-radius:10px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">'+(catIcons[p.cat]||'📦')+'</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:13px;font-weight:700;">'+p.name+'</div>' +
+        '<div style="font-size:11px;color:var(--soft);">'+p.brand+' · ₹'+Number(p.price).toLocaleString('en-IN')+'</div>' +
+      '</div>' +
+      '<button data-pid="'+p.id+'" class="delprod-btn" style="padding:5px 10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:7px;color:#EF4444;font-size:11px;cursor:pointer;flex-shrink:0;">Delete</button>' +
+    '</div>';
+  }).join('');
+
+  list.querySelectorAll('.delprod-btn').forEach(function(btn){
+    btn.onclick = function(){ deleteProduct(this.getAttribute('data-pid')); };
+  });
+}
+
+// ── PRODUCT DETAIL POPUP ─────────────────────────────────────────
+function showProductDetail(id) {
+  var products = getProducts();
+  var p = products.find(function(x){ return x.id===id; });
+  if (!p) return;
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧'};
+  var icon     = catIcons[p.cat] || '📦';
+  var discount = p.origPrice && p.origPrice>p.price ? Math.round((1-p.price/p.origPrice)*100)+'% off' : '';
+
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:700;display:flex;align-items:flex-end;justify-content:center;';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:#1C2333;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;';
+
+  // Handle bar
+  var bar = document.createElement('div');
+  bar.style.cssText = 'width:40px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 16px;';
+  box.appendChild(bar);
+
+  // Image
+  if (p.img) {
+    var img = document.createElement('img');
+    img.src = p.img;
+    img.style.cssText = 'width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:12px;';
+    box.appendChild(img);
+  } else {
+    var iconDiv = document.createElement('div');
+    iconDiv.style.cssText = 'width:100%;height:120px;border-radius:10px;background:rgba(245,166,35,0.08);display:flex;align-items:center;justify-content:center;font-size:50px;margin-bottom:12px;';
+    iconDiv.textContent = icon;
+    box.appendChild(iconDiv);
+  }
+
+  // Name
+  var nameEl = document.createElement('div');
+  nameEl.style.cssText = 'font-size:17px;font-weight:700;margin-bottom:4px;color:#fff;';
+  nameEl.textContent = p.name;
+  box.appendChild(nameEl);
+
+  // Brand
+  var brandEl = document.createElement('div');
+  brandEl.style.cssText = 'font-size:12px;color:var(--soft);margin-bottom:10px;';
+  brandEl.textContent = p.brand;
+  box.appendChild(brandEl);
+
+  // Price row
+  var priceRow = document.createElement('div');
+  priceRow.style.cssText = 'display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap;';
+  var priceEl = document.createElement('span');
+  priceEl.style.cssText = 'font-size:24px;font-weight:700;color:var(--sun);';
+  priceEl.textContent = '₹' + Number(p.price).toLocaleString('en-IN');
+  priceRow.appendChild(priceEl);
+  if(p.origPrice && p.origPrice>p.price) {
+    var origEl = document.createElement('span');
+    origEl.style.cssText = 'font-size:13px;color:var(--soft);text-decoration:line-through;';
+    origEl.textContent = '₹' + Number(p.origPrice).toLocaleString('en-IN');
+    priceRow.appendChild(origEl);
+    var discEl = document.createElement('span');
+    discEl.style.cssText = 'font-size:11px;color:var(--success);font-weight:700;';
+    discEl.textContent = discount;
+    priceRow.appendChild(discEl);
+  }
+  box.appendChild(priceRow);
+
+  // Description
+  var descEl = document.createElement('div');
+  descEl.style.cssText = 'font-size:13px;color:var(--soft);line-height:1.7;margin-bottom:16px;';
+  descEl.textContent = p.desc;
+  box.appendChild(descEl);
+
+  // Buttons
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px;';
+
+  if (p.stock !== 'out') {
+    var addBtn = document.createElement('button');
+    addBtn.style.cssText = 'flex:2;padding:13px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:10px;color:#080F1E;font-weight:700;font-size:14px;cursor:pointer;';
+    addBtn.textContent = '🛒 Add to Cart';
+    addBtn.onclick = function() { addToCart(p.id); overlay.remove(); };
+    btnRow.appendChild(addBtn);
+  } else {
+    var naBtn = document.createElement('button');
+    naBtn.style.cssText = 'flex:2;padding:13px;background:rgba(255,255,255,0.05);border:none;border-radius:10px;color:var(--soft);font-weight:700;font-size:14px;cursor:not-allowed;';
+    naBtn.textContent = 'Out of Stock';
+    naBtn.disabled = true;
+    btnRow.appendChild(naBtn);
+  }
+
+  var closeBtn = document.createElement('button');
+  closeBtn.style.cssText = 'flex:1;padding:13px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-weight:600;font-size:14px;cursor:pointer;';
+  closeBtn.textContent = 'Close';
+  closeBtn.onclick = function() { overlay.remove(); };
+  btnRow.appendChild(closeBtn);
+  box.appendChild(btnRow);
+
+  overlay.appendChild(box);
+  overlay.onclick = function(e){ if(e.target===overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+// ── INIT STORE WHEN SCREEN OPENS ────────────────────────────────
+function initStore() {
+  cart = JSON.parse(localStorage.getItem('sf_cart') || '[]');
+  applyFilters('', 'all');
+  updateCartBar();
+}
+
+function initAdminStore() {
+  renderAdminProducts();
+}
+
+// ── FIX PORTAL VISIBILITY ────────────────────────────────────────
+function ensurePortalVisible() {
+  var loginBox = document.getElementById('cLoginBox');
+  var portal   = document.getElementById('cPortal');
+  if (!loginBox) return;
+  if (currentCustomer) {
+    loginBox.style.display = 'none';
+    if(portal) portal.style.display = 'block';
+  } else {
+    // Always show login form - force it visible
+    loginBox.style.cssText = 'display:block !important';
+    if(portal) portal.style.display = 'none';
+  }
+}
+
+// ── SWIPE NAVIGATION ─────────────────────────────────────────────
+(function(){
+  var sa = document.getElementById('screen-area');
+  if(!sa) return;
+  var sx=0, sy=0;
+  sa.addEventListener('touchstart',function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  sa.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    var dy=Math.abs(e.changedTouches[0].clientY-sy);
+    if(Math.abs(dx)>60&&dy<80&&dx>0&&screenHistory.length>1){
+      screenHistory.pop();
+      var prev=screenHistory[screenHistory.length-1];
+      if(prev) goScreen(prev,true);
+    }
+  },{passive:true});
+})();
+
+</script>
+</body>
+</html
 
 <!-- INSTALL BAR -->
 <div id="installBanner" class="install-bar">
@@ -1417,6 +3361,15 @@ function updatePassword(ss,data){var sh=ss.getSheetByName('Customer Logins');if(
 function addQuery(ss,data){var headers=['#','Time','Customer ID','Name','Type','Priority','Message','Status','Response'];var sh=getOrCreate(ss,'Customer Queries',headers);sh.appendRow([sh.getLastRow(),new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),data.customerId,data.customerName||'',data.queryType,data.priority||'Normal',data.message,'Open','']);try{MailApp.sendEmail(ADMIN_EMAIL,'Query – '+(data.customerName||data.customerId)+' | '+data.queryType,data.message);}catch(e){}return{status:'success'};}
 function getAllCustomers(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'success',customers:[]};var rows=sh.getDataRange().getValues();var out=[];for(var i=1;i<rows.length;i++){if(!String(rows[i][0]).trim())continue;out.push({id:rows[i][0],name:rows[i][1],password:rows[i][2],phone:rows[i][3],email:rows[i][4],city:rows[i][5],address:rows[i][6],systemSize:rows[i][7],panels:rows[i][8],installCost:rows[i][9],amountPaid:rows[i][10],plan:rows[i][11],billingCycle:rows[i][12],nextService:rows[i][13],systemStatus:rows[i][14],installDate:rows[i][15],notes:rows[i][16]||''});}return{status:'success',customers:out};}
 function sendWelcomeEmail(ss,data){try{MailApp.sendEmail({to:data.email,subject:'✅ Welcome to Skyflies Solar! Your ID: '+data.customerId,htmlBody:'<div style="font-family:Arial;max-width:500px;margin:0 auto;"><div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="color:#080F1E;margin:0;">☀️ Welcome to Skyflies Solar!</h2></div><div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;"><p>Hi '+data.name+', your account is ready!</p><div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:16px;text-align:center;"><h1 style="color:#FF6B00;font-size:32px;letter-spacing:4px;margin:0;">'+data.customerId+'</h1></div><p style="font-size:12px;color:#666;">Login with your phone or email + password.<br>Our team will contact you for a free site survey.</p><a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;">Open My Account →</a></div></div>'});return{status:'success'};}catch(e){return{status:'error',message:e.toString()};}}
+function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'Skyflies Alert',data.message||'');return{status:'success'};}catch(e){return{status:'error'};}}</pre></div>
+    <p id="cpOk" style="font-size:12px;color:var(--success);margin-top:6px;display:none;">✅ Copied!</p>
+  </div>
+</div>
+
+
+</div><!-- end screen-area -->
+</div>
+Body:'<div style="font-family:Arial;max-width:500px;margin:0 auto;"><div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="color:#080F1E;margin:0;">☀️ Welcome to Skyflies Solar!</h2></div><div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;"><p>Hi '+data.name+', your account is ready!</p><div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:16px;text-align:center;"><h1 style="color:#FF6B00;font-size:32px;letter-spacing:4px;margin:0;">'+data.customerId+'</h1></div><p style="font-size:12px;color:#666;">Login with your phone or email + password.<br>Our team will contact you for a free site survey.</p><a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;">Open My Account →</a></div></div>'});return{status:'success'};}catch(e){return{status:'error',message:e.toString()};}}
 function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'Skyflies Alert',data.message||'');return{status:'success'};}catch(e){return{status:'error'};}}</pre></div>
     <p id="cpOk" style="font-size:12px;color:var(--success);margin-top:6px;display:none;">✅ Copied!</p>
   </div>
