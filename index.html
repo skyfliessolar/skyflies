@@ -1572,7 +1572,7 @@ var DB='sf_subs'; var WH='sf_wh'; var PW='sf_pwd';
 var curFilter='all';
 var PENDING_LIST=[];
 var currentCustomer=null;
-var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
+var WEBHOOK_URL='https://script.google.com/macros/s/AKfycbzk-z6K6pT2KxajtG4HjCb-XwcjcrNXD8jlOKRWSUVdoS9xeXiMPLt0SBcSEYCbauPD/exec';
 
 var RAZORPAY_KEY = 'YOUR_RAZORPAY_KEY';
 
@@ -1602,7 +1602,7 @@ async function sendBulkNotification() {
   }
   res.textContent = '⏳ Sending...';
   res.style.color = '#F5A623';
-  var wh = 'https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
+  var wh = 'https://script.google.com/macros/s/AKfycbzk-z6K6pT2KxajtG4HjCb-XwcjcrNXD8jlOKRWSUVdoS9xeXiMPLt0SBcSEYCbauPD/exec';
   var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
   try {
     var r = await fetch(wh, {
