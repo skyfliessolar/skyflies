@@ -8,7 +8,29 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Skyflies Solar">
-<title>Skyflies Solar</title>
+<title>Skyflies Solar – Solar Installation, Cleaning & AMC in Tamil Nadu</title>
+
+<!-- SEO Meta Tags -->
+<meta name="description" content="Skyflies Solar – Trusted solar panel installation, cleaning, AMC and customer portal in Tamil Nadu. Search Skyflies on Google and install our app directly on your phone.">
+<meta name="keywords" content="Skyflies, Skyflies Solar, solar installation Tamil Nadu, solar panel cleaning, solar AMC, Skyflies app, solar energy India">
+<meta name="author" content="Skyflies Solar Solutions">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="9_82prC9bFYLuM0uDEiOMlWUexusxVFX_mfNeUAvWww" />
+<link rel="canonical" href="https://skyfliessolar.github.io/skyflies-mobile-app/">
+
+<!-- Open Graph (for Google, WhatsApp, Facebook previews) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Skyflies Solar – Solar Installation & AMC in Tamil Nadu">
+<meta property="og:description" content="Install the Skyflies Solar app – get instant solar quotes, track your AMC, and contact our team. Serving Tamil Nadu since 2020.">
+<meta property="og:image" content="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
+<meta property="og:url" content="https://skyfliessolar.github.io/skyflies-mobile-app/">
+<meta property="og:site_name" content="Skyflies Solar">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Skyflies Solar – Solar Installation & AMC">
+<meta name="twitter:description" content="Search Skyflies Solar on Google and install our app. Solar installation, cleaning & AMC services in Tamil Nadu.">
+<meta name="twitter:image" content="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -34,6 +56,7 @@ html,body{height:100%;background:#0A0F1E;overflow:hidden;}
 :root{
   --sun:#F5A623;--solar:#FF6B00;--deep:#0A0F1E;--navy:#111827;
   --card:#1C2333;--card2:#242D3E;--border:rgba(245,166,35,0.15);
+  --border2:rgba(255,255,255,0.08);
   --soft:#8B9CB6;--success:#10B981;--error:#EF4444;--info:#3B82F6;
   --nav-h:64px;--top-h:56px;
 }
@@ -51,6 +74,7 @@ html,body{height:100%;background:#0A0F1E;overflow:hidden;}
 .tb-logo{width:34px;height:34px;border-radius:9px;object-fit:contain;background:rgba(245,166,35,0.15);}
 .tb-title{flex:1;}
 .tb-name{font-size:15px;font-weight:700;color:#fff;line-height:1.1;}
+.tb-nm{font-size:15px;font-weight:700;color:#fff;line-height:1.1;}
 .tb-sub{font-size:10px;color:var(--soft);letter-spacing:0.5px;}
 .tb-btn{width:36px;height:36px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;}
 .tb-btn:active{background:rgba(255,255,255,0.12);}
@@ -230,7 +254,7 @@ html,body{height:100%;background:#0A0F1E;overflow:hidden;}
 .tl-dot.done{background:linear-gradient(135deg,var(--sun),var(--solar));border-color:var(--sun);}
 .tl-dot.active{background:rgba(16,185,129,0.15);border-color:var(--success);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4);}50%{box-shadow:0 0 0 8px rgba(16,185,129,0);}}
-.tl-
+.tl-content{flex:1;min-width:0;}
 .tl-title{font-size:14px;font-weight:600;margin-bottom:3px;}
 .tl-date{font-size:11px;color:var(--soft);}
 .tl-desc{font-size:12px;color:var(--soft);margin-top:4px;line-height:1.5;}
@@ -383,6 +407,27 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 .install-bar{background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(255,107,0,0.07));border-bottom:1px solid var(--border);padding:10px 16px;display:none;}
 .install-inner{display:flex;align-items:center;gap:10px;}
 
+/* ── ADMIN DATA TABLE ── */
+.dtbl{width:100%;border-collapse:collapse;font-size:12px;}
+.dtbl th{background:rgba(245,166,35,0.1);color:var(--sun);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:10px 12px;text-align:left;white-space:nowrap;}
+.dtbl td{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.04);color:var(--soft);vertical-align:middle;}
+.dtbl tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* ── CUSTOMER QUERY CARDS ── */
+.query-item{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid var(--border2);}
+.qi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.qi-title{font-size:13px;font-weight:700;}
+.qi-status{padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;}
+.qi-status.open{background:rgba(245,166,35,0.15);color:var(--sun);}
+.qi-status.closed{background:rgba(16,185,129,0.15);color:var(--success);}
+.qi-date{font-size:11px;color:var(--soft);margin-bottom:6px;}
+.qi-msg{font-size:12px;color:var(--soft);line-height:1.5;}
+
+/* ── SETUP STATUS / WEBHOOK STATUS ── */
+.wst{font-size:12px;margin-top:6px;padding:6px 10px;border-radius:7px;display:none;}
+.wst.ok{display:block;background:rgba(16,185,129,0.1);color:var(--success);}
+.wst.no{display:block;background:rgba(239,68,68,0.1);color:#EF4444;}
+
 </style>
 </head>
 <body>
@@ -499,9 +544,9 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
       <div class="contact-ico" style="background:rgba(245,166,35,0.15);">📞</div>
       <div><div class="contact-lbl">Call Us</div><div class="contact-val">+91 93854 49167</div></div>
     </a>
-    <a class="contact-card" href="/cdn-cgi/l/email-protection#6b02050d042b1800120d07020e18450205">
+    <a class="contact-card" href="mailto:info@skyflies.in">
       <div class="contact-ico" style="background:rgba(59,130,246,0.15);">✉️</div>
-      <div><div class="contact-lbl">Email</div><div class="contact-val"><span class="sf-email"></span></div></div>
+      <div><div class="contact-lbl">Email</div><div class="contact-val">info@skyflies.in</div></div>
     </a>
   </div>
   <div class="contact-row">
@@ -845,6 +890,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     </div>
     <button class="plan-btn outline" onclick="goSub('Industrial Pro')">Get Custom Quote</button>
   </div>
+</div>
 
 <!-- ══ STORE ══ -->
 <div class="screen" id="screen-store">
@@ -870,7 +916,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div>
 
   <!-- Cart bar -->
-  <div id="cartBar" style="display:none;position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:12px;padding:12px 16px;margin-bottom:12px;display:none;align-items:center;gap:10px;">
+  <div id="cartBar" style="display:none;position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:12px;padding:12px 16px;margin-bottom:12px;align-items:center;gap:10px;">
     <span style="font-size:18px;">🛒</span>
     <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#080F1E;" id="cartCount">0 items</div><div style="font-size:11px;color:#080F1E;opacity:0.7;" id="cartTotal">₹0</div></div>
     <button onclick="goScreen('cart')" style="padding:8px 16px;background:#080F1E;border:none;border-radius:8px;color:var(--sun);font-weight:700;font-size:13px;cursor:pointer;">View Cart →</button>
@@ -1316,7 +1362,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
 // Deploy: Execute as Me | Access: Anyone
 // ════════════════════════════════════════
 
-var ADMIN_EMAIL = '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7f161119103f0c14061913161a0c511611">[email&#160;protected]</a>';
+var ADMIN_EMAIL = 'info@skyflies.in';
 
 function doPost(e) {
   try {
@@ -1417,7 +1463,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup','store','cart','adminstore'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -1698,8 +1744,8 @@ document.addEventListener('click',function(e){
   if(nav&&nav.classList.contains('open')&&!nav.contains(e.target)&&e.target!==btn){nav.classList.remove('open');btn.textContent='☰';}
 });
 
-function selPlan(el){document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
-function goSub(nm){showPage('subscribe',null);document.querySelectorAll('#planSel .po').forEach(o=>{var r=o.querySelector('input');if(r.value===nm){r.checked=true;o.classList.add('sel');}else o.classList.remove('sel');});}
+function selPlan(el){document.querySelectorAll('#planSel .plan-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function goSub(nm){goScreen('subscribe');document.querySelectorAll('#planSel .plan-opt').forEach(o=>{var r=o.querySelector('input');if(r&&r.value===nm){r.checked=true;o.classList.add('sel');}else o.classList.remove('sel');});}
 
 var pricePerKw={residential:55000,commercial:62000,industrial:58000,hospital:65000,school:60000};
 var panelMult={mono:1,poly:0.9,bifacial:1.15};
@@ -1742,7 +1788,7 @@ async function doSubmit(formEl,type,okId,erId){
   saveLocal(data);await sendToSheet(data);
   btn.disabled=false;bt.style.display='';bl.style.display='none';
   document.getElementById(okId).classList.add('show');
-  formEl.reset();document.querySelectorAll('#planSel .po').forEach(o=>o.classList.remove('sel'));
+  formEl.reset();document.querySelectorAll('#planSel .plan-opt').forEach(o=>o.classList.remove('sel'));
   refreshDash();
 }
 (function(){
@@ -1820,11 +1866,11 @@ function getLocal(){return JSON.parse(localStorage.getItem(DB)||'[]');}
 function getCustomerData(id){return JSON.parse(localStorage.getItem('cdata_'+id)||'{}');}
 function saveCustomerData(id,d){localStorage.setItem('cdata_'+id,JSON.stringify(d));}
 
-function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='wst no';return;}localStorage.setItem(WH,u);WEBHOOK_URL=u;s.textContent='✅ Webhook saved!';s.className='wst ok';}
+function saveWh(){var u=document.getElementById('whUrl').value.trim();var s=document.getElementById('whSt');if(!u||!u.startsWith('https://')){s.textContent='❌ Enter a valid HTTPS URL.';s.className='setup-status no';s.style.display='block';return;}localStorage.setItem(WH,u);WEBHOOK_URL=u;s.textContent='✅ Webhook saved!';s.className='setup-status ok';s.style.display='block';}
 function savePwd(){
   var p=document.getElementById('newPwd').value.trim();var s=document.getElementById('pwdSt');
-  if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='wst no';return;}
-  hashPassword(p).then(function(hashed){localStorage.setItem(PW,hashed);s.textContent='✅ Password updated securely.';s.className='wst ok';});
+  if(!p||p.length<4){s.textContent='❌ Min 4 characters.';s.className='setup-status no';s.style.display='block';return;}
+  hashPassword(p).then(function(hashed){localStorage.setItem(PW,hashed);s.textContent='✅ Password updated securely.';s.className='setup-status ok';s.style.display='block';});
 }
 async function testConnection(){
   var res=document.getElementById('testResult');res.textContent='⏳ Testing...';res.style.color='#F5A623';
@@ -2093,10 +2139,10 @@ function renderQueries(){if(!currentCustomer)return;var q=currentCustomer.querie
 
 // ── SOCIAL MEDIA ──────────────────────────────────
 function showSocTab(tab, btn) {
-  document.querySelectorAll('.soc-content').forEach(function(el) { el.style.display = 'none'; });
-  document.querySelectorAll('.soc-tab').forEach(function(el) { el.classList.remove('on'); });
+  document.querySelectorAll('.soc-content-area').forEach(function(el) { el.style.display = 'none'; el.classList.remove('on'); });
+  document.querySelectorAll('.soc-tab-btn').forEach(function(el) { el.classList.remove('on'); });
   var el = document.getElementById('soc-' + tab);
-  if (el) { el.style.display = ''; el.classList.add('on'); }
+  if (el) { el.style.display = 'block'; el.classList.add('on'); }
   if (btn) btn.classList.add('on');
   if (tab === 'youtube') loadYouTubeVideos();
 }
