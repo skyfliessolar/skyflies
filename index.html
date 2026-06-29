@@ -1232,6 +1232,100 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
           <button onclick="savePwd()" style="padding:10px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:9px;color:#080F1E;font-weight:700;font-size:13px;cursor:pointer;">Save</button>
         </div>
         <div class="setup-status" id="pwdSt"></div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:14px 0;"></div>
+        <div style="font-size:12px;font-weight:600;color:var(--sun);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Apps Script Code (backend reference)</div>
+        <div class="code-box"><button class="copy-btn" onclick="cpCode()">COPY</button><pre id="gasCd">// ════════════════════════════════════════
+// SKYFLIES SOLAR – APPS SCRIPT CRM v7
+// Deploy: Execute as Me | Access: Anyone
+// ════════════════════════════════════════
+
+var ADMIN_EMAIL = 'info@skyflies.in';
+
+function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (data.action === 'getCustomer') return respond(getCustomer(ss, data));
+    if (data.action === 'addCustomer') return respond(addCustomer(ss, data));
+    if (data.action === 'addQuery') return respond(addQuery(ss, data));
+    if (data.action === 'registerCustomer') return respond(saveRegistration(ss, data));
+    if (data.action === 'getPending') return respond(getPending(ss, data));
+    if (data.action === 'sendOTP') return respond(sendOTP(ss, data));
+    if (data.action === 'getCustomerByEmail') return respond(getCustomerByEmail(ss, data));
+    if (data.action === 'updatePassword') return respond(updatePassword(ss, data));
+    if (data.action === 'approveCustomer') return respond(approveCustomer(ss, data));
+    if (data.action === 'getAllCustomers') return respond(getAllCustomers(ss, data));
+    if (data.action === 'sendWelcomeEmail') return respond(sendWelcomeEmail(ss, data));
+    if (data.action === 'adminAlert') return respond(sendAdminAlert(data));
+    if (data.action === 'sendPushNotification') return respond(sendBulkNotification(ss, data));
+    return respond(handleForm(ss, data));
+  } catch(err) {
+    return respond({status:'error', message:err.toString()});
+  }
+}
+
+function doGet() {
+  return respond({status:'ok', app:'Skyflies Solar CRM v7'});
+}
+
+function sendBulkNotification(ss, data) {
+  var sh = ss.getSheetByName('Customer Logins');
+  if (!sh) return {status:'error', message:'No customers'};
+  var rows = sh.getDataRange().getValues();
+  var sent = 0;
+  for (var i = 1; i < rows.length; i++) {
+    var email = String(rows[i][4] || '').trim();
+    if (!email || !email.includes('@')) continue;
+    try {
+      MailApp.sendEmail({
+        to: email,
+        subject: data.title || 'Skyflies Solar Update',
+        htmlBody: '<div style="font-family:Arial;max-width:500px;margin:0 auto;">' +
+          '<div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;">' +
+          '<h2 style="color:#080F1E;margin:0;">☀️ Skyflies Solar Solutions</h2></div>' +
+          '<div style="background:#f9f9f9;padding:20px;border-radius:0 0 10px 10px;">' +
+          '<h3 style="color:#333;">' + (data.title || '') + '</h3>' +
+          '<p style="color:#555;line-height:1.7;">' + (data.message || '') + '</p>' +
+          '<a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;margin-top:10px;">Open App →</a>' +
+          '<p style="font-size:11px;color:#999;margin-top:16px;">📞 +91 93854 49167 | www.skyflies.in</p>' +
+          '</div></div>'
+      });
+      sent++;
+    } catch(e) {}
+  }
+  return {status:'success', sent: sent};
+}
+
+// ... (rest of functions same as before)
+function handleForm(ss, data) {
+  var ts = new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  var sheets = {
+    enquiry:{name:'Enquiries',headers:['#','Time','Name','Phone','Email','City','Type','Source','Message'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.source,d.message];}},
+    quotation:{name:'Quotations',headers:['#','Time','Name','Phone','Email','City','Type','Bill','System','Budget','Message'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.bill,d.systemType,d.budget,d.message];}},
+    subscribe:{name:'Subscriptions',headers:['#','Time','Name','Phone','Email','City','Address','Size','Plan','Billing','Day'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.address,d.systemSize,d.plan,d.billing,d.serviceDay];}},
+    emi:{name:'EMI Enquiries',headers:['#','Time','Name','Phone','Email','City','Type','Size','Income','EMI','Employment'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.systemSize,d.income,d.emi,d.employment];}},
+  };
+  var cfg=sheets[data.formType];if(!cfg)return{status:'error',message:'Unknown'};
+  var sh=getOrCreate(ss,cfg.name,cfg.headers);
+  sh.appendRow(cfg.row(data,sh.getLastRow()));
+  try{MailApp.sendEmail(ADMIN_EMAIL,'New '+cfg.name+' – '+(data.name||''),JSON.stringify(data,null,2));}catch(e){}
+  return{status:'success'};
+}
+function getOrCreate(ss,name,headers){var sh=ss.getSheetByName(name);if(!sh){sh=ss.insertSheet(name);sh.appendRow(headers);sh.getRange(1,1,1,headers.length).setBackground('#F5A623').setFontColor('#000').setFontWeight('bold');sh.setFrozenRows(1);}return sh;}
+function respond(obj){return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);}
+function getCustomer(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'error',message:'No accounts'};var rows=sh.getDataRange().getValues();var inp=String(data.customerId||'').trim();var pwd=String(data.password||'').trim();for(var i=1;i<rows.length;i++){var r=rows[i];var match=(String(r[0]).trim()===inp||String(r[3]).trim()===inp||String(r[4]).trim().toLowerCase()===inp.toLowerCase());if(match&&String(r[2]).trim()===pwd){return{status:'success',customer:{id:r[0],name:r[1],password:r[2],phone:r[3],email:r[4],city:r[5],address:r[6],systemSize:r[7],panels:r[8],installCost:r[9],amountPaid:r[10],plan:r[11],billingCycle:r[12],nextService:r[13],systemStatus:r[14],installDate:r[15],notes:r[16]||''}};}}return{status:'error',message:'Wrong credentials'};}
+function addCustomer(ss,data){var headers=['Customer ID','Name','Password','Phone','Email','City','Address','System Size','Panels','Install Cost','Amount Paid','Plan','Billing','Next Service','Status','Install Date','Notes','Last Login','Created'];var sh=getOrCreate(ss,'Customer Logins',headers);var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][0]).trim()===String(data.customerId).trim())return{status:'error',message:'ID exists'};}var ts=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});sh.appendRow([data.customerId,data.name,data.password,data.phone,data.email,data.city||'',data.address||'',data.systemSize||'Pending',data.panels||'Pending',data.installCost||'Pending',data.amountPaid||'Pending',data.plan||'Pending',data.billingCycle||'Monthly',data.nextService||'TBD',data.systemStatus||'Pending',data.installDate||ts,data.notes||'','',ts]);return{status:'success',customerId:data.customerId};}
+function saveRegistration(ss,data){var headers=['#','Time','Name','Phone','Email','City','Password','RegID','Status','Notes'];var sh=getOrCreate(ss,'Pending Registrations',headers);sh.appendRow([sh.getLastRow(),new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),data.name,data.phone,data.email,data.city||'',data.password,data.regId||'','Pending Approval','Awaiting admin review']);try{MailApp.sendEmail(ADMIN_EMAIL,'⏳ New Registration – '+data.name,'Name: '+data.name+'\nPhone: '+data.phone+'\nEmail: '+data.email);}catch(e){}return{status:'success'};}
+function getPending(ss,data){var sh=ss.getSheetByName('Pending Registrations');if(!sh)return{status:'success',pending:[]};var rows=sh.getDataRange().getValues();var out=[];for(var i=1;i<rows.length;i++){var st=String(rows[i][8]||'').toLowerCase();if(st.indexOf('pending')!==-1){out.push({regId:String(rows[i][7]||'ROW-'+i),name:String(rows[i][2]||''),phone:String(rows[i][3]||''),email:String(rows[i][4]||''),city:String(rows[i][5]||''),password:String(rows[i][6]||''),submittedAt:String(rows[i][1]||''),rowIndex:i});}}return{status:'success',pending:out};}
+function approveCustomer(ss,data){var sh=ss.getSheetByName('Pending Registrations');if(sh){var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][7]).trim()===String(data.regId).trim()||(data.phone&&String(rows[i][3]).trim()===String(data.phone).trim())){sh.getRange(i+1,9).setValue('Approved');break;}}}return addCustomer(ss,data);}
+function sendOTP(ss,data){try{MailApp.sendEmail({to:data.email,subject:'Your Skyflies Solar OTP – '+data.otp,htmlBody:'<div style="font-family:Arial;max-width:480px;margin:0 auto;"><div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="color:#080F1E;margin:0;">☀️ Skyflies Solar</h2></div><div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;"><p>Your OTP:</p><div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:20px;text-align:center;"><h1 style="color:#FF6B00;font-size:40px;letter-spacing:10px;margin:0;">'+data.otp+'</h1></div><p style="font-size:12px;color:#666;">Valid 5 minutes. Do not share.</p></div></div>'});return{status:'success'};}catch(e){return{status:'error',message:e.toString()};}}
+function getCustomerByEmail(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'error',message:'No accounts'};var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][4]).trim().toLowerCase()===String(data.email).trim().toLowerCase()){return{status:'success',customer:{id:rows[i][0],name:rows[i][1],password:rows[i][2],phone:rows[i][3],email:rows[i][4],city:rows[i][5],address:rows[i][6],systemSize:rows[i][7],panels:rows[i][8],installCost:rows[i][9],amountPaid:rows[i][10],plan:rows[i][11],billingCycle:rows[i][12],nextService:rows[i][13],systemStatus:rows[i][14],installDate:rows[i][15],notes:rows[i][16]||''}};}}return{status:'error',message:'Email not found'};}
+function updatePassword(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'error'};var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][4]).trim().toLowerCase()===String(data.email).trim().toLowerCase()){sh.getRange(i+1,3).setValue(data.newPassword);return{status:'success'};}}return{status:'error'};}
+function addQuery(ss,data){var headers=['#','Time','Customer ID','Name','Type','Priority','Message','Status','Response'];var sh=getOrCreate(ss,'Customer Queries',headers);sh.appendRow([sh.getLastRow(),new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),data.customerId,data.customerName||'',data.queryType,data.priority||'Normal',data.message,'Open','']);try{MailApp.sendEmail(ADMIN_EMAIL,'Query – '+(data.customerName||data.customerId)+' | '+data.queryType,data.message);}catch(e){}return{status:'success'};}
+function getAllCustomers(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'success',customers:[]};var rows=sh.getDataRange().getValues();var out=[];for(var i=1;i<rows.length;i++){if(!String(rows[i][0]).trim())continue;out.push({id:rows[i][0],name:rows[i][1],password:rows[i][2],phone:rows[i][3],email:rows[i][4],city:rows[i][5],address:rows[i][6],systemSize:rows[i][7],panels:rows[i][8],installCost:rows[i][9],amountPaid:rows[i][10],plan:rows[i][11],billingCycle:rows[i][12],nextService:rows[i][13],systemStatus:rows[i][14],installDate:rows[i][15],notes:rows[i][16]||''});}return{status:'success',customers:out};}
+function sendWelcomeEmail(ss,data){try{MailApp.sendEmail({to:data.email,subject:'✅ Welcome to Skyflies Solar! Your ID: '+data.customerId,htmlBody:'<div style="font-family:Arial;max-width:500px;margin:0 auto;"><div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="color:#080F1E;margin:0;">☀️ Welcome to Skyflies Solar!</h2></div><div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;"><p>Hi '+data.name+', your account is ready!</p><div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:16px;text-align:center;"><h1 style="color:#FF6B00;font-size:32px;letter-spacing:4px;margin:0;">'+data.customerId+'</h1></div><p style="font-size:12px;color:#666;">Login with your phone or email + password.<br>Our team will contact you for a free site survey.</p><a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;">Open My Account →</a></div></div>'});return{status:'success'};}catch(e){return{status:'error',message:e.toString()};}}
+function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'Skyflies Alert',data.message||'');return{status:'success'};}catch(e){return{status:'error'};}}</pre></div>
+        <p id="cpOk" style="font-size:12px;color:var(--success);margin-top:6px;display:none;">✅ Copied!</p>
       </div>
     </div>
     <!-- PENDING -->
@@ -1336,121 +1430,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div>
 </div>
 
-<!-- ══ SETUP ══ -->
-<div class="screen" id="screen-setup">
-  <div class="tag">⚙️ Setup</div>
-  <div class="screen-title">Connect Google Sheets</div>
-  <div class="screen-sub">All forms save to your Sheet with email alerts.</div>
-  <div class="setup-card">
-    <h3>📋 Google Apps Script URL</h3>
-    <p style="font-size:12px;color:var(--soft);line-height:1.6;margin-bottom:8px;">Deploy your Apps Script as a Web App, paste the URL here.</p>
-    <div class="setup-row"><input type="url" id="whUrl" class="setup-input" placeholder="Paste Apps Script URL..."><button class="save-btn" onclick="saveWh()">Save</button></div>
-    <div class="setup-status" id="whSt"></div>
-    <button onclick="testConnection()" style="margin-top:8px;padding:9px 16px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);border-radius:8px;color:#60A5FA;font-size:13px;font-weight:600;cursor:pointer;">🔌 Test Connection</button>
-    <div id="testResult" style="margin-top:8px;font-size:12px;"></div>
-  </div>
-  <div class="setup-card">
-    <h3>🔐 Change Admin Password</h3>
-    <div class="setup-row"><input type="password" id="newPwd" class="setup-input" placeholder="New password"><button class="save-btn" onclick="savePwd()">Save</button></div>
-    <div class="setup-status" id="pwdSt"></div>
-  </div>
-  <div class="setup-card">
-    <h3>📄 Apps Script Code</h3>
-    <p style="font-size:12px;color:var(--soft);margin-bottom:8px;">Copy and paste into Apps Script, then deploy as Web App:</p>
-    <div class="code-box"><button class="copy-btn" onclick="cpCode()">COPY</button><pre id="gasCd">// ════════════════════════════════════════
-// SKYFLIES SOLAR – APPS SCRIPT CRM v7
-// Deploy: Execute as Me | Access: Anyone
-// ════════════════════════════════════════
 
-var ADMIN_EMAIL = 'info@skyflies.in';
-
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    if (data.action === 'getCustomer') return respond(getCustomer(ss, data));
-    if (data.action === 'addCustomer') return respond(addCustomer(ss, data));
-    if (data.action === 'addQuery') return respond(addQuery(ss, data));
-    if (data.action === 'registerCustomer') return respond(saveRegistration(ss, data));
-    if (data.action === 'getPending') return respond(getPending(ss, data));
-    if (data.action === 'sendOTP') return respond(sendOTP(ss, data));
-    if (data.action === 'getCustomerByEmail') return respond(getCustomerByEmail(ss, data));
-    if (data.action === 'updatePassword') return respond(updatePassword(ss, data));
-    if (data.action === 'approveCustomer') return respond(approveCustomer(ss, data));
-    if (data.action === 'getAllCustomers') return respond(getAllCustomers(ss, data));
-    if (data.action === 'sendWelcomeEmail') return respond(sendWelcomeEmail(ss, data));
-    if (data.action === 'adminAlert') return respond(sendAdminAlert(data));
-    if (data.action === 'sendPushNotification') return respond(sendBulkNotification(ss, data));
-    return respond(handleForm(ss, data));
-  } catch(err) {
-    return respond({status:'error', message:err.toString()});
-  }
-}
-
-function doGet() {
-  return respond({status:'ok', app:'Skyflies Solar CRM v7'});
-}
-
-function sendBulkNotification(ss, data) {
-  var sh = ss.getSheetByName('Customer Logins');
-  if (!sh) return {status:'error', message:'No customers'};
-  var rows = sh.getDataRange().getValues();
-  var sent = 0;
-  for (var i = 1; i < rows.length; i++) {
-    var email = String(rows[i][4] || '').trim();
-    if (!email || !email.includes('@')) continue;
-    try {
-      MailApp.sendEmail({
-        to: email,
-        subject: data.title || 'Skyflies Solar Update',
-        htmlBody: '<div style="font-family:Arial;max-width:500px;margin:0 auto;">' +
-          '<div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;">' +
-          '<h2 style="color:#080F1E;margin:0;">☀️ Skyflies Solar Solutions</h2></div>' +
-          '<div style="background:#f9f9f9;padding:20px;border-radius:0 0 10px 10px;">' +
-          '<h3 style="color:#333;">' + (data.title || '') + '</h3>' +
-          '<p style="color:#555;line-height:1.7;">' + (data.message || '') + '</p>' +
-          '<a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;margin-top:10px;">Open App →</a>' +
-          '<p style="font-size:11px;color:#999;margin-top:16px;">📞 +91 93854 49167 | www.skyflies.in</p>' +
-          '</div></div>'
-      });
-      sent++;
-    } catch(e) {}
-  }
-  return {status:'success', sent: sent};
-}
-
-// ... (rest of functions same as before)
-function handleForm(ss, data) {
-  var ts = new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
-  var sheets = {
-    enquiry:{name:'Enquiries',headers:['#','Time','Name','Phone','Email','City','Type','Source','Message'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.source,d.message];}},
-    quotation:{name:'Quotations',headers:['#','Time','Name','Phone','Email','City','Type','Bill','System','Budget','Message'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.bill,d.systemType,d.budget,d.message];}},
-    subscribe:{name:'Subscriptions',headers:['#','Time','Name','Phone','Email','City','Address','Size','Plan','Billing','Day'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.address,d.systemSize,d.plan,d.billing,d.serviceDay];}},
-    emi:{name:'EMI Enquiries',headers:['#','Time','Name','Phone','Email','City','Type','Size','Income','EMI','Employment'],row:function(d,n){return[n,ts,d.name,d.phone,d.email,d.city,d.propertyType,d.systemSize,d.income,d.emi,d.employment];}},
-  };
-  var cfg=sheets[data.formType];if(!cfg)return{status:'error',message:'Unknown'};
-  var sh=getOrCreate(ss,cfg.name,cfg.headers);
-  sh.appendRow(cfg.row(data,sh.getLastRow()));
-  try{MailApp.sendEmail(ADMIN_EMAIL,'New '+cfg.name+' – '+(data.name||''),JSON.stringify(data,null,2));}catch(e){}
-  return{status:'success'};
-}
-function getOrCreate(ss,name,headers){var sh=ss.getSheetByName(name);if(!sh){sh=ss.insertSheet(name);sh.appendRow(headers);sh.getRange(1,1,1,headers.length).setBackground('#F5A623').setFontColor('#000').setFontWeight('bold');sh.setFrozenRows(1);}return sh;}
-function respond(obj){return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);}
-function getCustomer(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'error',message:'No accounts'};var rows=sh.getDataRange().getValues();var inp=String(data.customerId||'').trim();var pwd=String(data.password||'').trim();for(var i=1;i<rows.length;i++){var r=rows[i];var match=(String(r[0]).trim()===inp||String(r[3]).trim()===inp||String(r[4]).trim().toLowerCase()===inp.toLowerCase());if(match&&String(r[2]).trim()===pwd){return{status:'success',customer:{id:r[0],name:r[1],password:r[2],phone:r[3],email:r[4],city:r[5],address:r[6],systemSize:r[7],panels:r[8],installCost:r[9],amountPaid:r[10],plan:r[11],billingCycle:r[12],nextService:r[13],systemStatus:r[14],installDate:r[15],notes:r[16]||''}};}}return{status:'error',message:'Wrong credentials'};}
-function addCustomer(ss,data){var headers=['Customer ID','Name','Password','Phone','Email','City','Address','System Size','Panels','Install Cost','Amount Paid','Plan','Billing','Next Service','Status','Install Date','Notes','Last Login','Created'];var sh=getOrCreate(ss,'Customer Logins',headers);var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][0]).trim()===String(data.customerId).trim())return{status:'error',message:'ID exists'};}var ts=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});sh.appendRow([data.customerId,data.name,data.password,data.phone,data.email,data.city||'',data.address||'',data.systemSize||'Pending',data.panels||'Pending',data.installCost||'Pending',data.amountPaid||'Pending',data.plan||'Pending',data.billingCycle||'Monthly',data.nextService||'TBD',data.systemStatus||'Pending',data.installDate||ts,data.notes||'','',ts]);return{status:'success',customerId:data.customerId};}
-function saveRegistration(ss,data){var headers=['#','Time','Name','Phone','Email','City','Password','RegID','Status','Notes'];var sh=getOrCreate(ss,'Pending Registrations',headers);sh.appendRow([sh.getLastRow(),new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),data.name,data.phone,data.email,data.city||'',data.password,data.regId||'','Pending Approval','Awaiting admin review']);try{MailApp.sendEmail(ADMIN_EMAIL,'⏳ New Registration – '+data.name,'Name: '+data.name+'\nPhone: '+data.phone+'\nEmail: '+data.email);}catch(e){}return{status:'success'};}
-function getPending(ss,data){var sh=ss.getSheetByName('Pending Registrations');if(!sh)return{status:'success',pending:[]};var rows=sh.getDataRange().getValues();var out=[];for(var i=1;i<rows.length;i++){var st=String(rows[i][8]||'').toLowerCase();if(st.indexOf('pending')!==-1){out.push({regId:String(rows[i][7]||'ROW-'+i),name:String(rows[i][2]||''),phone:String(rows[i][3]||''),email:String(rows[i][4]||''),city:String(rows[i][5]||''),password:String(rows[i][6]||''),submittedAt:String(rows[i][1]||''),rowIndex:i});}}return{status:'success',pending:out};}
-function approveCustomer(ss,data){var sh=ss.getSheetByName('Pending Registrations');if(sh){var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][7]).trim()===String(data.regId).trim()||(data.phone&&String(rows[i][3]).trim()===String(data.phone).trim())){sh.getRange(i+1,9).setValue('Approved');break;}}}return addCustomer(ss,data);}
-function sendOTP(ss,data){try{MailApp.sendEmail({to:data.email,subject:'Your Skyflies Solar OTP – '+data.otp,htmlBody:'<div style="font-family:Arial;max-width:480px;margin:0 auto;"><div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="color:#080F1E;margin:0;">☀️ Skyflies Solar</h2></div><div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;"><p>Your OTP:</p><div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:20px;text-align:center;"><h1 style="color:#FF6B00;font-size:40px;letter-spacing:10px;margin:0;">'+data.otp+'</h1></div><p style="font-size:12px;color:#666;">Valid 5 minutes. Do not share.</p></div></div>'});return{status:'success'};}catch(e){return{status:'error',message:e.toString()};}}
-function getCustomerByEmail(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'error',message:'No accounts'};var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][4]).trim().toLowerCase()===String(data.email).trim().toLowerCase()){return{status:'success',customer:{id:rows[i][0],name:rows[i][1],password:rows[i][2],phone:rows[i][3],email:rows[i][4],city:rows[i][5],address:rows[i][6],systemSize:rows[i][7],panels:rows[i][8],installCost:rows[i][9],amountPaid:rows[i][10],plan:rows[i][11],billingCycle:rows[i][12],nextService:rows[i][13],systemStatus:rows[i][14],installDate:rows[i][15],notes:rows[i][16]||''}};}}return{status:'error',message:'Email not found'};}
-function updatePassword(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'error'};var rows=sh.getDataRange().getValues();for(var i=1;i<rows.length;i++){if(String(rows[i][4]).trim().toLowerCase()===String(data.email).trim().toLowerCase()){sh.getRange(i+1,3).setValue(data.newPassword);return{status:'success'};}}return{status:'error'};}
-function addQuery(ss,data){var headers=['#','Time','Customer ID','Name','Type','Priority','Message','Status','Response'];var sh=getOrCreate(ss,'Customer Queries',headers);sh.appendRow([sh.getLastRow(),new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),data.customerId,data.customerName||'',data.queryType,data.priority||'Normal',data.message,'Open','']);try{MailApp.sendEmail(ADMIN_EMAIL,'Query – '+(data.customerName||data.customerId)+' | '+data.queryType,data.message);}catch(e){}return{status:'success'};}
-function getAllCustomers(ss,data){var sh=ss.getSheetByName('Customer Logins');if(!sh)return{status:'success',customers:[]};var rows=sh.getDataRange().getValues();var out=[];for(var i=1;i<rows.length;i++){if(!String(rows[i][0]).trim())continue;out.push({id:rows[i][0],name:rows[i][1],password:rows[i][2],phone:rows[i][3],email:rows[i][4],city:rows[i][5],address:rows[i][6],systemSize:rows[i][7],panels:rows[i][8],installCost:rows[i][9],amountPaid:rows[i][10],plan:rows[i][11],billingCycle:rows[i][12],nextService:rows[i][13],systemStatus:rows[i][14],installDate:rows[i][15],notes:rows[i][16]||''});}return{status:'success',customers:out};}
-function sendWelcomeEmail(ss,data){try{MailApp.sendEmail({to:data.email,subject:'✅ Welcome to Skyflies Solar! Your ID: '+data.customerId,htmlBody:'<div style="font-family:Arial;max-width:500px;margin:0 auto;"><div style="background:#F5A623;padding:16px;border-radius:10px 10px 0 0;text-align:center;"><h2 style="color:#080F1E;margin:0;">☀️ Welcome to Skyflies Solar!</h2></div><div style="background:#f9f9f9;padding:24px;border-radius:0 0 10px 10px;"><p>Hi '+data.name+', your account is ready!</p><div style="background:#fff;border:2px solid #F5A623;border-radius:10px;padding:16px;text-align:center;"><h1 style="color:#FF6B00;font-size:32px;letter-spacing:4px;margin:0;">'+data.customerId+'</h1></div><p style="font-size:12px;color:#666;">Login with your phone or email + password.<br>Our team will contact you for a free site survey.</p><a href="https://skyfliessolar.github.io/skyflies" style="display:inline-block;background:#F5A623;color:#080F1E;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;">Open My Account →</a></div></div>'});return{status:'success'};}catch(e){return{status:'error',message:e.toString()};}}
-function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'Skyflies Alert',data.message||'');return{status:'success'};}catch(e){return{status:'error'};}}</pre></div>
-    <p id="cpOk" style="font-size:12px;color:var(--success);margin-top:6px;display:none;">✅ Copied!</p>
-  </div>
-</div>
 
 
 </div>
@@ -1649,7 +1629,7 @@ async function sendBulkNotification() {
   }
   res.textContent = '⏳ Sending...';
   res.style.color = '#F5A623';
-  var wh = 'https://script.google.com/macros/s/AKfycbwPfPQi4CVNLCJB1mdnMr2d4GZ7KtPtW7t79n-i-33Z6iMLYAFLrU9kLhaaq0QfN-O_/exec';
+  var wh = localStorage.getItem(WH) || WEBHOOK_URL;
   var payload = JSON.stringify({ action: 'sendPushNotification', title: title, message: msg });
   try {
     var r = await fetch(wh, {
