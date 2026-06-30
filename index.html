@@ -59,7 +59,28 @@ html,body{height:100%;background:#0A0F1E;overflow:hidden;}
   --border2:rgba(255,255,255,0.08);
   --soft:#8B9CB6;--success:#10B981;--error:#EF4444;--info:#3B82F6;
   --nav-h:64px;--top-h:56px;
+  --text:#fff;--bg:#0A0F1E;
 }
+html.light{
+  --deep:#F7F9FC;--navy:#FFFFFF;
+  --card:#FFFFFF;--card2:#F2F4F8;--border:rgba(245,166,35,0.30);
+  --border2:rgba(0,0,0,0.08);
+  --soft:#5B6B82;
+  --text:#0A0F1E;--bg:#F7F9FC;
+}
+html.light body{background:var(--bg);color:var(--text);}
+html.light .screen{color:var(--text);}
+html.light input,html.light select,html.light textarea{background:rgba(0,0,0,0.04) !important;color:var(--text) !important;border-color:var(--border2) !important;}
+html.light .field label{color:var(--text);}
+html.light .form-card,html.light .stat-card,html.light .svc-card,html.light .home-hero,html.light .quick-btn,html.light .emi-strip,html.light .trust-badge{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,0.06);color:var(--text);}
+html.light .stat-num,html.light .svc-name,html.light .quick-name,html.light .hero-h1,html.light .total-val{color:var(--text);}
+html.light .hero-h1 span{color:var(--solar);}
+html.light #topbar{background:#fff;border-bottom:1px solid var(--border2);color:var(--text);}
+html.light #bottomnav{background:#fff;border-top:1px solid var(--border2);}
+html.light .bnav-label{color:var(--soft);}
+html.light .ten-btn{background:rgba(0,0,0,0.04);color:var(--text);border-color:var(--border2);}
+html.light .cmp-row{border-color:var(--border2);}
+html.light .cmp-row span:first-child{color:var(--text);}
 
 
 
@@ -383,6 +404,46 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 /* ── EMI STRIPS ── */
 .emi-strip{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.05);}
 .emi-strip.best{border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.05);}
+.ten-btn{padding:10px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:9px;color:var(--soft);font-weight:600;font-size:12px;cursor:pointer;transition:all 0.18s;}
+.ten-btn:hover{background:rgba(255,255,255,0.07);}
+.ten-btn.on{background:linear-gradient(135deg,var(--sun),#FF6B00);border-color:var(--sun);color:#080F1E;font-weight:800;box-shadow:0 4px 14px rgba(245,166,35,0.35);}
+.cmp-row{display:grid;grid-template-columns:60px 1fr 1fr 1fr;gap:8px;padding:9px 12px;font-size:12px;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;}
+.cmp-row.head{background:rgba(245,166,35,0.08);color:var(--sun);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:1px;}
+.cmp-row.on{background:rgba(245,166,35,0.05);color:var(--sun);}
+.cmp-row span:first-child{font-weight:700;color:#fff;}
+.trust-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0;}
+.trust-badge{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:12px 6px;text-align:center;}
+.trust-badge .ti{font-size:22px;margin-bottom:4px;}
+.trust-badge .tn{font-size:10px;color:var(--sun);font-weight:700;letter-spacing:1px;}
+.trust-badge .td{font-size:9px;color:var(--soft);margin-top:2px;}
+.wa-fab{position:fixed;bottom:78px;right:14px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);border:none;cursor:pointer;box-shadow:0 8px 20px rgba(37,211,102,0.45);z-index:90;font-size:24px;display:flex;align-items:center;justify-content:center;}
+.field-err{font-size:11px;color:#FF6B6B;margin-top:4px;display:none;}
+.field-err.show{display:block;}
+.field input.invalid,.field select.invalid{border-color:#FF6B6B !important;}
+.pin-status{font-size:11px;margin-top:4px;color:var(--soft);min-height:14px;}
+.pin-status.ok{color:var(--success);}
+.pin-status.err{color:#FF6B6B;}
+.tst-wrap{margin-bottom:20px;}
+.tst-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tst-track::-webkit-scrollbar{display:none;}
+.tst-card{flex:0 0 86%;scroll-snap-align:center;background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:16px;}
+.tst-stars{color:#FFB400;font-size:14px;letter-spacing:2px;margin-bottom:8px;}
+.tst-quote{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:14px;font-style:italic;}
+.tst-meta{display:flex;gap:10px;align-items:center;}
+.tst-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sun),var(--solar));color:#080F1E;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.tst-name{font-size:13px;font-weight:700;color:var(--text);}
+.tst-loc{font-size:11px;color:var(--soft);margin-top:1px;}
+.tst-dots{display:flex;gap:6px;justify-content:center;margin-top:8px;}
+.tst-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25);transition:all 0.2s;cursor:pointer;}
+html.light .tst-dot{background:rgba(0,0,0,0.18);}
+.tst-dot.on{background:var(--sun);width:18px;border-radius:3px;}
+.fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.fin-card{background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:11px;padding:12px;cursor:pointer;transition:all 0.18s;text-align:left;}
+html.light .fin-card{background:rgba(0,0,0,0.03);}
+.fin-card:hover{background:rgba(245,166,35,0.08);border-color:var(--sun);}
+.fin-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.fin-rate{font-size:11px;color:var(--sun);font-weight:600;}
+.fin-meta{font-size:10px;color:var(--soft);margin-top:4px;line-height:1.4;}
 .emi-name{font-size:11px;color:var(--soft);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
 .emi-amount{font-size:26px;font-weight:700;color:var(--success);}
 .emi-period{font-size:11px;color:var(--soft);}
@@ -443,9 +504,10 @@ async function fbGet(c,i){if(!db)return null;try{var d=await db.collection(c).do
 async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).where(f,"==",v).get();var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
 </script>
 <div id="app">
-<div id="topbar"><img src="logo.png" class="tb-logo" alt="Skyflies" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;"><div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div><button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button><button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button><button class="tb-btn" onclick="goScreen('social')">📱</button><button class="tb-btn" onclick="installApp()">📲</button></div>
+<div id="topbar"><img src="logo.png" class="tb-logo" alt="Skyflies" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;"><div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div><button class="tb-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme" aria-label="Toggle light/dark theme">🌙</button><button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button><button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button><button class="tb-btn" onclick="goScreen('social')">📱</button><button class="tb-btn" onclick="installApp()">📲</button></div>
 <nav id="bottomnav"><button class="bnav-item on" id="bn-home" onclick="goScreen('home')"><div class="bnav-icon">🏠</div><div class="bnav-label">Home</div></button><button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')"><div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div></button><button class="bnav-item" id="bn-portal" onclick="goScreen('portal')"><div class="bnav-icon">👤</div><div class="bnav-label">Account</div></button><button class="bnav-item" id="bn-store" onclick="goScreen('store')"><div class="bnav-icon">🛒</div><div class="bnav-label">Store</div></button><button class="bnav-item" id="bn-more" onclick="goScreen('more')"><div class="bnav-icon">☰</div><div class="bnav-label">More</div><span class="bnav-badge" id="moreBadge" style="display:none;"></span></button></nav>
 <div id="installBanner" class="install-bar" style="display:none;"><div class="install-inner"><img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:32px;height:32px;border-radius:8px;" alt=""><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Install Skyflies Solar App</div><div style="font-size:11px;color:var(--soft);">Add to home screen</div></div><button onclick="installApp()" style="padding:7px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#0A0F1E;font-weight:700;font-size:12px;cursor:pointer;">Install</button><button onclick="dismissBanner()" style="padding:7px 10px;background:transparent;border:none;color:var(--soft);font-size:14px;cursor:pointer;">✕</button></div></div>
+<button class="wa-fab" onclick="whatsappQuickShare()" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">💬</button>
 <div id="screen-area">
 
 
@@ -466,6 +528,49 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="stat-card"><div class="stat-num">90%</div><div class="stat-lbl">Bill Savings</div></div>
     <div class="stat-card"><div class="stat-num">4–5yr</div><div class="stat-lbl">ROI Period</div></div>
     <div class="stat-card"><div class="stat-num">24hr</div><div class="stat-lbl">Response</div></div>
+  </div>
+
+  <div class="trust-row">
+    <div class="trust-badge"><div class="ti">🏛️</div><div class="tn">MNRE</div><div class="td">Empanelled</div></div>
+    <div class="trust-badge"><div class="ti">🛡️</div><div class="tn">BIS</div><div class="td">Certified Panels</div></div>
+    <div class="trust-badge"><div class="ti">📜</div><div class="tn">GST</div><div class="td">Registered</div></div>
+    <div class="trust-badge"><div class="ti">⚡</div><div class="tn">25 YR</div><div class="td">Panel Warranty</div></div>
+  </div>
+
+  <div class="sec-head" style="margin-top:18px;"><div class="sec-title">Refer & Earn</div></div>
+  <div onclick="goScreen('refer')" style="background:linear-gradient(135deg,rgba(16,185,129,0.18),rgba(5,150,105,0.10));border:1px solid rgba(16,185,129,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#10B981,#059669);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🎁</div>
+    <div style="flex:1;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);">Earn ₹2,000 per referral</div>
+      <div style="font-size:12px;color:var(--soft);margin-top:2px;">Refer a friend — get ₹2,000 when they install. Tap to share.</div>
+    </div>
+    <div style="font-size:18px;color:var(--success);">›</div>
+  </div>
+  <div class="sec-head"><div class="sec-title">What Our Customers Say</div></div>
+  <div class="tst-wrap">
+    <div class="tst-track" id="tstTrack">
+      <div class="tst-card">
+        <div class="tst-stars">★★★★★</div>
+        <div class="tst-quote">"Installed 5kW system last year. Electricity bill dropped from ₹4,800 to ₹420/month. Team was professional and finished in 2 days."</div>
+        <div class="tst-meta"><div class="tst-avatar">RK</div><div><div class="tst-name">Rajesh Kumar</div><div class="tst-loc">Chennai · Residential 5kW</div></div></div>
+      </div>
+      <div class="tst-card">
+        <div class="tst-stars">★★★★★</div>
+        <div class="tst-quote">"We saved ₹38,000 on our first year's electricity bill at our textile shop. ROI in 4 years as promised. Highly recommend Skyflies."</div>
+        <div class="tst-meta"><div class="tst-avatar">PM</div><div><div class="tst-name">Priya Murugan</div><div class="tst-loc">Vellore · Commercial 10kW</div></div></div>
+      </div>
+      <div class="tst-card">
+        <div class="tst-stars">★★★★★</div>
+        <div class="tst-quote">"Subsidy paperwork handled end-to-end. Got ₹78,000 PM Surya Ghar + ₹60,000 TN state credit directly to my account. Zero hassle."</div>
+        <div class="tst-meta"><div class="tst-avatar">SV</div><div><div class="tst-name">Suresh Venkatesh</div><div class="tst-loc">Kanchipuram · Residential 3kW</div></div></div>
+      </div>
+      <div class="tst-card">
+        <div class="tst-stars">★★★★★</div>
+        <div class="tst-quote">"AMC service is excellent. Quarterly cleaning + monitoring. My panels still producing 96% capacity after 2 years. Worth every rupee."</div>
+        <div class="tst-meta"><div class="tst-avatar">AB</div><div><div class="tst-name">Anita Balaji</div><div class="tst-loc">Ranipet · AMC Subscriber</div></div></div>
+      </div>
+    </div>
+    <div class="tst-dots" id="tstDots"></div>
   </div>
 
   <div class="sec-head"><div class="sec-title">Our Services</div></div>
@@ -569,12 +674,17 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   <div class="screen-sub">Get an instant price estimate in seconds.</div>
   <div class="form-card">
     <div class="row2">
-      <div class="field"><label>Your Name *</label><input type="text" id="cn" placeholder="Full name"></div>
-      <div class="field"><label>Phone *</label><input type="tel" id="cp" placeholder="+91 XXXXX"></div>
+      <div class="field"><label>Your Name *</label><input type="text" id="cn" placeholder="Full name"><div class="field-err"></div></div>
+      <div class="field"><label>Phone *</label><input type="tel" id="cp" placeholder="+91 XXXXX"><div class="field-err"></div></div>
     </div>
     <div class="row2">
-      <div class="field"><label>Email *</label><input type="email" id="ce" placeholder="your@email.com"></div>
+      <div class="field"><label>Email *</label><input type="email" id="ce" placeholder="your@email.com"><div class="field-err"></div></div>
       <div class="field"><label>City</label><select id="cc"><option value="">Select</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option></select></div>
+    </div>
+    <div class="field">
+      <label>Pincode <span style="font-weight:400;color:var(--soft);">(auto-fills your area)</span></label>
+      <input type="tel" id="cpin" maxlength="6" inputmode="numeric" placeholder="600001" oninput="lookupPincode(this,'cpin-status','cc')">
+      <div class="pin-status" id="cpin-status"></div>
     </div>
     <div class="field"><label>Property Type *</label><select id="cpt" onchange="calcQuote()"><option value="">Select type</option><option value="residential">Residential – House</option><option value="commercial">Commercial – Office/Shop</option><option value="industrial">Industrial – Factory</option><option value="hospital">Hospital / Clinic</option><option value="school">School / College</option></select></div>
     <div class="row2">
@@ -603,7 +713,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="result-actions">
       <button class="act-btn main" onclick="sendQuotation()">📧 Send Quote to My Email</button>
       <button class="act-btn pdf" onclick="downloadPDFQuote()">📄 Download PDF Quote</button>
-      <button class="act-btn ghost" onclick="window.open('https://wa.me/919385449167?text=Hi! I calculated my solar quote on your app.','_blank')">💬 Share on WhatsApp</button>
+      <button class="act-btn ghost" onclick="shareQuoteOnWhatsApp()">💬 Send Quote on WhatsApp</button>
     </div>
     <div class="alert ok" id="qsent" style="margin-top:10px;">✅ Sent to your email! Team will follow up within 24 hours.</div>
     <p style="font-size:11px;color:var(--soft);margin-top:10px;line-height:1.5;">* Estimated quote. Final pricing confirmed after free site survey.</p>
@@ -1048,38 +1158,143 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
 
 <!-- ══ EMI ══ -->
 <div class="screen" id="screen-emi">
-  <div class="tag">💳 EMI & Loan</div>
-  <div class="screen-title">Solar EMI Enquiry</div>
-  <div class="screen-sub">Start solar with easy monthly payments.</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-    <div class="emi-strip"><div class="emi-name">Starter</div><div class="emi-amount">₹999</div><div class="emi-period">/month · 1–2 kW · 24mo</div></div>
-    <div class="emi-strip"><div class="emi-name">Home</div><div class="emi-amount">₹2,499</div><div class="emi-period">/month · 3–5 kW · 36mo</div></div>
-    <div class="emi-strip best"><div class="emi-name">Commercial</div><div class="emi-amount">₹4,999</div><div class="emi-period">/month · 5–10 kW · 48mo</div><div class="emi-badge">BEST VALUE</div></div>
-    <div class="emi-strip"><div class="emi-name">Industrial</div><div class="emi-amount">Custom</div><div class="emi-period">/month · 10 kW+</div></div>
-  </div>
+  <div class="tag">💳 Solar EMI Calculator</div>
+  <div class="screen-title">Plan Your Solar EMI</div>
+  <div class="screen-sub">Real EMI math · Compare tenures · Apply in one tap.</div>
+
   <div class="form-card">
-    <form id="emiForm">
-      <div class="row2">
-        <div class="field"><label>Full Name *</label><input type="text" name="name" required placeholder="Your name"></div>
-        <div class="field"><label>Phone *</label><input type="tel" name="phone" required placeholder="+91 XXXXX"></div>
+    <div class="field">
+      <label>System Cost (₹) <span style="font-weight:400;color:var(--soft);">– Auto-filled from quote, or enter manually</span></label>
+      <input type="number" id="emi-cost" placeholder="e.g. 250000" oninput="recalcEMI()">
+    </div>
+
+    <div class="field">
+      <label>Down Payment <span id="emi-dp-label" style="float:right;color:var(--sun);font-weight:700;">20%</span></label>
+      <input type="range" id="emi-dp" min="0" max="80" step="5" value="20" oninput="recalcEMI()" style="width:100%;accent-color:var(--sun);">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--soft);margin-top:4px;"><span>0%</span><span>40%</span><span>80%</span></div>
+    </div>
+
+    <div class="field">
+      <label>Interest Rate (% per year)</label>
+      <select id="emi-rate" onchange="recalcEMI()">
+        <option value="0">0% – Zero Cost EMI (selected partners)</option>
+        <option value="8.5">8.5% – SBI Solar Loan</option>
+        <option value="9.0">9.0% – Canara Bank</option>
+        <option value="9.5" selected>9.5% – HDFC / Bajaj Finserv</option>
+        <option value="10.5">10.5% – Standard NBFC</option>
+        <option value="12.0">12.0% – Personal Loan rate</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Tenure</label>
+      <div id="emi-tenure-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+        <button type="button" class="ten-btn" data-m="12" onclick="setTenure(12)">12 mo</button>
+        <button type="button" class="ten-btn" data-m="24" onclick="setTenure(24)">24 mo</button>
+        <button type="button" class="ten-btn on" data-m="36" onclick="setTenure(36)">36 mo</button>
+        <button type="button" class="ten-btn" data-m="48" onclick="setTenure(48)">48 mo</button>
+        <button type="button" class="ten-btn" data-m="60" onclick="setTenure(60)">60 mo</button>
       </div>
-      <div class="row2">
-        <div class="field"><label>Email *</label><input type="email" name="email" required placeholder="email"></div>
-        <div class="field"><label>City *</label><select name="city" required onchange="handleOtherCity(this)"><option value="">Select</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select><input type="text" name="cityOther" placeholder="Enter city" style="display:none;margin-top:8px;width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;" class="other-city-input"></div>
+    </div>
+
+    <div class="emi-result" id="emi-result" style="display:none;">
+      <div style="background:linear-gradient(135deg,rgba(245,166,35,0.18),rgba(255,107,0,0.12));border:1px solid rgba(245,166,35,0.35);border-radius:14px;padding:18px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--soft);">Monthly EMI</div>
+        <div style="font-size:36px;font-weight:800;color:var(--sun);margin:4px 0;" id="emi-monthly">₹0</div>
+        <div style="font-size:12px;color:var(--soft);" id="emi-tenure-text">for 36 months @ 9.5%</div>
       </div>
-      <div class="row2">
-        <div class="field"><label>Property Type *</label><select name="propertyType" required><option value="">Select</option><option>Residential</option><option>Commercial</option><option>Industrial</option><option>Hospital</option><option>School</option></select></div>
-        <div class="field"><label>System Size</label><select name="systemSize"><option value="">Select</option><option>1–2 kW</option><option>3–5 kW</option><option>5–10 kW</option><option>10 kW+</option></select></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:var(--soft);letter-spacing:1px;">DOWN PAYMENT</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-top:3px;" id="emi-dp-amt">₹0</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:var(--soft);letter-spacing:1px;">LOAN AMOUNT</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;margin-top:3px;" id="emi-loan-amt">₹0</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:var(--soft);letter-spacing:1px;">TOTAL INTEREST</div>
+          <div style="font-size:15px;font-weight:700;color:#FF6B00;margin-top:3px;" id="emi-interest">₹0</div>
+        </div>
       </div>
-      <div class="row2">
-        <div class="field"><label>Monthly Income</label><select name="income"><option value="">Select</option><option>₹10,000–₹25,000</option><option>₹25,000–₹50,000</option><option>₹50,000–₹1,00,000</option><option>Above ₹1,00,000</option></select></div>
-        <div class="field"><label>Preferred EMI</label><select name="emi"><option value="">Select</option><option>₹999/month</option><option>₹2,499/month</option><option>₹4,999/month</option><option>Custom</option></select></div>
+
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:12px;margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--success);letter-spacing:1px;text-transform:uppercase;font-weight:700;">💡 Smart Tip</div>
+        <div style="font-size:13px;color:#fff;margin-top:4px;line-height:1.5;" id="emi-tip">Solar saves ~₹X/month. After EMI, your net savings could be ₹Y/month from month 1.</div>
       </div>
-      <div class="field"><label>Employment</label><select name="employment"><option value="">Select</option><option>Salaried</option><option>Self-Employed</option><option>Business Owner</option><option>Farmer</option><option>Other</option></select></div>
-      <button type="submit" class="submit-btn" style="background:linear-gradient(135deg,var(--success),#059669);color:#fff;"><span class="bt">Submit EMI Enquiry →</span><div class="bll spin" style="display:none;"></div></button>
-      <div class="alert ok" id="em-ok" style="margin-top:10px;">✅ Submitted! Team calls within 24 hours.</div>
-      <div class="alert er" id="em-er" style="margin-top:10px;">❌ Error. Please call +91 93854 49167.</div>
-    </form>
+
+      <div style="font-size:11px;color:var(--soft);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Compare Tenures</div>
+      <div id="emi-compare" style="background:rgba(255,255,255,0.03);border-radius:10px;overflow:hidden;margin-bottom:14px;"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="submit-btn" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;margin:0;" onclick="applyEMIWhatsApp()">💬 Apply on WhatsApp</button>
+        <button class="submit-btn" style="background:linear-gradient(135deg,var(--sun),#FF6B00);color:#080F1E;margin:0;" onclick="goScreen('enquiry')">📞 Request Callback</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;margin-top:14px;font-size:12px;color:var(--soft);line-height:1.6;">
+    <strong style="color:var(--sun);">How this works:</strong> Standard reducing-balance EMI formula. Actual rates and tenures depend on your bank, credit score, and KYC. Many of our customers get approval in 48 hours through our finance partners.
+  </div>
+
+  <div class="sec-head" style="margin-top:18px;"><div class="sec-title">Finance Partners</div></div>
+  <p style="font-size:12px;color:var(--soft);margin-bottom:10px;">Tap to start your application — your details go directly to our partner on WhatsApp.</p>
+  <div class="fin-grid">
+    <button class="fin-card" onclick="applyFinancePartner('Bajaj Finserv','10.5')">
+      <div class="fin-name">Bajaj Finserv</div>
+      <div class="fin-rate">From 10.5% · up to 60 mo</div>
+      <div class="fin-meta">Zero/low DP options · Quick KYC · Salaried & SEP</div>
+    </button>
+    <button class="fin-card" onclick="applyFinancePartner('HDFC Bank','9.5')">
+      <div class="fin-name">HDFC Bank</div>
+      <div class="fin-rate">From 9.5% · up to 60 mo</div>
+      <div class="fin-meta">Pre-approved for HDFC customers · 48hr approval</div>
+    </button>
+    <button class="fin-card" onclick="applyFinancePartner('SBI Solar Loan','8.5')">
+      <div class="fin-name">SBI Solar Loan</div>
+      <div class="fin-rate">From 8.5% · up to 120 mo</div>
+      <div class="fin-meta">Lowest rate · PM Surya Ghar tie-up · Long tenure</div>
+    </button>
+    <button class="fin-card" onclick="applyFinancePartner('Canara Bank','9.0')">
+      <div class="fin-name">Canara Bank</div>
+      <div class="fin-rate">From 9.0% · up to 120 mo</div>
+      <div class="fin-meta">PSU rates · Govt subsidy direct credit · Min docs</div>
+    </button>
+  </div>
+</div>
+
+<!-- ══ REFER & EARN ══ -->
+<div class="screen" id="screen-refer">
+  <div class="tag">🎁 Refer & Earn</div>
+  <div class="screen-title">Earn ₹2,000 per friend</div>
+  <div class="screen-sub">Share your code, your friend gets ₹1,000 off, you get ₹2,000 cash.</div>
+
+  <div class="form-card" style="text-align:center;padding:24px 16px;">
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--soft);">Your Referral Code</div>
+    <div id="refCode" style="font-size:32px;font-weight:800;color:var(--sun);letter-spacing:4px;margin:10px 0;font-family:monospace;">SKY-XXXXXX</div>
+    <button class="submit-btn" onclick="copyReferralCode()" style="background:rgba(255,255,255,0.08);color:var(--text);margin-bottom:8px;">📋 Copy Code</button>
+    <button class="submit-btn" onclick="shareReferral()" style="background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;margin-top:4px;">💬 Share on WhatsApp</button>
+  </div>
+
+  <div class="sec-head" style="margin-top:18px;"><div class="sec-title">How It Works</div></div>
+  <div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:0;overflow:hidden;margin-bottom:16px;">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border2);display:flex;gap:12px;align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--sun);color:#080F1E;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+      <div><div style="font-size:14px;font-weight:700;color:var(--text);">Share your code</div><div style="font-size:12px;color:var(--soft);margin-top:2px;">Send your unique code to friends via WhatsApp.</div></div>
+    </div>
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border2);display:flex;gap:12px;align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--sun);color:#080F1E;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+      <div><div style="font-size:14px;font-weight:700;color:var(--text);">Friend installs solar</div><div style="font-size:12px;color:var(--soft);margin-top:2px;">They mention your code while booking. They get ₹1,000 off.</div></div>
+    </div>
+    <div style="padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--success);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div>
+      <div><div style="font-size:14px;font-weight:700;color:var(--text);">You earn ₹2,000</div><div style="font-size:12px;color:var(--soft);margin-top:2px;">Credited to your account within 7 days of their installation.</div></div>
+    </div>
+  </div>
+
+  <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:11px;padding:12px;font-size:12px;color:var(--soft);line-height:1.6;">
+    <strong style="color:var(--sun);">Terms:</strong> Cashback applies once the referred customer's installation is complete and fully paid. Maximum 10 referrals per month. Code must be shared before friend's first contact with us.
   </div>
 </div>
 
@@ -1394,6 +1609,26 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
     <div style="font-size:12px;font-weight:600;color:var(--soft);margin:12px 0 8px;">📁 Uploaded Media</div>
     <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
   </div>
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">⭐ Manage Testimonials</div>
+  <div class="form-card">
+    <div class="row2">
+      <div class="field"><label>Customer Name *</label><input type="text" id="admTstName" placeholder="e.g. Rajesh Kumar"></div>
+      <div class="field"><label>Location & System</label><input type="text" id="admTstLoc" placeholder="Chennai · 5kW Residential"></div>
+    </div>
+    <div class="field"><label>Quote *</label><textarea id="admTstQuote" placeholder="What the customer said about their experience..." style="min-height:80px;"></textarea></div>
+    <div class="field"><label>Rating</label>
+      <select id="admTstRating">
+        <option value="5" selected>★★★★★ (5)</option>
+        <option value="4">★★★★☆ (4)</option>
+        <option value="3">★★★☆☆ (3)</option>
+      </select>
+    </div>
+    <button class="submit-btn" onclick="adminAddTestimonial()" style="background:linear-gradient(135deg,var(--success),#059669);color:#fff;">➕ Add Testimonial</button>
+    <p style="font-size:11px;color:var(--soft);margin-top:8px;line-height:1.5;">Make sure you have the customer's written consent before publishing.</p>
+  </div>
+  <div style="font-size:13px;font-weight:600;color:var(--soft);margin:12px 0 8px;">Published Testimonials</div>
+  <div id="admTstList"><button onclick="adminLoadTestimonials()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load</button></div>
+
   <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">➕ Add Customer Manually</div>
     <div class="form-card">
       <form id="addCustForm">
@@ -1443,7 +1678,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','social','admin','setup','store','cart','adminstore'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -1735,19 +1970,34 @@ function calcQuote(){
   var pt=document.getElementById('cpt').value,sz=parseFloat(document.getElementById('csz').value||0),pl=document.getElementById('cpl').value,amc=document.getElementById('camc').value;
   if(!pt||!sz)return;
   var base=(pricePerKw[pt]||55000)*sz*panelMult[pl];
-  var subsidy=pt==='residential'?Math.min(sz<=3?sz*14588:sz<=10?43764+(sz-3)*7294:43764+7*7294,94822):0;
+  var sub=calcSubsidy(sz, pt);
+  var subsidy=sub.total;
   var total=base-subsidy+(amc==='yes'?sz*1200:0);
+  if(total<0) total=0;
   var panels=Math.ceil(sz/0.4),saving=Math.round(sz*850),emi=Math.round(total/36),roi=parseFloat((total/(saving*12)).toFixed(1));
   document.getElementById('qtotal').textContent='₹'+Math.round(total).toLocaleString('en-IN');
-  document.getElementById('qsubsidy').textContent=subsidy>0?'Govt subsidy of ₹'+Math.round(subsidy).toLocaleString('en-IN')+' already deducted':'Govt subsidy not applicable for this property type';
+  document.getElementById('qsubsidy').textContent=subsidy>0
+    ? 'Govt subsidy of ₹'+subsidy.toLocaleString('en-IN')+' deducted ('+sub.notes+')'
+    : 'Govt subsidy not applicable for this property type';
   document.getElementById('qsize').textContent=sz+' kW System';document.getElementById('qpanel').textContent=panelTypes[pl];
   document.getElementById('qpanels').textContent=panels+' panels (400W each)';document.getElementById('qsaving').textContent='₹'+saving.toLocaleString('en-IN')+'/month';
   document.getElementById('qemi').textContent='₹'+emi.toLocaleString('en-IN')+'/month (36mo)';document.getElementById('qroi').textContent=roi+' years';
-  document.getElementById('qnotes').textContent='📋 This quote includes '+sz+' kW '+panelTypes[pl]+' panels, inverter, mounting structure, wiring, and installation charges'+(amc==='yes'?' + Annual Maintenance Contract':'')+'. Government subsidy (if applicable) has been deducted. Final pricing confirmed after free site survey.';
+  document.getElementById('qnotes').textContent='📋 This quote includes '+sz+' kW '+panelTypes[pl]+' panels, inverter, mounting structure, wiring, and installation charges'+(amc==='yes'?' + Annual Maintenance Contract':'')+'. '+(subsidy>0?sub.notes+' applied.':'No subsidy.')+' Final pricing confirmed after free site survey.';
 }
 function showResult(){
   var pt=document.getElementById('cpt').value,sz=document.getElementById('csz').value;
-  if(!pt||!sz){alert('Please select property type and system size first!');return;}
+  var nm=document.getElementById('cn'),ph=document.getElementById('cp'),em=document.getElementById('ce');
+  var ok=true;
+  [nm,ph,em].forEach(clearInvalid);
+  if(!nm.value.trim()){ markInvalid(nm,'Please enter your name'); ok=false; }
+  if(!ph.value.trim() || !isValidIndianPhone(ph.value)){ markInvalid(ph,'Enter a valid 10-digit Indian mobile'); ok=false; }
+  if(em.value.trim() && !isValidEmail(em.value)){ markInvalid(em,'Enter a valid email'); ok=false; }
+  if(!pt||!sz){
+    if(!ok){ document.getElementById('cn').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    alert('Please select property type and system size first!');
+    return;
+  }
+  if(!ok){ nm.scrollIntoView({behavior:'smooth',block:'center'}); return; }
   calcQuote();document.getElementById('qresult').classList.add('show');document.getElementById('qresult').scrollIntoView({behavior:'smooth',block:'start'});
 }
 async function sendQuotation(){
@@ -1776,7 +2026,7 @@ async function doSubmit(formEl,type,okId,erId){
   safeOn('enqForm','submit',function(e){e.preventDefault();doSubmit(e.target,'enquiry','e-ok','e-er');});
   safeOn('quotForm','submit',function(e){e.preventDefault();doSubmit(e.target,'quotation','q-ok','q-er');});
   safeOn('subForm','submit',function(e){e.preventDefault();doSubmit(e.target,'subscribe','s-ok','s-er');});
-  safeOn('emiForm','submit',function(e){e.preventDefault();doSubmit(e.target,'emi','em-ok','em-er');});
+  safeOn('emiForm','submit',function(e){e.preventDefault();}); // EMI is now a calculator, not a form
 })();
 (function(){
   var qf=document.getElementById('queryForm');if(!qf)return;
@@ -2302,7 +2552,491 @@ function ytChannelCards() {
   }).join('');
 }
 
-// ── SERVICE WORKER (PWA) ─────────────────────────
+// ════════════════════════════════════════════════
+// ── FINTECH-GRADE UPGRADES (v28) ─────────────────
+// ════════════════════════════════════════════════
+
+// ─── Accurate India subsidy math (PM Surya Ghar + TN State) ───
+// PM Surya Ghar Yojana (residential): ₹30,000/kW for 1-2 kW, ₹18,000/kW for the 3rd kW.
+// Cap: ₹78,000 per residential consumer. Source: solarrooftop.gov.in / mnre.gov.in
+// TN State (CM's Solar Rooftop Capital Incentive): ₹20,000/kW additional for domestic consumers.
+function calcSubsidy(systemSizeKW, propertyType){
+  if(propertyType!=='residential') return {central:0, state:0, total:0, notes:'Subsidies apply only to residential rooftop systems.'};
+  var sz=Math.max(0, parseFloat(systemSizeKW)||0);
+  var central=0;
+  if(sz<=1) central=sz*30000;
+  else if(sz<=2) central=2*30000;
+  else if(sz<3) central=2*30000 + (sz-2)*18000;
+  else central=78000; // capped
+  central=Math.min(central, 78000);
+  // TN state — ₹20k/kW
+  var state=sz*20000;
+  // Stack both — net DBT to customer
+  var total=central+state;
+  return {central:Math.round(central), state:Math.round(state), total:Math.round(total),
+    notes:'Central (PM Surya Ghar): ₹'+Math.round(central).toLocaleString('en-IN')+' + TN State: ₹'+Math.round(state).toLocaleString('en-IN')};
+}
+
+// ─── EMI math (reducing-balance) ───
+function emiMonthly(principal, annualRate, months){
+  var P=Math.max(0, principal||0), R=(annualRate||0)/12/100, N=Math.max(1, months||1);
+  if(R===0) return P/N;
+  return P*R*Math.pow(1+R,N)/(Math.pow(1+R,N)-1);
+}
+function inr(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
+
+var emiState={cost:0, dpPct:20, rate:9.5, tenure:36};
+
+function setTenure(m){
+  emiState.tenure=m;
+  document.querySelectorAll('#emi-tenure-grid .ten-btn').forEach(function(b){
+    b.classList.toggle('on', parseInt(b.dataset.m,10)===m);
+  });
+  recalcEMI();
+}
+
+function recalcEMI(){
+  var costEl=document.getElementById('emi-cost');
+  var dpEl=document.getElementById('emi-dp');
+  var rateEl=document.getElementById('emi-rate');
+  if(!costEl) return;
+  emiState.cost=parseFloat(costEl.value||0);
+  emiState.dpPct=parseInt(dpEl.value||20,10);
+  emiState.rate=parseFloat(rateEl.value||9.5);
+  document.getElementById('emi-dp-label').textContent=emiState.dpPct+'%';
+  if(!emiState.cost || emiState.cost<5000){
+    document.getElementById('emi-result').style.display='none';
+    return;
+  }
+  var dpAmt=emiState.cost*emiState.dpPct/100;
+  var loan=emiState.cost-dpAmt;
+  var monthly=emiMonthly(loan, emiState.rate, emiState.tenure);
+  var totalPaid=monthly*emiState.tenure;
+  var interest=totalPaid-loan;
+  document.getElementById('emi-monthly').textContent=inr(monthly);
+  document.getElementById('emi-tenure-text').textContent='for '+emiState.tenure+' months @ '+emiState.rate+'%';
+  document.getElementById('emi-dp-amt').textContent=inr(dpAmt);
+  document.getElementById('emi-loan-amt').textContent=inr(loan);
+  document.getElementById('emi-interest').textContent=inr(interest);
+  // Solar saving estimate: ~₹850/kW/month — derive kW from cost
+  var sz=emiState.cost/55000; // rough reverse from base residential price
+  var solarSaving=Math.round(sz*850);
+  var netSavings=Math.round(solarSaving-monthly);
+  var tipEl=document.getElementById('emi-tip');
+  if(netSavings>0){
+    tipEl.innerHTML='Solar saves ~'+inr(solarSaving)+'/month on bills. After EMI of '+inr(monthly)+', you keep <strong style="color:var(--success);">'+inr(netSavings)+'/month</strong> from month 1.';
+  }else{
+    tipEl.innerHTML='Solar saves ~'+inr(solarSaving)+'/month. EMI is '+inr(monthly)+'. Try a longer tenure or higher down payment to make EMI ≤ savings.';
+  }
+  // Compare tenures table
+  var rows=[12,24,36,48,60].map(function(t){
+    var em=emiMonthly(loan, emiState.rate, t);
+    var tot=em*t;
+    var int_=tot-loan;
+    var cls=t===emiState.tenure?' on':'';
+    return '<div class="cmp-row'+cls+'"><span>'+t+'mo</span><span>'+inr(em)+'/mo</span><span>'+inr(int_)+'</span><span>'+inr(tot)+'</span></div>';
+  }).join('');
+  document.getElementById('emi-compare').innerHTML='<div class="cmp-row head"><span>Tenure</span><span>EMI</span><span>Interest</span><span>Total</span></div>'+rows;
+  document.getElementById('emi-result').style.display='block';
+}
+
+function applyEMIWhatsApp(){
+  if(!emiState.cost){ alert('Please enter system cost first.'); return; }
+  var dpAmt=emiState.cost*emiState.dpPct/100;
+  var loan=emiState.cost-dpAmt;
+  var monthly=emiMonthly(loan, emiState.rate, emiState.tenure);
+  var msg='Hi Skyflies! I want to apply for solar EMI.\n\n'+
+    '💰 System cost: '+inr(emiState.cost)+'\n'+
+    '🪙 Down payment: '+inr(dpAmt)+' ('+emiState.dpPct+'%)\n'+
+    '🏦 Loan: '+inr(loan)+' @ '+emiState.rate+'% for '+emiState.tenure+' months\n'+
+    '📅 EMI: '+inr(monthly)+'/month\n\n'+
+    'Please share next steps.';
+  window.open('https://wa.me/919385449167?text='+encodeURIComponent(msg),'_blank');
+}
+
+function shareQuoteOnWhatsApp(){
+  var nm=(document.getElementById('cn').value||'').trim();
+  var ph=(document.getElementById('cp').value||'').trim();
+  var em=(document.getElementById('ce').value||'').trim();
+  var city=document.getElementById('cc').value||'';
+  var pin=(document.getElementById('cpin')||{}).value||'';
+  var ptEl=document.getElementById('cpt');
+  var sz=document.getElementById('csz').value;
+  var plEl=document.getElementById('cpl');
+  var pt=ptEl.options[ptEl.selectedIndex].text;
+  var pl=plEl.options[plEl.selectedIndex].text;
+  var total=document.getElementById('qtotal').textContent;
+  var saving=document.getElementById('qsaving').textContent;
+  var roi=document.getElementById('qroi').textContent;
+  if(!sz || total==='₹0'){ alert('Please calculate your quote first!'); return; }
+  var msg='Hi Skyflies! Here is my solar quote:\n\n'+
+    '👤 '+(nm||'(name)')+'\n'+
+    (ph?'📱 '+ph+'\n':'')+(em?'✉️ '+em+'\n':'')+
+    (city||pin?'📍 '+(city||'')+(pin?' - '+pin:'')+'\n':'')+'\n'+
+    '🏠 '+pt+'\n☀️ '+sz+' kW '+pl+'\n💰 Estimated: '+total+'\n💡 Saves: '+saving+'\n⏱️ ROI: '+roi+'\n\n'+
+    'Please schedule a free site survey.';
+  window.open('https://wa.me/919385449167?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ─── Finance partner handoff (BNPL-style) ───
+function applyFinancePartner(partner, rate){
+  var nm=(document.getElementById('cn')||{}).value||'';
+  var ph=(document.getElementById('cp')||{}).value||'';
+  var em=(document.getElementById('ce')||{}).value||'';
+  var pin=(document.getElementById('cpin')||{}).value||'';
+  var cost=emiState.cost||parseFloat((document.getElementById('qtotal')||{textContent:'0'}).textContent.replace(/[^\d]/g,''));
+  var loan=cost? cost*(1-emiState.dpPct/100) : 0;
+  var monthly=loan? emiMonthly(loan, parseFloat(rate), emiState.tenure||36) : 0;
+  var msg='Hi Skyflies! I want to apply for solar finance via '+partner+'.\n\n'+
+    (nm?'👤 '+nm+'\n':'')+
+    (ph?'📱 '+ph+'\n':'')+
+    (em?'✉️ '+em+'\n':'')+
+    (pin?'📍 PIN: '+pin+'\n':'')+
+    (cost?'💰 System cost: '+inr(cost)+'\n':'')+
+    (loan?'🏦 Loan needed: '+inr(loan)+' @ '+rate+'% for '+(emiState.tenure||36)+' months\n':'')+
+    (monthly?'📅 Approx EMI: '+inr(monthly)+'/month\n':'')+
+    '\nPlease share '+partner+' application steps & required documents.';
+  window.open('https://wa.me/919385449167?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ─── Theme toggle ───
+function applyTheme(t){
+  document.documentElement.classList.toggle('light', t==='light');
+  var btn=document.getElementById('themeBtn');
+  if(btn) btn.textContent=t==='light'?'☀️':'🌙';
+  var meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', t==='light'?'#FFFFFF':'#F5A623');
+}
+function toggleTheme(){
+  var cur=document.documentElement.classList.contains('light')?'light':'dark';
+  var nxt=cur==='light'?'dark':'light';
+  try{localStorage.setItem('sf_theme', nxt);}catch(e){}
+  applyTheme(nxt);
+}
+(function(){
+  try{
+    var saved=localStorage.getItem('sf_theme');
+    if(!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) saved='light';
+    if(saved) applyTheme(saved);
+  }catch(e){}
+})();
+
+// ─── Testimonials carousel ───
+(function(){
+  function initTst(){
+    var track=document.getElementById('tstTrack');
+    var dotsWrap=document.getElementById('tstDots');
+    if(!track||!dotsWrap) return;
+    var cards=track.children;
+    if(!cards.length) return;
+    // Build dots
+    dotsWrap.innerHTML='';
+    for(var i=0;i<cards.length;i++){
+      (function(idx){
+        var d=document.createElement('div');
+        d.className='tst-dot'+(idx===0?' on':'');
+        d.addEventListener('click',function(){ cards[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); });
+        dotsWrap.appendChild(d);
+      })(i);
+    }
+    // Update dot on scroll
+    track.addEventListener('scroll', function(){
+      var scrollLeft=track.scrollLeft;
+      var cardWidth=cards[0].offsetWidth+12;
+      var idx=Math.round(scrollLeft/cardWidth);
+      idx=Math.max(0, Math.min(idx, cards.length-1));
+      var dots=dotsWrap.children;
+      for(var i=0;i<dots.length;i++) dots[i].classList.toggle('on', i===idx);
+    });
+    // Auto-rotate every 6s
+    var auto=setInterval(function(){
+      if(document.hidden) return;
+      var scrollLeft=track.scrollLeft;
+      var cardWidth=cards[0].offsetWidth+12;
+      var idx=Math.round(scrollLeft/cardWidth);
+      var nxt=(idx+1)%cards.length;
+      cards[nxt].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    }, 6000);
+    // Stop auto-rotate on user interaction
+    track.addEventListener('touchstart', function(){ clearInterval(auto); }, {passive:true});
+    track.addEventListener('mousedown', function(){ clearInterval(auto); });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initTst);
+  else initTst();
+})();
+
+// ─── Referral program ───
+function generateReferralCode(seed){
+  var s=String(seed||'').replace(/[^a-zA-Z0-9]/g,'').toUpperCase();
+  if(s.length>=6) return 'SKY-'+s.substring(0,6);
+  // Random 6-char alphanumeric (no ambiguous chars)
+  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code='';
+  for(var i=0;i<6;i++) code+=chars.charAt(Math.floor(Math.random()*chars.length));
+  return 'SKY-'+code;
+}
+
+function getMyReferralCode(){
+  var cached=localStorage.getItem('sf_my_ref');
+  if(cached) return cached;
+  // Try to derive from logged-in session
+  var seed='';
+  try{
+    var sess=sessionStorage.getItem('sf_session');
+    if(sess){ var s=JSON.parse(sess); seed=s.id||s.phone||s.email||''; }
+  }catch(e){}
+  var code=generateReferralCode(seed);
+  try{localStorage.setItem('sf_my_ref', code);}catch(e){}
+  return code;
+}
+
+function copyReferralCode(){
+  var code=document.getElementById('refCode').textContent;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(function(){
+      if(typeof showToast==='function') showToast('✅ Code copied to clipboard');
+      else alert('✅ Code copied');
+    });
+  }else{
+    var ta=document.createElement('textarea');
+    ta.value=code; document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta);
+    alert('✅ Code copied');
+  }
+}
+
+function shareReferral(){
+  var code=document.getElementById('refCode').textContent;
+  var url='https://skyfliessolar.github.io/skyflies/?ref='+encodeURIComponent(code);
+  var msg='☀️ Save on your electricity bills with Skyflies Solar!\n\n'+
+    'I use them and they are excellent. Use my code *'+code+'* and get ₹1,000 off your installation.\n\n'+
+    'Get a free instant quote: '+url+'\n\n'+
+    'They cover Chennai, Vellore, Ranipet & Kanchipuram.';
+  // Try native share first (mobile)
+  if(navigator.share){
+    navigator.share({title:'Skyflies Solar', text:msg, url:url}).catch(function(){
+      window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+    });
+  }else{
+    window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+  }
+}
+
+// Capture incoming referrals
+(function(){
+  try{
+    var p=new URLSearchParams(window.location.search);
+    var ref=p.get('ref');
+    if(ref && /^[A-Z0-9-]{4,16}$/i.test(ref)){
+      localStorage.setItem('sf_came_via_ref', ref);
+    }
+  }catch(e){}
+})();
+
+function getReferredBy(){ try{return localStorage.getItem('sf_came_via_ref')||'';}catch(e){return '';} }
+
+// Initialize refer screen when shown
+(function(){
+  var origGo=window.goScreen;
+  if(typeof origGo==='function'){
+    window.goScreen=function(id, isBack){
+      origGo(id, isBack);
+      if(id==='emi') setTimeout(syncEMICostFromQuote, 50);
+      if(id==='refer'){
+        var el=document.getElementById('refCode');
+        if(el) el.textContent=getMyReferralCode();
+      }
+    };
+  }
+})();
+
+// Auto-attach referral code to outgoing submissions
+(function(){
+  if(typeof window.sendToSheet==='function'){
+    var orig=window.sendToSheet;
+    window.sendToSheet=function(data){
+      try{
+        var r=getReferredBy();
+        if(r && data && typeof data==='object' && !data.referredBy) data.referredBy=r;
+      }catch(e){}
+      return orig.apply(this, arguments);
+    };
+  }
+})();
+
+// ─── Admin testimonials manager (Firestore-backed) ───
+async function adminLoadTestimonials(){
+  var listEl=document.getElementById('admTstList');
+  if(!listEl) return;
+  listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
+  if(!db){ listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">Firebase not connected.</div>'; return; }
+  try{
+    var snap=await db.collection('testimonials').orderBy('createdAt','desc').get();
+    if(snap.empty){ listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">No custom testimonials yet. Defaults from app are shown.</div>'; return; }
+    var html='';
+    snap.forEach(function(doc){
+      var t=doc.data();
+      html+='<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text);">'+escapeHTML(t.name||'(no name)')+' <span style="font-weight:400;color:var(--soft);">· '+escapeHTML(t.loc||'')+'</span></div>'+
+        '<div style="color:#FFB400;font-size:13px;margin:4px 0;">'+'★'.repeat(Math.max(1,Math.min(5,parseInt(t.rating||5,10))))+'</div>'+
+        '<div style="font-size:12px;color:var(--soft);font-style:italic;">"'+escapeHTML(t.quote||'')+'"</div>'+
+        '<button onclick="adminDeleteTestimonial(\''+doc.id+'\')" style="margin-top:8px;padding:6px 10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:7px;color:#FF6B6B;font-size:11px;cursor:pointer;">Delete</button>'+
+        '</div>';
+    });
+    listEl.innerHTML=html;
+  }catch(e){ listEl.innerHTML='<div style="color:#FF6B6B;font-size:12px;">Error: '+escapeHTML(e.message||'')+'</div>'; }
+}
+function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+async function adminAddTestimonial(){
+  if(!db){ alert('Firebase not connected'); return; }
+  var nm=document.getElementById('admTstName').value.trim();
+  var loc=document.getElementById('admTstLoc').value.trim();
+  var quote=document.getElementById('admTstQuote').value.trim();
+  var rating=parseInt(document.getElementById('admTstRating').value||5,10);
+  if(!nm||!quote){ alert('Please enter name and quote'); return; }
+  try{
+    await db.collection('testimonials').add({name:nm, loc:loc, quote:quote, rating:rating, createdAt:Date.now()});
+    document.getElementById('admTstName').value='';
+    document.getElementById('admTstLoc').value='';
+    document.getElementById('admTstQuote').value='';
+    document.getElementById('admTstRating').value='5';
+    adminLoadTestimonials();
+    if(typeof showToast==='function') showToast('✅ Testimonial added');
+  }catch(e){ alert('Save failed: '+(e.message||e)); }
+}
+async function adminDeleteTestimonial(id){
+  if(!confirm('Delete this testimonial?')) return;
+  try{ await db.collection('testimonials').doc(id).delete(); adminLoadTestimonials(); }
+  catch(e){ alert('Delete failed: '+(e.message||e)); }
+}
+
+// Load custom testimonials on home if present
+(function(){
+  function tryLoad(){
+    if(!db){ setTimeout(tryLoad, 1000); return; }
+    db.collection('testimonials').orderBy('createdAt','desc').limit(8).get().then(function(snap){
+      if(snap.empty) return;
+      var track=document.getElementById('tstTrack');
+      if(!track) return;
+      var html='';
+      snap.forEach(function(doc){
+        var t=doc.data();
+        var initials=String(t.name||'?').split(' ').map(function(p){return p.charAt(0);}).join('').substring(0,2).toUpperCase();
+        var stars='★'.repeat(Math.max(1,Math.min(5,parseInt(t.rating||5,10))));
+        html+='<div class="tst-card"><div class="tst-stars">'+stars+'</div>'+
+          '<div class="tst-quote">"'+escapeHTML(t.quote||'')+'"</div>'+
+          '<div class="tst-meta"><div class="tst-avatar">'+escapeHTML(initials)+'</div>'+
+          '<div><div class="tst-name">'+escapeHTML(t.name||'')+'</div>'+
+          '<div class="tst-loc">'+escapeHTML(t.loc||'')+'</div></div></div></div>';
+      });
+      track.innerHTML=html;
+      // Rebuild dots
+      var dotsWrap=document.getElementById('tstDots');
+      if(dotsWrap){
+        dotsWrap.innerHTML='';
+        var cards=track.children;
+        for(var i=0;i<cards.length;i++){
+          (function(idx){
+            var d=document.createElement('div');
+            d.className='tst-dot'+(idx===0?' on':'');
+            d.addEventListener('click',function(){ cards[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); });
+            dotsWrap.appendChild(d);
+          })(i);
+        }
+      }
+    }).catch(function(){});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryLoad, 1500); });
+  else setTimeout(tryLoad, 1500);
+})();
+
+// ─── Pincode auto-fill (postalpincode.in) ───
+function lookupPincode(input, statusElId, areaInputId){
+  var pin=String(input.value||'').replace(/\D/g,'');
+  var status=document.getElementById(statusElId);
+  if(pin.length!==6){
+    if(status){ status.className='pin-status'; status.textContent=pin.length>0?'Enter all 6 digits':''; }
+    return;
+  }
+  if(status){ status.className='pin-status'; status.textContent='Looking up…'; }
+  fetch('https://api.postalpincode.in/pincode/'+pin).then(function(r){return r.json();}).then(function(j){
+    if(j && j[0] && j[0].Status==='Success' && j[0].PostOffice && j[0].PostOffice.length){
+      var po=j[0].PostOffice[0];
+      var area=(po.Block&&po.Block!=='NA'?po.Block+', ':'')+po.District+', '+po.State;
+      if(status){ status.className='pin-status ok'; status.textContent='✓ '+area; }
+      if(areaInputId){
+        var ai=document.getElementById(areaInputId);
+        if(ai && !ai.value) ai.value=po.District;
+      }
+    }else{
+      if(status){ status.className='pin-status err'; status.textContent='Invalid pincode'; }
+    }
+  }).catch(function(){
+    if(status){ status.className='pin-status err'; status.textContent='Network error — please try again'; }
+  });
+}
+
+// ─── Validation helpers ───
+function isValidIndianPhone(v){ var d=String(v||'').replace(/\D/g,''); return /^[6-9]\d{9}$/.test(d) || /^91[6-9]\d{9}$/.test(d); }
+function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v||'').trim()); }
+function isValidPincode(v){ return /^[1-9]\d{5}$/.test(String(v||'').replace(/\D/g,'')); }
+
+function markInvalid(el, msg){
+  if(!el) return;
+  el.classList.add('invalid');
+  var nxt=el.nextElementSibling;
+  if(nxt && nxt.classList && nxt.classList.contains('field-err')){
+    nxt.textContent=msg; nxt.classList.add('show');
+  }
+}
+function clearInvalid(el){
+  if(!el) return;
+  el.classList.remove('invalid');
+  var nxt=el.nextElementSibling;
+  if(nxt && nxt.classList && nxt.classList.contains('field-err')) nxt.classList.remove('show');
+}
+
+// Auto-clear errors when user types
+document.addEventListener('input', function(e){
+  if(e.target.classList && e.target.classList.contains('invalid')) clearInvalid(e.target);
+});
+
+// ─── WhatsApp share fab ───
+function whatsappQuickShare(){
+  var msg='Hi Skyflies Solar! I am interested in a solar system for my property. Please send me details.';
+  window.open('https://wa.me/919385449167?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ─── Sync EMI cost from quote calculator when user navigates ───
+function syncEMICostFromQuote(){
+  var qt=document.getElementById('qtotal');
+  var emiCost=document.getElementById('emi-cost');
+  if(qt && emiCost && !emiCost.value){
+    var n=parseFloat(String(qt.textContent||'').replace(/[^\d]/g,''));
+    if(n>5000){ emiCost.value=n; recalcEMI(); }
+  }
+}
+
+// Wire up on initial load
+window.addEventListener('DOMContentLoaded', function(){
+  // Add Indian-formatted placeholder
+  var emiCost=document.getElementById('emi-cost');
+  if(emiCost){ emiCost.addEventListener('input', recalcEMI); }
+});
+
+// Hook into goScreen to sync EMI cost
+(function(){
+  var origGo=window.goScreen;
+  if(typeof origGo==='function'){
+    window.goScreen=function(id, isBack){
+      origGo(id, isBack);
+      if(id==='emi') setTimeout(syncEMICostFromQuote, 50);
+    };
+  }
+})();
+
+
 if ('serviceWorker' in navigator && location.hostname !== 'www.claudeusercontent.com') {
   navigator.serviceWorker.register('/skyflies/sw.js', { scope: '/skyflies/' })
     .then(function(reg) { console.log('SW registered, scope:', reg.scope); })
@@ -2394,6 +3128,7 @@ function downloadPDFQuote(){
   var subsidy=subsidyEl?subsidyEl.textContent:'';
   var ptText=pt.options[pt.selectedIndex].text;
   var amcText=amc==='yes'?'Yes – Included':'No';
+  var pdfSub=calcSubsidy(parseFloat(sz.value||0), pt.value);
 
   var today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
   var quoteNo='SKY-'+Date.now().toString().slice(-6);
@@ -2524,14 +3259,32 @@ function downloadPDFQuote(){
   </table>
 
   <!-- FINANCIAL BENEFITS -->
+  <div class="section-title">Government Subsidy Breakdown</div>
+  <table>
+    <thead><tr><th>Scheme</th><th>Amount</th></tr></thead>
+    <tbody>
+      <tr><td>PM Surya Ghar Muft Bijli Yojana (Central)</td><td>${pdfSub.central>0?'₹'+pdfSub.central.toLocaleString('en-IN'):'Not applicable'}</td></tr>
+      <tr><td>CM's Solar Rooftop Capital Incentive (Tamil Nadu)</td><td>${pdfSub.state>0?'₹'+pdfSub.state.toLocaleString('en-IN'):'Not applicable'}</td></tr>
+      <tr class="savings-row"><td><strong>Total Subsidy (Already Deducted)</strong></td><td><strong>${pdfSub.total>0?'₹'+pdfSub.total.toLocaleString('en-IN'):'—'}</strong></td></tr>
+    </tbody>
+  </table>
+
   <div class="section-title">Financial Benefits</div>
   <table>
     <thead><tr><th>Benefit</th><th>Estimated Value</th></tr></thead>
     <tbody>
       <tr class="savings-row"><td>Monthly Electricity Savings</td><td>${saving}</td></tr>
-      <tr><td>EMI Option (36 months)</td><td>${emi}</td></tr>
+      <tr><td>EMI Option (36 months @ 9.5%)</td><td>${emi}</td></tr>
       <tr><td>Payback Period</td><td>${roi}</td></tr>
       <tr class="savings-row"><td>25-Year Lifetime Savings</td><td>₹${Math.round(parseInt((saving||'₹0').replace(/[₹,]/g,''))*12*25).toLocaleString('en-IN')}</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">5-Year Savings Projection</div>
+  <table>
+    <thead><tr><th>Year</th><th>Annual Savings</th><th>Cumulative Savings</th></tr></thead>
+    <tbody>
+      ${(function(){var s=parseInt((saving||'₹0').replace(/[₹,]/g,''))*12;var cum=0;var rows='';for(var y=1;y<=5;y++){cum+=s;rows+='<tr><td>Year '+y+'</td><td>₹'+s.toLocaleString('en-IN')+'</td><td>₹'+cum.toLocaleString('en-IN')+'</td></tr>';}return rows;})()}
     </tbody>
   </table>
 
