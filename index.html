@@ -36,7 +36,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:#0A0F1E;overflow:hidden;}
+html,body{height:100%;background:#0A0F1E;overflow:hidden;color:#fff;-webkit-font-smoothing:antialiased;}
 #app{width:100%;height:100vh;height:100dvh;background:#0A0F1E;display:flex;flex-direction:column;overflow:hidden;}
 #topbar{flex:0 0 56px;height:56px;min-height:56px;background:#111827;display:flex;align-items:center;padding:0 16px;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08);z-index:200;}
 #bottomnav{flex:0 0 52px;height:52px;min-height:52px;background:#111827;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:stretch;z-index:200;}
@@ -205,11 +205,20 @@ html.light .cmp-row span:first-child{color:var(--text);}
 /* ── STORE ── */
 .cat-pill{padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--soft);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
 .cat-pill.on{background:rgba(245,166,35,0.15);border-color:var(--sun);color:var(--sun);}
-.prod-card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:transform 0.15s;}
+.prod-card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:transform 0.15s;display:flex;flex-direction:column;}
 .prod-card:active{transform:scale(0.97);}
-.prod-img{width:100%;aspect-ratio:1;object-fit:cover;background:linear-gradient(135deg,rgba(245,166,35,0.1),rgba(255,107,0,0.05));display:flex;align-items:center;justify-content:center;font-size:40px;}
-.prod-info{padding:10px;}
-.prod-name{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;}
+.prod-img-wrap{width:100%;aspect-ratio:1;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(245,166,35,0.14),rgba(255,107,0,0.08));display:flex;align-items:center;justify-content:center;}
+.prod-img-wrap.panels{background:linear-gradient(135deg,#F5A623,#FF6B00);}
+.prod-img-wrap.inverters{background:linear-gradient(135deg,#3B82F6,#1D4ED8);}
+.prod-img-wrap.batteries{background:linear-gradient(135deg,#10B981,#059669);}
+.prod-img-wrap.lighting{background:linear-gradient(135deg,#FBBF24,#F59E0B);}
+.prod-img-wrap.gadgets{background:linear-gradient(135deg,#8B5CF6,#6D28D9);}
+.prod-img-wrap.accessories{background:linear-gradient(135deg,#EC4899,#BE185D);}
+.prod-img-wrap.appliances{background:linear-gradient(135deg,#06B6D4,#0E7490);}
+.prod-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.prod-img-emoji{position:relative;font-size:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.28));}
+.prod-info{padding:10px;flex:1;display:flex;flex-direction:column;}
+.prod-name{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.3;color:var(--text);min-height:34px;}
 .prod-brand{font-size:10px;color:var(--soft);margin-bottom:5px;}
 .prod-price{font-size:16px;font-weight:700;color:var(--sun);}
 .prod-orig{font-size:11px;color:var(--soft);text-decoration:line-through;margin-left:4px;}
@@ -220,6 +229,9 @@ html.light .cmp-row span:first-child{color:var(--text);}
 .prod-badge.out{background:rgba(239,68,68,0.15);color:#EF4444;}
 .prod-badge.in{background:rgba(16,185,129,0.15);color:var(--success);}
 .prod-badge.pre{background:rgba(59,130,246,0.15);color:#60A5FA;}
+#cartBar{transition:opacity 0.2s;}
+/* Store screen needs extra bottom padding so WA fab doesn't overlap last card */
+#screen-store{padding-bottom:96px;}
 
 /* ── PLAN CARDS ── */
 .plan-card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);cursor:pointer;}
@@ -1011,7 +1023,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   <!-- Search bar -->
   <div style="position:relative;margin-bottom:14px;">
     <input type="text" id="storeSearch" placeholder="🔍  Search products..." oninput="filterProducts(this.value)"
-      style="width:100%;background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 16px 12px 40px;color:#fff;font-size:14px;outline:none;">
+      style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 16px 12px 40px;color:var(--text);font-size:14px;outline:none;">
     <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;">🔍</span>
   </div>
 
@@ -1026,7 +1038,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div>
 
   <!-- Cart bar -->
-  <div id="cartBar" style="display:none;position:sticky;top:0;z-index:50;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:12px;padding:12px 16px;margin-bottom:12px;align-items:center;gap:10px;">
+  <div id="cartBar" style="display:none;background:linear-gradient(135deg,var(--sun),var(--solar));border-radius:12px;padding:12px 16px;margin-bottom:12px;align-items:center;gap:10px;">
     <span style="font-size:18px;">🛒</span>
     <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#080F1E;" id="cartCount">0 items</div><div style="font-size:11px;color:#080F1E;opacity:0.7;" id="cartTotal">₹0</div></div>
     <button onclick="goScreen('cart')" style="padding:8px 16px;background:#080F1E;border:none;border-radius:8px;color:var(--sun);font-weight:700;font-size:13px;cursor:pointer;">View Cart →</button>
@@ -3708,9 +3720,13 @@ function renderProducts(products) {
     card.className = 'prod-card';
     card.setAttribute('data-id', p.id);
     var icon = catIcons[p.cat] || '📦';
-    var imgEl = p.img
-      ? '<img src="' + p.img + '" style="width:100%;aspect-ratio:1;object-fit:cover;">'
-      : '<div style="width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px;background:rgba(245,166,35,0.08);">' + icon + '</div>';
+    var cat = String(p.cat||'').toLowerCase();
+    // Image wrap always shows a gradient + big emoji; real image overlays only if valid
+    var imgHtml = '';
+    if (p.img && /^https?:\/\//i.test(p.img)) {
+      imgHtml = '<img src="' + p.img + '" alt="'+ (p.name||'').replace(/"/g,'&quot;') +'" loading="lazy" onerror="this.style.display=\'none\'">';
+    }
+    var imgEl = '<div class="prod-img-wrap ' + cat + '">' + imgHtml + '<div class="prod-img-emoji">' + icon + '</div></div>';
     var stockBadge = p.stock==='out'
       ? '<span class="prod-badge out">Out of Stock</span>'
       : p.stock==='pre' ? '<span class="prod-badge pre">Pre-order</span>'
@@ -3724,20 +3740,19 @@ function renderProducts(products) {
       imgEl +
       '<div class="prod-info">' +
         stockBadge +
-        '<div class="prod-name">' + p.name + '</div>' +
-        '<div class="prod-brand">' + p.brand + '</div>' +
+        '<div class="prod-name">' + (p.name||'') + '</div>' +
+        '<div class="prod-brand">' + (p.brand||'') + '</div>' +
         '<div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:4px;">' + priceHtml + '</div>' +
         (p.stock !== 'out'
           ? '<button class="prod-add" data-add="'+p.id+'">🛒 Add to Cart</button>'
           : '<button class="prod-add" style="opacity:0.4;cursor:not-allowed;" disabled>Out of Stock</button>'
         ) +
       '</div>';
-    card.querySelector('.prod-card') ; // dummy
-    card.onclick = function(e) {
-      var addBtn = e.target.closest ? e.target.closest('[data-add]') : (e.target.getAttribute('data-add') ? e.target : null);
-      if(addBtn) { addToCart(addBtn.getAttribute('data-add'), e); return; }
-      else { showProductDetail(this.getAttribute('data-id')); }
-    };
+    card.addEventListener('click', function(e) {
+      var addBtn = e.target && e.target.closest ? e.target.closest('[data-add]') : null;
+      if(addBtn) { e.stopPropagation(); addToCart(addBtn.getAttribute('data-add'), e); return; }
+      showProductDetail(this.getAttribute('data-id'));
+    });
     grid.appendChild(card);
   });
 }
