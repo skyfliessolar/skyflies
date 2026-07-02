@@ -507,6 +507,7 @@ html.light .fin-card{background:rgba(0,0,0,0.03);}
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var FIREBASE_CONFIG={apiKey:"AIzaSyCjsw3gwtfqSpAGEehtdFSCIpgPlbxnIFM",authDomain:"skyflies-solar.firebaseapp.com",projectId:"skyflies-solar",storageBucket:"skyflies-solar.firebasestorage.app",messagingSenderId:"714418955246",appId:"1:714418955246:web:d8206ea5c0b866faaf64ff",measurementId:"G-2DD4EM94MY"};
 var FIREBASE_ENABLED=true,db=null;
@@ -691,12 +692,15 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     </div>
     <div class="row2">
       <div class="field"><label>Email *</label><input type="email" id="ce" placeholder="your@email.com"><div class="field-err"></div></div>
-      <div class="field"><label>City</label><select id="cc"><option value="">Select</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option></select></div>
+      <div class="field"><label>Country</label><select id="ccountry"><option value="India" selected>🇮🇳 India</option><option value="United Kingdom">🇬🇧 United Kingdom</option><option value="UAE">🇦🇪 UAE</option><option value="Singapore">🇸🇬 Singapore</option><option value="Sri Lanka">🇱🇰 Sri Lanka</option><option value="USA">🇺🇸 USA</option><option value="Other">🌍 Other</option></select></div>
     </div>
-    <div class="field">
-      <label>Pincode <span style="font-weight:400;color:var(--soft);">(auto-fills your area)</span></label>
-      <input type="tel" id="cpin" maxlength="6" inputmode="numeric" placeholder="600001" oninput="lookupPincode(this,'cpin-status','cc')">
-      <div class="pin-status" id="cpin-status"></div>
+    <div class="row2">
+      <div class="field"><label>City</label><select id="cc"><option value="">Select</option><option>Chennai</option><option>Vellore</option><option>Ranipet</option><option>Kanchipuram</option><option value="Other">Other</option></select></div>
+      <div class="field">
+        <label>Pincode <span style="font-weight:400;color:var(--soft);">(auto-fills area)</span></label>
+        <input type="tel" id="cpin" maxlength="6" inputmode="numeric" placeholder="600001" oninput="lookupPincode(this,'cpin-status','cc')">
+        <div class="pin-status" id="cpin-status"></div>
+      </div>
     </div>
     <div class="field"><label>Property Type *</label><select id="cpt" onchange="calcQuote()"><option value="">Select type</option><option value="residential">Residential – House</option><option value="commercial">Commercial – Office/Shop</option><option value="industrial">Industrial – Factory</option><option value="hospital">Hospital / Clinic</option><option value="school">School / College</option></select></div>
     <div class="row2">
@@ -2015,7 +2019,7 @@ function showResult(){
 async function sendQuotation(){
   var nm=document.getElementById('cn').value,em=document.getElementById('ce').value,ph=document.getElementById('cp').value;
   if(!nm||!em||!ph){alert('Please fill in your Name, Email and Phone at the top first!');return;}
-  var data={formType:'quotation',name:nm,email:em,phone:ph,city:document.getElementById('cc').value,propertyType:document.getElementById('cpt').options[document.getElementById('cpt').selectedIndex].text,systemType:document.getElementById('csz').value+' kW '+document.getElementById('cpl').options[document.getElementById('cpl').selectedIndex].text,budget:'As calculated',message:'Auto quote from calculator. Est total: '+document.getElementById('qtotal').textContent,submittedAt:new Date().toISOString()};
+  var data={formType:'quotation',name:nm,email:em,phone:ph,city:document.getElementById('cc').value,country:detectCountry(),pincode:(document.getElementById('cpin')||{}).value||'',propertyType:document.getElementById('cpt').options[document.getElementById('cpt').selectedIndex].text,systemType:document.getElementById('csz').value+' kW '+document.getElementById('cpl').options[document.getElementById('cpl').selectedIndex].text,budget:'As calculated',message:'Auto quote from calculator. Est total: '+document.getElementById('qtotal').textContent,submittedAt:new Date().toISOString()};
   await sendToSheet(data);document.getElementById('qsent').classList.add('show');
 }
 
@@ -2097,6 +2101,13 @@ function payNow(amount,description,planName){
 }
 
 async function sendToSheet(data){
+  // Fire Supabase insert in parallel (non-blocking)
+  try{
+    var src=data.formType||data.action||'misc';
+    if(sb && ['enquiry','quotation','emi','subscribe','query','quote'].indexOf(String(src).toLowerCase())>=0){
+      sendLead(String(src).toLowerCase(), data).catch(function(){});
+    }
+  }catch(e){}
   var wh=localStorage.getItem(WH)||WEBHOOK_URL;if(!wh)return false;
   if(FIREBASE_ENABLED&&db){try{var col=data.formType||data.action||'misc';await fbSave(col,'doc_'+Date.now(),Object.assign({},data,{savedAt:new Date().toISOString()}));}catch(fe){}}
   try{await fetch(wh,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});return true;}
@@ -2568,6 +2579,143 @@ function ytChannelCards() {
 // ── FINTECH-GRADE UPGRADES (v28) ─────────────────
 // ════════════════════════════════════════════════
 
+// ─── Supabase backend ───
+var SUPABASE_URL='https://fcwozkqxpmkbczrnjpqx.supabase.co';
+var SUPABASE_KEY='sb_publishable_nttjeP0-ChmS41eBKUGd9g_LrQtKNmG';
+var sb=null;
+(function initSupabase(){
+  if(typeof supabase==='undefined'){ setTimeout(initSupabase, 400); return; }
+  try{
+    sb=supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:false}});
+    console.log('Supabase ready');
+  }catch(e){ console.warn('Supabase init failed:', e); }
+})();
+
+// Universal lead sender: writes to Supabase first, falls back to Google Sheets
+async function sendLead(source, data){
+  var payload={
+    source: source,
+    name: data.name||null,
+    phone: data.phone||null,
+    email: data.email||null,
+    city: data.city||null,
+    country: data.country||detectCountry(),
+    pincode: data.pincode||null,
+    property_type: data.propertyType||data.property_type||null,
+    system_size: data.systemSize||data.system_size||null,
+    panel_type: data.panelType||data.panel_type||null,
+    amc: data.amc||null,
+    quote_total: numOrNull(data.quoteTotal||data.total),
+    monthly_saving: numOrNull(data.monthlySaving||data.saving),
+    emi_amount: numOrNull(data.emiAmount||data.emi),
+    emi_tenure: intOrNull(data.emiTenure||data.tenure),
+    emi_rate: numOrNull(data.emiRate||data.rate),
+    message: data.message||data.notes||null,
+    referred_by: getReferredBy()||null,
+    raw: data
+  };
+  if(sb){
+    try{
+      var res=await sb.from('leads').insert(payload);
+      if(!res.error) return {ok:true, backend:'supabase'};
+      console.warn('Supabase insert error:', res.error);
+    }catch(e){ console.warn('Supabase network error:', e); }
+  }
+  // Fallback: Google Sheets webhook (original path)
+  try{
+    var wh=localStorage.getItem('sf_wh_url')||WEBHOOK_URL;
+    await fetch(wh, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(Object.assign({action:'lead_'+source}, data))});
+    return {ok:true, backend:'sheets'};
+  }catch(e){ return {ok:false, backend:'none', error:String(e)}; }
+}
+function numOrNull(v){ var n=parseFloat(String(v||'').replace(/[^\d.]/g,'')); return isFinite(n)&&n>0?n:null; }
+function intOrNull(v){ var n=parseInt(String(v||'').replace(/[^\d]/g,''),10); return isFinite(n)&&n>0?n:null; }
+
+// ─── Country detection (timezone-based, no network) ───
+function detectCountry(){
+  try{
+    var sel=document.getElementById('ccountry');
+    if(sel && sel.value) return sel.value;
+    var tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
+    var map={'Asia/Kolkata':'India','Asia/Calcutta':'India','Europe/London':'United Kingdom','Asia/Dubai':'UAE','Asia/Colombo':'Sri Lanka','Asia/Singapore':'Singapore','America/New_York':'USA','America/Chicago':'USA','America/Los_Angeles':'USA'};
+    if(map[tz]) return map[tz];
+    if(tz.indexOf('Asia/')===0) return 'India';
+    if(tz.indexOf('Europe/')===0) return 'United Kingdom';
+    if(tz.indexOf('America/')===0) return 'USA';
+  }catch(e){}
+  return 'India';
+}
+// Pre-select country dropdown on load
+window.addEventListener('DOMContentLoaded', function(){
+  var sel=document.getElementById('ccountry');
+  if(sel && !sel.value){
+    var c=detectCountry();
+    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value===c){ sel.selectedIndex=i; break; } }
+  }
+});
+
+// Load testimonials from Supabase (falls back to Firestore, then hardcoded)
+async function loadTestimonialsFromBackend(){
+  var track=document.getElementById('tstTrack');
+  if(!track) return;
+  var rows=null;
+  if(sb){
+    try{
+      var res=await sb.from('testimonials').select('*').eq('published', true).order('created_at', {ascending:false}).limit(8);
+      if(!res.error && res.data && res.data.length) rows=res.data;
+    }catch(e){}
+  }
+  if(rows){
+    var html='';
+    rows.forEach(function(t){
+      var initials=String(t.name||'?').split(' ').map(function(p){return p.charAt(0);}).join('').substring(0,2).toUpperCase();
+      var stars='★'.repeat(Math.max(1,Math.min(5,parseInt(t.rating||5,10))));
+      html+='<div class="tst-card"><div class="tst-stars">'+stars+'</div>'+
+        '<div class="tst-quote">"'+escapeHTML(t.quote||'')+'"</div>'+
+        '<div class="tst-meta"><div class="tst-avatar">'+escapeHTML(initials)+'</div>'+
+        '<div><div class="tst-name">'+escapeHTML(t.name||'')+'</div>'+
+        '<div class="tst-loc">'+escapeHTML(t.loc||'')+'</div></div></div></div>';
+    });
+    track.innerHTML=html;
+    var dotsWrap=document.getElementById('tstDots');
+    if(dotsWrap){
+      dotsWrap.innerHTML='';
+      var cards=track.children;
+      for(var i=0;i<cards.length;i++){
+        (function(idx){
+          var d=document.createElement('div');
+          d.className='tst-dot'+(idx===0?' on':'');
+          d.addEventListener('click',function(){ cards[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); });
+          dotsWrap.appendChild(d);
+        })(i);
+      }
+    }
+  }
+}
+setTimeout(loadTestimonialsFromBackend, 1200);
+
+// Load products from Supabase (falls back to localStorage defaults)
+async function loadProductsFromBackend(){
+  if(!sb) return null;
+  try{
+    var res=await sb.from('products').select('*').eq('active', true).order('created_at', {ascending:false});
+    if(!res.error && res.data && res.data.length){
+      var mapped=res.data.map(function(p){
+        return {id:p.id, name:p.name, brand:p.brand||'', cat:p.cat||'accessories',
+          price:p.price, origPrice:p.orig_price||null, qty:p.qty||0, unit:p.unit||'piece',
+          desc:p.descr||'', img:p.img||'', stock:p.stock||'in'};
+      });
+      localStorage.setItem('sf_products', JSON.stringify(mapped));
+      if(typeof applyFilters==='function' && document.getElementById('screen-store').classList.contains('active')){
+        applyFilters('', 'all');
+      }
+      return mapped;
+    }
+  }catch(e){}
+  return null;
+}
+setTimeout(loadProductsFromBackend, 1500);
+
 // ─── Accurate India subsidy math (PM Surya Ghar + TN State) ───
 // PM Surya Ghar Yojana (residential): ₹30,000/kW for 1-2 kW, ₹18,000/kW for the 3rd kW.
 // Cap: ₹78,000 per residential consumer. Source: solarrooftop.gov.in / mnre.gov.in
@@ -2671,6 +2819,7 @@ function shareQuoteOnWhatsApp(){
   var ph=(document.getElementById('cp').value||'').trim();
   var em=(document.getElementById('ce').value||'').trim();
   var city=document.getElementById('cc').value||'';
+  var country=detectCountry();
   var pin=(document.getElementById('cpin')||{}).value||'';
   var ptEl=document.getElementById('cpt');
   var sz=document.getElementById('csz').value;
@@ -2684,7 +2833,7 @@ function shareQuoteOnWhatsApp(){
   var msg='Hi Skyflies! Here is my solar quote:\n\n'+
     '👤 '+(nm||'(name)')+'\n'+
     (ph?'📱 '+ph+'\n':'')+(em?'✉️ '+em+'\n':'')+
-    (city||pin?'📍 '+(city||'')+(pin?' - '+pin:'')+'\n':'')+'\n'+
+    (city||pin?'📍 '+(city||'')+(pin?' - '+pin:'')+(country?', '+country:'')+'\n':'')+'\n'+
     '🏠 '+pt+'\n☀️ '+sz+' kW '+pl+'\n💰 Estimated: '+total+'\n💡 Saves: '+saving+'\n⏱️ ROI: '+roi+'\n\n'+
     'Please schedule a free site survey.';
   window.open('https://wa.me/919385449167?text='+encodeURIComponent(msg),'_blank');
@@ -2877,23 +3026,24 @@ function getReferredBy(){ try{return localStorage.getItem('sf_came_via_ref')||''
   }
 })();
 
-// ─── Admin testimonials manager (Firestore-backed) ───
+// ─── Admin testimonials manager (Supabase-backed) ───
 async function adminLoadTestimonials(){
   var listEl=document.getElementById('admTstList');
   if(!listEl) return;
   listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
-  if(!db){ listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">Firebase not connected.</div>'; return; }
+  if(!sb){ listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">Supabase not connected yet — try again in a moment.</div>'; return; }
   try{
-    var snap=await db.collection('testimonials').orderBy('createdAt','desc').get();
-    if(snap.empty){ listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">No custom testimonials yet. Defaults from app are shown.</div>'; return; }
+    var res=await sb.from('testimonials').select('*').order('created_at', {ascending:false});
+    if(res.error){ listEl.innerHTML='<div style="color:#FF6B6B;font-size:12px;">'+escapeHTML(res.error.message||'')+'</div>'; return; }
+    var rows=res.data||[];
+    if(!rows.length){ listEl.innerHTML='<div style="color:var(--soft);font-size:12px;">No custom testimonials yet. Defaults from app are shown.</div>'; return; }
     var html='';
-    snap.forEach(function(doc){
-      var t=doc.data();
+    rows.forEach(function(t){
       html+='<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:8px;">'+
         '<div style="font-size:13px;font-weight:700;color:var(--text);">'+escapeHTML(t.name||'(no name)')+' <span style="font-weight:400;color:var(--soft);">· '+escapeHTML(t.loc||'')+'</span></div>'+
         '<div style="color:#FFB400;font-size:13px;margin:4px 0;">'+'★'.repeat(Math.max(1,Math.min(5,parseInt(t.rating||5,10))))+'</div>'+
         '<div style="font-size:12px;color:var(--soft);font-style:italic;">"'+escapeHTML(t.quote||'')+'"</div>'+
-        '<button onclick="adminDeleteTestimonial(\''+doc.id+'\')" style="margin-top:8px;padding:6px 10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:7px;color:#FF6B6B;font-size:11px;cursor:pointer;">Delete</button>'+
+        '<button onclick="adminDeleteTestimonial(\''+t.id+'\')" style="margin-top:8px;padding:6px 10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:7px;color:#FF6B6B;font-size:11px;cursor:pointer;">Delete</button>'+
         '</div>';
     });
     listEl.innerHTML=html;
@@ -2901,67 +3051,34 @@ async function adminLoadTestimonials(){
 }
 function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 async function adminAddTestimonial(){
-  if(!db){ alert('Firebase not connected'); return; }
+  if(!sb){ alert('Supabase not connected yet — try again in a moment.'); return; }
   var nm=document.getElementById('admTstName').value.trim();
   var loc=document.getElementById('admTstLoc').value.trim();
   var quote=document.getElementById('admTstQuote').value.trim();
   var rating=parseInt(document.getElementById('admTstRating').value||5,10);
   if(!nm||!quote){ alert('Please enter name and quote'); return; }
   try{
-    await db.collection('testimonials').add({name:nm, loc:loc, quote:quote, rating:rating, createdAt:Date.now()});
+    var res=await sb.from('testimonials').insert({name:nm, loc:loc, quote:quote, rating:rating, published:true});
+    if(res.error){ alert('Save failed: '+res.error.message); return; }
     document.getElementById('admTstName').value='';
     document.getElementById('admTstLoc').value='';
     document.getElementById('admTstQuote').value='';
     document.getElementById('admTstRating').value='5';
     adminLoadTestimonials();
+    loadTestimonialsFromBackend(); // refresh home carousel too
     if(typeof showToast==='function') showToast('✅ Testimonial added');
   }catch(e){ alert('Save failed: '+(e.message||e)); }
 }
 async function adminDeleteTestimonial(id){
   if(!confirm('Delete this testimonial?')) return;
-  try{ await db.collection('testimonials').doc(id).delete(); adminLoadTestimonials(); }
-  catch(e){ alert('Delete failed: '+(e.message||e)); }
+  if(!sb){ alert('Supabase not connected'); return; }
+  try{
+    var res=await sb.from('testimonials').delete().eq('id', id);
+    if(res.error){ alert('Delete failed: '+res.error.message); return; }
+    adminLoadTestimonials();
+    loadTestimonialsFromBackend();
+  }catch(e){ alert('Delete failed: '+(e.message||e)); }
 }
-
-// Load custom testimonials on home if present
-(function(){
-  function tryLoad(){
-    if(!db){ setTimeout(tryLoad, 1000); return; }
-    db.collection('testimonials').orderBy('createdAt','desc').limit(8).get().then(function(snap){
-      if(snap.empty) return;
-      var track=document.getElementById('tstTrack');
-      if(!track) return;
-      var html='';
-      snap.forEach(function(doc){
-        var t=doc.data();
-        var initials=String(t.name||'?').split(' ').map(function(p){return p.charAt(0);}).join('').substring(0,2).toUpperCase();
-        var stars='★'.repeat(Math.max(1,Math.min(5,parseInt(t.rating||5,10))));
-        html+='<div class="tst-card"><div class="tst-stars">'+stars+'</div>'+
-          '<div class="tst-quote">"'+escapeHTML(t.quote||'')+'"</div>'+
-          '<div class="tst-meta"><div class="tst-avatar">'+escapeHTML(initials)+'</div>'+
-          '<div><div class="tst-name">'+escapeHTML(t.name||'')+'</div>'+
-          '<div class="tst-loc">'+escapeHTML(t.loc||'')+'</div></div></div></div>';
-      });
-      track.innerHTML=html;
-      // Rebuild dots
-      var dotsWrap=document.getElementById('tstDots');
-      if(dotsWrap){
-        dotsWrap.innerHTML='';
-        var cards=track.children;
-        for(var i=0;i<cards.length;i++){
-          (function(idx){
-            var d=document.createElement('div');
-            d.className='tst-dot'+(idx===0?' on':'');
-            d.addEventListener('click',function(){ cards[idx].scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); });
-            dotsWrap.appendChild(d);
-          })(i);
-        }
-      }
-    }).catch(function(){});
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryLoad, 1500); });
-  else setTimeout(tryLoad, 1500);
-})();
 
 // ─── Pincode auto-fill (postalpincode.in) ───
 function lookupPincode(input, statusElId, areaInputId){
