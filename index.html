@@ -899,7 +899,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('cart')"><div class="soc-ico" style="background:rgba(16,185,129,0.15);">🛍️</div><div><div class="soc-info-name">My Cart</div><div class="soc-info-sub">View & place orders</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(239,68,68,0.15);">🔐</div><div><div class="soc-info-name">Admin Dashboard</div><div class="soc-info-sub">Manage submissions & send notifications</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('adminstore')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛍️</div><div><div class="soc-info-name">Manage Store</div><div class="soc-info-sub">Add & edit products</div></div><div class="soc-arrow">›</div></div>
-    <div><div class="soc-info-name">Setup</div><div class="soc-info-sub">Google Sheets connection</div></div><div class="soc-arrow">›</div></div>
+    <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(139,156,182,0.15);">⚙️</div><div><div class="soc-info-name">Setup</div><div class="soc-info-sub">Google Sheets connection</div></div><div class="soc-arrow">›</div></div>
   </div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
@@ -1130,7 +1130,6 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   <div id="adminProductList" style="display:flex;flex-direction:column;gap:8px;"></div>
 </div>
 
-</div>
 
 <!-- ══ SUBSCRIBE ══ -->
 <div class="screen" id="screen-subscribe">
@@ -1684,8 +1683,8 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 
-</div>
-</div>
+</div><!-- /screen-area -->
+</div><!-- /app -->
 <div id="toast"></div>
 <div id="wafloat"><a href="https://wa.me/919385449167?text=Hi%20Skyflies%20Solar!" target="_blank">💬</a></div>
 <div class="modal-overlay" id="notifModal"><div class="modal"><div class="modal-handle"></div><div class="modal-title">🔔 Send Notification to All Users</div><div class="field"><label>Title</label><input type="text" id="notifTitle" placeholder="e.g. Special Offer!" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;"></div><div class="field" style="margin-top:10px;"><label>Message</label><textarea id="notifMsg" placeholder="Your message..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 13px;color:#fff;font-size:14px;outline:none;min-height:80px;font-family:inherit;resize:vertical;"></textarea></div><div style="display:flex;gap:8px;margin-top:12px;"><button onclick="sendBulkNotification()" style="flex:1;padding:13px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;">📧 Send to All Users</button><button onclick="closeNotifModal()" style="padding:13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--soft);font-size:14px;cursor:pointer;">Cancel</button></div><div id="notifResult" style="font-size:12px;color:var(--success);margin-top:8px;text-align:center;"></div></div></div>
@@ -2706,7 +2705,7 @@ async function loadProductsFromBackend(){
           desc:p.descr||'', img:p.img||'', stock:p.stock||'in'};
       });
       localStorage.setItem('sf_products', JSON.stringify(mapped));
-      if(typeof applyFilters==='function' && document.getElementById('screen-store').classList.contains('active')){
+      if(typeof applyFilters==='function' && document.getElementById('screen-store').classList.contains('on')){
         applyFilters('', 'all');
       }
       return mapped;
@@ -3892,7 +3891,7 @@ function applyFilters(query, cat) {
   var q = (query || '').toLowerCase();
   var filtered = products.filter(function(p) {
     var matchCat = cat === 'all' || p.cat === cat;
-    var matchQ   = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q);
+    var matchQ   = !q || String(p.name||'').toLowerCase().includes(q) || String(p.brand||'').toLowerCase().includes(q) || String(p.desc||'').toLowerCase().includes(q);
     return matchCat && matchQ;
   });
   renderProducts(filtered);
@@ -4251,16 +4250,23 @@ function ensurePortalVisible() {
   }
 }
 
-// ── SWIPE NAVIGATION ─────────────────────────────────────────────
+// ── SWIPE NAVIGATION (left-edge back only; never blocks scroll) ──
 (function(){
   var sa = document.getElementById('screen-area');
   if(!sa) return;
-  var sx=0, sy=0;
-  sa.addEventListener('touchstart',function(e){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; },{passive:true});
+  var sx=0, sy=0, tracking=false;
+  sa.addEventListener('touchstart',function(e){
+    sx=e.touches[0].clientX; sy=e.touches[0].clientY;
+    // Only arm swipe-back if the gesture starts near the left edge
+    tracking = sx < 40;
+  },{passive:true});
   sa.addEventListener('touchend',function(e){
+    if(!tracking) return;
+    tracking=false;
     var dx=e.changedTouches[0].clientX-sx;
     var dy=Math.abs(e.changedTouches[0].clientY-sy);
-    if(Math.abs(dx)>60&&dy<80&&dx>0&&screenHistory.length>1){
+    // Require a clear horizontal rightward swipe, minimal vertical drift
+    if(dx>70 && dy<50 && screenHistory.length>1){
       screenHistory.pop();
       var prev=screenHistory[screenHistory.length-1];
       if(prev) goScreen(prev,true);
