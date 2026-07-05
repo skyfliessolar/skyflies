@@ -892,14 +892,36 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('social')"><div class="soc-ico" style="background:rgba(255,0,0,0.15);">📱</div><div><div class="soc-info-name">Social Media</div><div class="soc-info-sub">YouTube, Instagram & more</div></div><div class="soc-arrow">›</div></div>
   </div>
 
-  <div class="sec-head"><div class="sec-title">Admin</div></div>
+  <div class="sec-head"><div class="sec-title">Shop & Services</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
     <div class="social-link-card" onclick="goScreen('plans')"><div class="soc-ico" style="background:rgba(139,92,246,0.15);">📋</div><div><div class="soc-info-name">AMC Plans</div><div class="soc-info-sub">Maintenance subscriptions</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('store')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛒</div><div><div class="soc-info-name">Solar Store</div><div class="soc-info-sub">Products & appliances</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('cart')"><div class="soc-ico" style="background:rgba(16,185,129,0.15);">🛍️</div><div><div class="soc-info-name">My Cart</div><div class="soc-info-sub">View & place orders</div></div><div class="soc-arrow">›</div></div>
-    <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(239,68,68,0.15);">🔐</div><div><div class="soc-info-name">Admin Dashboard</div><div class="soc-info-sub">Manage submissions & send notifications</div></div><div class="soc-arrow">›</div></div>
-    <div class="social-link-card" onclick="goScreen('adminstore')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛍️</div><div><div class="soc-info-name">Manage Store</div><div class="soc-info-sub">Add & edit products</div></div><div class="soc-arrow">›</div></div>
-    <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(139,156,182,0.15);">⚙️</div><div><div class="soc-info-name">Setup</div><div class="soc-info-sub">Google Sheets connection</div></div><div class="soc-arrow">›</div></div>
+    <div class="social-link-card" onclick="goScreen('refer')"><div class="soc-ico" style="background:rgba(16,185,129,0.15);">🎁</div><div><div class="soc-info-name">Refer & Earn</div><div class="soc-info-sub">Earn ₹2,000 per referral</div></div><div class="soc-arrow">›</div></div>
+  </div>
+
+  <!-- Admin section: hidden until admin logs in -->
+  <div id="adminMenuSection" style="display:none;">
+    <div class="sec-head"><div class="sec-title">Admin <span style="font-size:10px;color:var(--success);border:1px solid rgba(16,185,129,0.3);padding:2px 7px;border-radius:6px;margin-left:6px;">● SIGNED IN</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+      <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(239,68,68,0.15);">🔐</div><div><div class="soc-info-name">Admin Dashboard</div><div class="soc-info-sub">Manage submissions & notifications</div></div><div class="soc-arrow">›</div></div>
+      <div class="social-link-card" onclick="goScreen('adminstore')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛍️</div><div><div class="soc-info-name">Manage Store</div><div class="soc-info-sub">Add & edit products</div></div><div class="soc-arrow">›</div></div>
+      <div class="social-link-card" onclick="adminSignOut()"><div class="soc-ico" style="background:rgba(139,156,182,0.15);">🔓</div><div><div class="soc-info-name">Sign Out</div><div class="soc-info-sub">End admin session</div></div><div class="soc-arrow">›</div></div>
+    </div>
+  </div>
+
+  <!-- Admin sign-in entry: shown only when NOT signed in -->
+  <div id="adminEntrySection">
+    <div class="sec-head"><div class="sec-title">Staff</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+      <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(139,156,182,0.12);">🔑</div><div><div class="soc-info-name">Admin Sign In</div><div class="soc-info-sub">Staff access only</div></div><div class="soc-arrow">›</div></div>
+    </div>
+  </div>
+
+  <div class="sec-head"><div class="sec-title">Legal</div></div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+    <a class="social-link-card" href="privacy.html" target="_blank" style="text-decoration:none;"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></a>
+    <a class="social-link-card" href="terms.html" target="_blank" style="text-decoration:none;"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></a>
   </div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
@@ -1411,15 +1433,19 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   <!-- LOGIN -->
   <div id="adminLoginBox">
     <div class="form-card">
-      <div class="form-title">Admin Login</div>
-      <div class="form-sub">Enter your admin password.</div>
+      <div class="form-title">Admin Sign In</div>
+      <div class="form-sub">Staff access only. Sign in with your admin account.</div>
+      <div class="field"><label>Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@skyflies.in" autocomplete="username" onkeydown="if(event.key==='Enter')adminLogin()">
+      </div>
       <div class="field"><label>Password</label>
         <div style="position:relative;">
-          <input type="password" id="adminPwd" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()" style="padding-right:44px;">
+          <input type="password" id="adminPwd" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()" style="padding-right:44px;">
           <button type="button" onclick="togglePwd('adminPwd',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--soft);font-size:16px;cursor:pointer;padding:4px;">👁</button>
         </div></div>
-      <button class="submit-btn" onclick="adminLogin()">Login →</button>
-      <div class="alert er" id="loginErr" style="margin-top:10px;display:none;">❌ Wrong password. Please try again.</div>
+      <button class="submit-btn" id="adminLoginBtn" onclick="adminLogin()">Sign In →</button>
+      <div class="alert er" id="loginErr" style="margin-top:10px;display:none;">❌ Invalid email or password.</div>
+      <div style="font-size:11px;color:var(--soft);margin-top:10px;line-height:1.5;">Forgot your password? Contact the account owner to reset it in the Supabase dashboard.</div>
     </div>
   </div>
   <!-- DASHBOARD -->
@@ -1761,6 +1787,7 @@ function goScreen(id, isBack) {
   if(id==='store') setTimeout(initStore, 50);
   if(id==='cart') setTimeout(renderCart, 50);
   if(id==='adminstore') setTimeout(initAdminStore, 50);
+  if(id==='admin' || id==='adminstore') guardAdminScreen(id);
   if(id==='portal') ensurePortalVisible();
 }
 
@@ -1779,44 +1806,104 @@ function mobPage(id) { goScreen(id); }
 // function moved below
 
 
-// ── ADMIN OVERRIDES ──────────────────────────────
-function adminLogin(){
+// ── ADMIN AUTH (Supabase) ────────────────────────
+var isAdmin = false;
+
+async function adminLogin(){
+  var emailEl = document.getElementById('adminEmail');
   var pwdInput = document.getElementById('adminPwd');
-  var pwd = pwdInput.value.trim();
-  var correct = localStorage.getItem(PW) || 'skyflies2024';
-  hashPassword(pwd).then(function(hashedPwd){
-    if(pwd===correct||hashedPwd===correct){
-      document.getElementById('adminLoginBox').style.display='none';
-      document.getElementById('adminDash').style.display='block';
-      pwdInput.value='';
-      refreshDash();renderCustList();renderAdminMediaList();
-      // Pre-fill setup URL
-      var whEl = document.getElementById('whUrl');
-      if(whEl){ var wh=localStorage.getItem(WH)||WEBHOOK_URL; whEl.value=wh||''; }
-      var whSt = document.getElementById('whSt');
-      if(whSt && localStorage.getItem(WH)){ whSt.textContent='✅ Google Sheet connected.'; whSt.className='setup-status ok'; }
-      loadPendingFromSheet().then(function(){renderPending();});
-      loadCustomersFromSheet();
-    }else{
-      // Shake the input + show error
-      pwdInput.classList.add('shake');
-      pwdInput.style.borderColor='#EF4444';
-      pwdInput.value='';
-      setTimeout(function(){
-        pwdInput.classList.remove('shake');
-        pwdInput.style.borderColor='';
-      },600);
-      var e=document.getElementById('loginErr');
-      e.style.display='flex';e.classList.add('show');
-      setTimeout(function(){e.style.display='none';e.classList.remove('show');},3000);
-    }
+  var email = (emailEl.value||'').trim().toLowerCase();
+  var pwd = pwdInput.value;
+  var errEl = document.getElementById('loginErr');
+  var btn = document.getElementById('adminLoginBtn');
+  errEl.style.display='none';
+  if(!email || !pwd){ showLoginError('Enter email and password.'); return; }
+  if(!sb){ showLoginError('Connecting… try again in a moment.'); return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  try{
+    var res = await sb.auth.signInWithPassword({email:email, password:pwd});
+    if(res.error){ showLoginError(res.error.message||'Invalid email or password.'); return; }
+    pwdInput.value='';
+    onAdminAuthed();
+  }catch(e){
+    showLoginError('Sign-in failed. Check your connection.');
+  }finally{
+    btn.disabled=false; btn.textContent='Sign In →';
+  }
+}
+
+function showLoginError(msg){
+  var e=document.getElementById('loginErr');
+  var pwdInput=document.getElementById('adminPwd');
+  e.textContent='❌ '+msg;
+  e.style.display='flex'; e.classList.add('show');
+  if(pwdInput){ pwdInput.classList.add('shake'); setTimeout(function(){pwdInput.classList.remove('shake');},600); }
+  setTimeout(function(){ e.style.display='none'; e.classList.remove('show'); },4000);
+}
+
+function onAdminAuthed(){
+  isAdmin = true;
+  applyAdminVisibility();
+  var lb=document.getElementById('adminLoginBox'); if(lb) lb.style.display='none';
+  var dash=document.getElementById('adminDash'); if(dash) dash.style.display='block';
+  try{
+    refreshDash(); renderCustList(); renderAdminMediaList();
+    var whEl=document.getElementById('whUrl');
+    if(whEl){ var wh=localStorage.getItem(WH)||WEBHOOK_URL; whEl.value=wh||''; }
+    loadPendingFromSheet().then(function(){renderPending();});
+    loadCustomersFromSheet();
+    if(typeof adminLoadTestimonials==='function') adminLoadTestimonials();
+  }catch(e){}
+}
+
+async function adminSignOut(){
+  try{ if(sb) await sb.auth.signOut(); }catch(e){}
+  isAdmin = false;
+  applyAdminVisibility();
+  var lb=document.getElementById('adminLoginBox'); if(lb) lb.style.display='';
+  var dash=document.getElementById('adminDash'); if(dash) dash.style.display='none';
+  goScreen('more');
+}
+// keep old name working
+function adminLogout(){ adminSignOut(); }
+
+// Show/hide all admin-only UI based on isAdmin
+function applyAdminVisibility(){
+  var menu=document.getElementById('adminMenuSection');
+  var entry=document.getElementById('adminEntrySection');
+  if(menu) menu.style.display = isAdmin ? 'block' : 'none';
+  if(entry) entry.style.display = isAdmin ? 'none' : 'block';
+  document.querySelectorAll('.admin-only').forEach(function(el){
+    el.style.display = isAdmin ? '' : 'none';
   });
 }
-function adminLogout(){
-  document.getElementById('adminLoginBox').style.display='';
-  document.getElementById('adminDash').style.display='none';
-  document.getElementById('adminPwd').value='';
+
+// Restore session on load (stay logged in across app restarts)
+(function restoreAdminSession(){
+  function tryRestore(){
+    if(!sb){ setTimeout(tryRestore, 400); return; }
+    sb.auth.getSession().then(function(res){
+      if(res && res.data && res.data.session){ isAdmin=true; }
+      applyAdminVisibility();
+    }).catch(function(){ applyAdminVisibility(); });
+  }
+  tryRestore();
+})();
+
+// Guard admin screens: if not signed in, force the login box to show
+function guardAdminScreen(id){
+  if(id==='admin'){
+    var lb=document.getElementById('adminLoginBox');
+    var dash=document.getElementById('adminDash');
+    if(isAdmin){ if(lb) lb.style.display='none'; if(dash) dash.style.display='block'; }
+    else { if(lb) lb.style.display=''; if(dash) dash.style.display='none'; }
+  }
+  if(id==='adminstore' && !isAdmin){
+    // Bounce non-admins back to the admin sign-in
+    goScreen('admin');
+  }
 }
+
 function toggleAdminSetup() {
   var panel = document.getElementById('adminSetupPanel');
   if (!panel) return;
@@ -3772,28 +3859,28 @@ function closeFullPhoto() {
 
 // Default products (admin can add more)
 var DEFAULT_PRODUCTS = [
-  {id:'p1',name:'Monocrystalline Solar Panel 400W',cat:'panels',price:9500,origPrice:12000,qty:50,unit:'piece',desc:'High efficiency mono panel, 25 year warranty. Ideal for rooftops.',brand:'Luminous',img:'',stock:'in'},
-  {id:'p2',name:'Polycrystalline Solar Panel 335W',cat:'panels',price:6800,origPrice:8500,qty:80,unit:'piece',desc:'Durable poly panel, all weather. Best value for budget installs.',brand:'Tata Solar',img:'',stock:'in'},
-  {id:'p3',name:'Bifacial Solar Panel 450W',cat:'panels',price:13500,origPrice:16000,qty:30,unit:'piece',desc:'Generates power from both sides. 20% more energy than mono.',brand:'Adani Solar',img:'',stock:'in'},
-  {id:'p4',name:'5kW Solar Hybrid Inverter',cat:'inverters',price:28000,origPrice:35000,qty:15,unit:'piece',desc:'MPPT hybrid inverter with WiFi monitoring. Works with grid and battery.',brand:'Luminous',img:'',stock:'in'},
-  {id:'p5',name:'3kW On-Grid Solar Inverter',cat:'inverters',price:18000,origPrice:22000,qty:20,unit:'piece',desc:'Pure sine wave grid-tied inverter with anti-islanding protection.',brand:'Growatt',img:'',stock:'in'},
-  {id:'p6',name:'150Ah Tall Tubular Solar Battery',cat:'batteries',price:14000,origPrice:16500,qty:40,unit:'piece',desc:'Deep cycle battery for solar. 5 year warranty.',brand:'Exide',img:'',stock:'in'},
-  {id:'p7',name:'100Ah Lithium Solar Battery',cat:'batteries',price:22000,origPrice:28000,qty:20,unit:'piece',desc:'LiFePO4 lithium, 10 year life, 3000 cycles. Lightweight.',brand:'Livfast',img:'',stock:'in'},
-  {id:'p8',name:'Solar LED Street Light 30W',cat:'lighting',price:3200,origPrice:4000,qty:100,unit:'piece',desc:'All-in-one solar street light with motion sensor. IP65 waterproof.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p9',name:'Solar LED Bulb 9W - Pack of 10',cat:'lighting',price:1200,origPrice:1800,qty:200,unit:'pack',desc:'9W solar LED bulbs for 12V DC system. 3 year warranty.',brand:'Syska',img:'',stock:'in'},
-  {id:'p10',name:'Solar Garden Light - Pack of 6',cat:'lighting',price:1500,origPrice:2000,qty:150,unit:'pack',desc:'Waterproof solar garden stake lights. Auto on at dusk.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p11',name:'Solar Indoor LED Lamp 5W',cat:'lighting',price:650,origPrice:900,qty:300,unit:'piece',desc:'Portable solar lamp with USB charging. 8 hour backup.',brand:'Wipro',img:'',stock:'in'},
-  {id:'p12',name:'Solar Phone Charger 20000mAh',cat:'gadgets',price:1800,origPrice:2500,qty:100,unit:'piece',desc:'Foldable solar power bank. Charges 2 phones. Waterproof.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p13',name:'Solar DC Fan 25W',cat:'gadgets',price:2200,origPrice:3000,qty:60,unit:'piece',desc:'Runs directly on solar. No inverter needed. 3 speeds, 18 inch.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p14',name:'Solar Water Pump 0.5HP',cat:'gadgets',price:8500,origPrice:10000,qty:25,unit:'piece',desc:'Submersible solar pump for agriculture and homes. 1 year warranty.',brand:'Kirloskar',img:'',stock:'in'},
-  {id:'p15',name:'Solar Radio & Torch Combo',cat:'gadgets',price:850,origPrice:1200,qty:200,unit:'piece',desc:'AM/FM solar radio with torch and phone charger. USB backup.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p16',name:'Solar CCTV Camera 2MP',cat:'gadgets',price:4500,origPrice:6000,qty:40,unit:'piece',desc:'Wireless solar CCTV, night vision, motion alerts, 64GB SD.',brand:'CP Plus',img:'',stock:'in'},
-  {id:'p17',name:'Solar Panel Mounting Structure',cat:'accessories',price:3500,origPrice:4500,qty:60,unit:'set',desc:'GI mounting for 4 panels. Hot-dip galvanised. Adjustable tilt.',brand:'Skyflies',img:'',stock:'in'},
-  {id:'p18',name:'Solar Wire 4mm 50m Roll',cat:'accessories',price:1800,origPrice:2200,qty:100,unit:'roll',desc:'UV resistant DC solar cable. 4mm cross section, TUV certified.',brand:'Polycab',img:'',stock:'in'},
-  {id:'p19',name:'MC4 Solar Connector 10 Pairs',cat:'accessories',price:450,origPrice:600,qty:500,unit:'set',desc:'Weatherproof MC4 connectors. IP67. 10 male + 10 female pairs.',brand:'Generic',img:'',stock:'in'},
-  {id:'p20',name:'40A MPPT Charge Controller',cat:'accessories',price:5500,origPrice:7000,qty:30,unit:'piece',desc:'40A MPPT with LCD display. Compatible with 12V/24V systems.',brand:'Epever',img:'',stock:'in'},
-  {id:'p21',name:'Solar Charge Controller 20A PWM',cat:'accessories',price:1200,origPrice:1800,qty:80,unit:'piece',desc:'20A PWM charge controller, dual USB, LCD display.',brand:'Phocos',img:'',stock:'in'},
-  {id:'p22',name:'Junction Box IP67 - Pack of 5',cat:'accessories',price:800,origPrice:1200,qty:150,unit:'pack',desc:'Weatherproof solar junction boxes. IP67 rated. Safe wiring.',brand:'Skyflies',img:'',stock:'in'},
+  {id:'p1',name:'Monocrystalline Solar Panel 400W',cat:'panels',price:9500,origPrice:12000,qty:50,unit:'piece',desc:'High efficiency mono panel, 25 year warranty. Ideal for rooftops.',brand:'Luminous',img:'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p2',name:'Polycrystalline Solar Panel 335W',cat:'panels',price:6800,origPrice:8500,qty:80,unit:'piece',desc:'Durable poly panel, all weather. Best value for budget installs.',brand:'Tata Solar',img:'https://images.unsplash.com/photo-1613665813446-82a78c468a1d?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p3',name:'Bifacial Solar Panel 450W',cat:'panels',price:13500,origPrice:16000,qty:30,unit:'piece',desc:'Generates power from both sides. 20% more energy than mono.',brand:'Adani Solar',img:'https://images.unsplash.com/photo-1548337138-e87d889cc369?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p4',name:'5kW Solar Hybrid Inverter',cat:'inverters',price:28000,origPrice:35000,qty:15,unit:'piece',desc:'MPPT hybrid inverter with WiFi monitoring. Works with grid and battery.',brand:'Luminous',img:'https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p5',name:'3kW On-Grid Solar Inverter',cat:'inverters',price:18000,origPrice:22000,qty:20,unit:'piece',desc:'Pure sine wave grid-tied inverter with anti-islanding protection.',brand:'Growatt',img:'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p6',name:'150Ah Tall Tubular Solar Battery',cat:'batteries',price:14000,origPrice:16500,qty:40,unit:'piece',desc:'Deep cycle battery for solar. 5 year warranty.',brand:'Exide',img:'https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p7',name:'100Ah Lithium Solar Battery',cat:'batteries',price:22000,origPrice:28000,qty:20,unit:'piece',desc:'LiFePO4 lithium, 10 year life, 3000 cycles. Lightweight.',brand:'Livfast',img:'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p8',name:'Solar LED Street Light 30W',cat:'lighting',price:3200,origPrice:4000,qty:100,unit:'piece',desc:'All-in-one solar street light with motion sensor. IP65 waterproof.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p9',name:'Solar LED Bulb 9W - Pack of 10',cat:'lighting',price:1200,origPrice:1800,qty:200,unit:'pack',desc:'9W solar LED bulbs for 12V DC system. 3 year warranty.',brand:'Syska',img:'https://images.unsplash.com/photo-1550985616-10810253b84d?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p10',name:'Solar Garden Light - Pack of 6',cat:'lighting',price:1500,origPrice:2000,qty:150,unit:'pack',desc:'Waterproof solar garden stake lights. Auto on at dusk.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1567789884554-0b844b597180?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p11',name:'Solar Indoor LED Lamp 5W',cat:'lighting',price:650,origPrice:900,qty:300,unit:'piece',desc:'Portable solar lamp with USB charging. 8 hour backup.',brand:'Wipro',img:'https://images.unsplash.com/photo-1524634126442-357e0eac3c14?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p12',name:'Solar Phone Charger 20000mAh',cat:'gadgets',price:1800,origPrice:2500,qty:100,unit:'piece',desc:'Foldable solar power bank. Charges 2 phones. Waterproof.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1609592806596-b43bada2f4bb?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p13',name:'Solar DC Fan 25W',cat:'gadgets',price:2200,origPrice:3000,qty:60,unit:'piece',desc:'Runs directly on solar. No inverter needed. 3 speeds, 18 inch.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p14',name:'Solar Water Pump 0.5HP',cat:'gadgets',price:8500,origPrice:10000,qty:25,unit:'piece',desc:'Submersible solar pump for agriculture and homes. 1 year warranty.',brand:'Kirloskar',img:'https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p15',name:'Solar Radio & Torch Combo',cat:'gadgets',price:850,origPrice:1200,qty:200,unit:'piece',desc:'AM/FM solar radio with torch and phone charger. USB backup.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1558379850-3d2c9f4a9f92?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p16',name:'Solar CCTV Camera 2MP',cat:'gadgets',price:4500,origPrice:6000,qty:40,unit:'piece',desc:'Wireless solar CCTV, night vision, motion alerts, 64GB SD.',brand:'CP Plus',img:'https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p17',name:'Solar Panel Mounting Structure',cat:'accessories',price:3500,origPrice:4500,qty:60,unit:'set',desc:'GI mounting for 4 panels. Hot-dip galvanised. Adjustable tilt.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1591866426574-e0d7c9baf4a3?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p18',name:'Solar Wire 4mm 50m Roll',cat:'accessories',price:1800,origPrice:2200,qty:100,unit:'roll',desc:'UV resistant DC solar cable. 4mm cross section, TUV certified.',brand:'Polycab',img:'https://images.unsplash.com/photo-1601275549307-63d90a637c8b?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p19',name:'MC4 Solar Connector 10 Pairs',cat:'accessories',price:450,origPrice:600,qty:500,unit:'set',desc:'Weatherproof MC4 connectors. IP67. 10 male + 10 female pairs.',brand:'Generic',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p20',name:'40A MPPT Charge Controller',cat:'accessories',price:5500,origPrice:7000,qty:30,unit:'piece',desc:'40A MPPT with LCD display. Compatible with 12V/24V systems.',brand:'Epever',img:'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p21',name:'Solar Charge Controller 20A PWM',cat:'accessories',price:1200,origPrice:1800,qty:80,unit:'piece',desc:'20A PWM charge controller, dual USB, LCD display.',brand:'Phocos',img:'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=400&fit=crop',stock:'in'},
+  {id:'p22',name:'Junction Box IP67 - Pack of 5',cat:'accessories',price:800,origPrice:1200,qty:150,unit:'pack',desc:'Weatherproof solar junction boxes. IP67 rated. Safe wiring.',brand:'Skyflies',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop',stock:'in'},
 ];
 
 var currentCat = 'all';
