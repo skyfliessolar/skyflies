@@ -3,10 +3,12 @@
 // Enables offline support & install as app
 // ══════════════════════════════════════════════
 
-var CACHE_NAME = 'skyflies-v9';
+var CACHE_NAME = 'skyflies-v12';
 var URLS_TO_CACHE = [
   '/skyflies/',
   '/skyflies/index.html',
+  '/skyflies/privacy.html',
+  '/skyflies/terms.html',
   'https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap',
   'https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png'
 ];
