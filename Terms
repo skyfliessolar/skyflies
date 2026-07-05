@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Terms &amp; Conditions — Skyflies Solar</title>
+<meta name="robots" content="index,follow">
+<style>
+  :root{--sun:#F5A623;--ink:#1a2332;--soft:#5b6b82;--line:#e7ebf0;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);line-height:1.65;margin:0;background:#f7f9fc;}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px;}
+  header{border-bottom:3px solid var(--sun);padding-bottom:16px;margin-bottom:24px;}
+  h1{font-size:26px;margin:0 0 4px;}
+  h2{font-size:19px;margin:28px 0 8px;}
+  .updated{color:var(--soft);font-size:13px;}
+  p,li{font-size:15px;color:#2c3a4d;}
+  a{color:#0a66c2;}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+  .back{display:inline-block;margin-bottom:16px;color:var(--sun);text-decoration:none;font-weight:600;font-size:14px;}
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);color:var(--soft);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="index.html" class="back">← Back to App</a>
+  <header>
+    <h1>Terms &amp; Conditions</h1>
+    <div class="updated">Skyflies Solar Solutions · Last updated: 05 July 2026</div>
+  </header>
+  <div class="box">
+    <p>These Terms &amp; Conditions ("Terms") govern your use of the Skyflies Solar application and website (the "Service"), operated by Skyflies Solar Solutions ("we", "us", "our"). By using the Service, you agree to these Terms.</p>
+
+    <h2>1. Services</h2>
+    <p>We provide solar panel installation, cleaning, annual maintenance contracts (AMC), a solar products store, and related services. Information in the app is provided for general guidance.</p>
+
+    <h2>2. Quotations &amp; Estimates</h2>
+    <p>All prices, savings figures, EMI amounts, subsidy calculations, ROI estimates, and system sizes shown in the app are <strong>indicative estimates only</strong>. Actual figures depend on a physical site survey, current market prices, government policy, your electricity usage, and eligibility. Final pricing is confirmed only after a free site survey and a written quotation.</p>
+
+    <h2>3. Government Subsidies</h2>
+    <p>Subsidy figures (including PM Surya Ghar and state incentives) are estimates based on current schemes and are subject to change, eligibility, and government approval. We do not guarantee any specific subsidy amount or that a subsidy will be granted.</p>
+
+    <h2>4. Financing &amp; EMI</h2>
+    <p>EMI and financing options are provided through third-party banks and NBFCs. We are a facilitator and do not lend money ourselves. Loan approval, interest rates, and terms are decided solely by the finance partner based on your credit profile and KYC. Figures shown in the app are illustrative.</p>
+
+    <h2>5. Store Orders</h2>
+    <p>Product availability, prices, and specifications may change without notice. Orders are subject to confirmation and stock. Delivery timelines are estimates. Warranty on products is provided by the respective manufacturer/brand.</p>
+
+    <h2>6. Referral Programme</h2>
+    <p>Referral rewards are subject to programme terms shown in the app, including that the referred customer completes a paid installation. We may modify or discontinue the programme at any time.</p>
+
+    <h2>7. User Accounts</h2>
+    <p>If you create an account, you are responsible for keeping your credentials secure and for activity under your account. Provide accurate information and keep it updated.</p>
+
+    <h2>8. Acceptable Use</h2>
+    <p>You agree not to misuse the Service, submit false information, attempt to gain unauthorised access, or use the Service for any unlawful purpose.</p>
+
+    <h2>9. Intellectual Property</h2>
+    <p>The Skyflies Solar name, logo, content, and app design are our property or used with permission. You may not copy or reuse them without written consent.</p>
+
+    <h2>10. Limitation of Liability</h2>
+    <p>To the maximum extent permitted by law, we are not liable for any indirect or consequential loss arising from use of the Service or reliance on estimates provided in it. The Service is provided "as is" without warranties of any kind.</p>
+
+    <h2>11. Third-Party Services</h2>
+    <p>The Service integrates with third parties (e.g. WhatsApp, Google, Supabase, finance partners, social media). Your use of those services is governed by their own terms.</p>
+
+    <h2>12. Changes to These Terms</h2>
+    <p>We may update these Terms from time to time. Continued use of the Service after changes means you accept the updated Terms.</p>
+
+    <h2>13. Governing Law</h2>
+    <p>These Terms are governed by the laws of India, and any disputes are subject to the jurisdiction of the courts of Tamil Nadu.</p>
+
+    <h2>14. Contact</h2>
+    <p>Skyflies Solar Solutions<br>
+    Email: <a href="mailto:info@skyflies.in">info@skyflies.in</a><br>
+    Phone: +91 93854 49167<br>
+    Website: <a href="https://skyflies.in">skyflies.in</a></p>
+  </div>
+  <footer>© 2026 Skyflies Solar Solutions. All rights reserved.</footer>
+</div>
+</body>
+</html>
