@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Privacy Policy — Skyflies Solar</title>
+<meta name="robots" content="index,follow">
+<style>
+  :root{--sun:#F5A623;--ink:#1a2332;--soft:#5b6b82;--line:#e7ebf0;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:var(--ink);line-height:1.65;margin:0;background:#f7f9fc;}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 80px;}
+  header{border-bottom:3px solid var(--sun);padding-bottom:16px;margin-bottom:24px;}
+  h1{font-size:26px;margin:0 0 4px;}
+  h2{font-size:19px;margin:28px 0 8px;color:var(--ink);}
+  .updated{color:var(--soft);font-size:13px;}
+  p,li{font-size:15px;color:#2c3a4d;}
+  a{color:#0a66c2;}
+  .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+  .back{display:inline-block;margin-bottom:16px;color:var(--sun);text-decoration:none;font-weight:600;font-size:14px;}
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);color:var(--soft);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="index.html" class="back">← Back to App</a>
+  <header>
+    <h1>Privacy Policy</h1>
+    <div class="updated">Skyflies Solar Solutions · Last updated: 05 July 2026</div>
+  </header>
+  <div class="box">
+    <p>Skyflies Solar Solutions ("we", "us", "our") operates the Skyflies Solar mobile application and website (the "Service"). This policy explains what information we collect, how we use it, and your rights. By using the Service you agree to this policy.</p>
+
+    <h2>1. Information We Collect</h2>
+    <p>We collect information you provide directly when you request a quote, submit an enquiry, apply for financing/EMI, place a store order, subscribe to maintenance plans, or create an account. This may include:</p>
+    <ul>
+      <li>Name, phone number, and email address</li>
+      <li>Location details (country, city, pincode) and property type</li>
+      <li>Solar system preferences (size, panel type) and financing details you enter</li>
+      <li>Order and delivery information for store purchases</li>
+      <li>Referral codes you share or use</li>
+    </ul>
+    <p>We also automatically collect limited technical data such as approximate region (from your device time zone) and basic usage information to operate the app.</p>
+
+    <h2>2. How We Use Your Information</h2>
+    <ul>
+      <li>To prepare solar quotations, respond to enquiries, and provide the services you request</li>
+      <li>To process store orders and maintenance subscriptions</li>
+      <li>To assess and forward financing/EMI applications to our finance partners at your request</li>
+      <li>To administer the referral programme</li>
+      <li>To contact you about your requests, typically via phone, email, or WhatsApp</li>
+      <li>To improve and maintain the Service</li>
+    </ul>
+
+    <h2>3. WhatsApp & Communications</h2>
+    <p>When you choose "Share on WhatsApp" or similar options, your device opens WhatsApp with a pre-filled message that you send to us voluntarily. Your use of WhatsApp is also governed by WhatsApp's own privacy policy.</p>
+
+    <h2>4. How We Store & Protect Data</h2>
+    <p>Submissions are stored using trusted third-party infrastructure, including Supabase (database) and Google (Sheets/Apps Script) backends. We apply access controls so that submission and order data can be read only by authorised staff. While we take reasonable measures to protect your information, no method of transmission or storage is completely secure.</p>
+
+    <h2>5. Sharing of Information</h2>
+    <p>We do not sell your personal information. We share it only:</p>
+    <ul>
+      <li>With finance partners (e.g. banks/NBFCs) when you request a financing application</li>
+      <li>With service providers who help us operate the Service (hosting, database)</li>
+      <li>When required by law or to protect our legal rights</li>
+    </ul>
+
+    <h2>6. Data Retention</h2>
+    <p>We retain your information for as long as needed to provide the Service and to meet legal, accounting, or reporting requirements. You may request deletion at any time (see Contact).</p>
+
+    <h2>7. Your Rights</h2>
+    <p>You may request access to, correction of, or deletion of your personal information by contacting us. We will respond within a reasonable time as required by applicable law.</p>
+
+    <h2>8. Children's Privacy</h2>
+    <p>The Service is not directed at children under 13, and we do not knowingly collect their personal information.</p>
+
+    <h2>9. Third-Party Links</h2>
+    <p>The Service may link to third-party sites (e.g. YouTube, Instagram, Facebook, LinkedIn, finance partners). We are not responsible for the privacy practices of those sites.</p>
+
+    <h2>10. Changes to This Policy</h2>
+    <p>We may update this policy from time to time. The "Last updated" date above reflects the latest version.</p>
+
+    <h2>11. Contact Us</h2>
+    <p>Skyflies Solar Solutions<br>
+    Email: <a href="mailto:info@skyflies.in">info@skyflies.in</a><br>
+    Phone: +91 93854 49167<br>
+    Website: <a href="https://skyflies.in">skyflies.in</a><br>
+    Service areas: Chennai, Vellore, Ranipet, Kanchipuram &amp; across India</p>
+  </div>
+  <footer>© 2026 Skyflies Solar Solutions. All rights reserved.</footer>
+</div>
+</body>
+</html>
