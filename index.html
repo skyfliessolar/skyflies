@@ -435,6 +435,15 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 .pin-status{font-size:11px;margin-top:4px;color:var(--soft);min-height:14px;}
 .pin-status.ok{color:var(--success);}
 .pin-status.err{color:#FF6B6B;}
+.proj-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform 0.15s;}
+.proj-card:active{transform:scale(0.98);}
+.proj-cover{width:100%;aspect-ratio:16/10;position:relative;background:linear-gradient(135deg,rgba(245,166,35,0.15),rgba(255,107,0,0.08));overflow:hidden;}
+.proj-cover img{width:100%;height:100%;object-fit:cover;}
+.proj-cover-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:44px;}
+.proj-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;font-weight:600;padding:3px 9px;border-radius:8px;}
+.proj-body{padding:12px 14px;}
+.proj-title{font-size:15px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.3;}
+.proj-loc{font-size:12px;color:var(--soft);margin-top:4px;}
 .tst-wrap{margin-bottom:20px;}
 .tst-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .tst-track::-webkit-scrollbar{display:none;}
@@ -548,6 +557,16 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="trust-badge"><div class="ti">🛡️</div><div class="tn">BIS</div><div class="td">Certified Panels</div></div>
     <div class="trust-badge"><div class="ti">📜</div><div class="tn">GST</div><div class="td">Registered</div></div>
     <div class="trust-badge"><div class="ti">⚡</div><div class="tn">25 YR</div><div class="td">Panel Warranty</div></div>
+  </div>
+
+  <div class="sec-head" style="margin-top:18px;"><div class="sec-title">See Our Work</div></div>
+  <div onclick="goScreen('projects')" style="background:linear-gradient(135deg,rgba(245,166,35,0.18),rgba(255,107,0,0.10));border:1px solid rgba(245,166,35,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--sun),#FF6B00);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">📸</div>
+    <div style="flex:1;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);">Our Work Near You</div>
+      <div style="font-size:12px;color:var(--soft);margin-top:2px;">See real solar projects we've completed in your area.</div>
+    </div>
+    <div style="font-size:18px;color:var(--sun);">›</div>
   </div>
 
   <div class="sec-head" style="margin-top:18px;"><div class="sec-title">Refer & Earn</div></div>
@@ -906,6 +925,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
       <div class="social-link-card" onclick="goScreen('admin')"><div class="soc-ico" style="background:rgba(239,68,68,0.15);">🔐</div><div><div class="soc-info-name">Admin Dashboard</div><div class="soc-info-sub">Manage submissions & notifications</div></div><div class="soc-arrow">›</div></div>
       <div class="social-link-card" onclick="goScreen('adminstore')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">🛍️</div><div><div class="soc-info-name">Manage Store</div><div class="soc-info-sub">Add & edit products</div></div><div class="soc-arrow">›</div></div>
+      <div class="social-link-card" onclick="goScreen('adminprojects')"><div class="soc-ico" style="background:rgba(245,166,35,0.15);">📸</div><div><div class="soc-info-name">Manage Projects</div><div class="soc-info-sub">Upload project photos by area</div></div><div class="soc-arrow">›</div></div>
       <div class="social-link-card" onclick="adminSignOut()"><div class="soc-ico" style="background:rgba(139,156,182,0.15);">🔓</div><div><div class="soc-info-name">Sign Out</div><div class="soc-info-sub">End admin session</div></div><div class="soc-arrow">›</div></div>
     </div>
   </div>
@@ -1335,6 +1355,90 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div>
 </div>
 
+<!-- ══ PROJECTS GALLERY (Our Work Near You) ══ -->
+<div class="screen" id="screen-projects">
+  <div class="tag">📸 Our Work</div>
+  <div class="screen-title">Our Work Near You</div>
+  <div class="screen-sub">Real solar installations we've completed. See projects near your area.</div>
+
+  <div style="position:relative;margin-bottom:12px;">
+    <input type="tel" id="projPin" maxlength="6" inputmode="numeric" placeholder="Enter your pincode to see nearby work"
+      oninput="onProjPinInput(this.value)"
+      style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 16px 12px 40px;color:var(--text);font-size:14px;outline:none;">
+    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;">📍</span>
+  </div>
+  <div class="pin-status" id="projPinStatus" style="margin-bottom:10px;"></div>
+
+  <div id="projFilterRow" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none;">
+    <button class="cat-pill on" data-pf="all" onclick="filterProjects('all',this)">All</button>
+    <button class="cat-pill" data-pf="residential" onclick="filterProjects('residential',this)">🏠 Residential</button>
+    <button class="cat-pill" data-pf="commercial" onclick="filterProjects('commercial',this)">🏢 Commercial</button>
+    <button class="cat-pill" data-pf="industrial" onclick="filterProjects('industrial',this)">🏭 Industrial</button>
+  </div>
+
+  <div id="projLoading" style="text-align:center;padding:30px;color:var(--soft);font-size:13px;">Loading projects…</div>
+  <div id="projGrid" style="display:flex;flex-direction:column;gap:14px;"></div>
+  <div id="projEmpty" style="display:none;text-align:center;padding:40px 20px;color:var(--soft);">
+    <div style="font-size:40px;margin-bottom:10px;">📷</div>
+    <div style="font-size:14px;">No projects to show yet.</div>
+    <div style="font-size:12px;margin-top:6px;">Check back soon — we're adding our latest installations.</div>
+  </div>
+</div>
+
+<!-- Project lightbox -->
+<div id="projLightbox" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.94);flex-direction:column;">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;">
+    <div id="lbTitle" style="color:#fff;font-weight:700;font-size:15px;"></div>
+    <button onclick="closeLightbox()" style="background:rgba(255,255,255,0.12);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button>
+  </div>
+  <div id="lbMedia" style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;"></div>
+  <div id="lbStrip" style="display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none;"></div>
+  <div id="lbMeta" style="padding:0 16px 20px;color:#cbd5e1;font-size:13px;line-height:1.6;"></div>
+</div>
+
+<!-- ══ ADMIN PROJECTS ══ -->
+<div class="screen" id="screen-adminprojects">
+  <div class="tag">🛠️ Admin</div>
+  <div class="screen-title">Manage Projects</div>
+  <div class="screen-sub">Upload completed project photos with location. Customers see these as "Our Work Near You".</div>
+
+  <div class="form-card">
+    <div class="form-title">Add New Project</div>
+    <div class="field"><label>Project Title *</label><input type="text" id="apTitle" placeholder="e.g. 5kW Rooftop — Anna Nagar"></div>
+    <div class="row2">
+      <div class="field"><label>Category</label>
+        <select id="apCat"><option value="residential">Residential</option><option value="commercial">Commercial</option><option value="industrial">Industrial</option></select>
+      </div>
+      <div class="field"><label>System Size</label><input type="text" id="apSize" placeholder="e.g. 5 kW"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Pincode *</label><input type="tel" id="apPin" maxlength="6" inputmode="numeric" placeholder="600040" oninput="apPinLookup(this.value)"></div>
+      <div class="field"><label>Area / Locality</label><input type="text" id="apArea" placeholder="Anna Nagar"></div>
+    </div>
+    <div class="pin-status" id="apPinStatus" style="margin-top:-6px;margin-bottom:8px;"></div>
+    <div class="row2">
+      <div class="field"><label>City</label><input type="text" id="apCity" placeholder="Chennai"></div>
+      <div class="field"><label>State</label><input type="text" id="apState" placeholder="Tamil Nadu"></div>
+    </div>
+    <div class="field"><label>Description</label><textarea id="apDesc" placeholder="Short note about this project..." style="min-height:70px;"></textarea></div>
+
+    <div class="field"><label>Photos / Videos *</label>
+      <div id="apDrop" onclick="document.getElementById('apFiles').click()" style="border:2px dashed var(--border2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;color:var(--soft);">
+        <div style="font-size:30px;">📤</div>
+        <div style="font-size:13px;margin-top:6px;">Tap to select photos or videos</div>
+      </div>
+      <input type="file" id="apFiles" accept="image/*,video/*" multiple style="display:none;" onchange="apPreview(this.files)">
+      <div id="apPreview" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;"></div>
+    </div>
+
+    <button class="submit-btn" id="apSaveBtn" onclick="saveProject()" style="background:linear-gradient(135deg,var(--success),#059669);color:#fff;">➕ Publish Project</button>
+    <div class="pin-status" id="apSaveStatus" style="margin-top:8px;"></div>
+  </div>
+
+  <div style="font-size:13px;font-weight:600;color:var(--soft);margin:14px 0 8px;">Published Projects</div>
+  <div id="apList"><button onclick="apLoadList()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load</button></div>
+</div>
+
 <!-- ══ SOCIAL ══ -->
 <div class="screen" id="screen-social">
   <div class="tag">📱 Social Media</div>
@@ -1719,7 +1823,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -2672,7 +2776,7 @@ var sb=null;
 (function initSupabase(){
   if(typeof supabase==='undefined'){ setTimeout(initSupabase, 400); return; }
   try{
-    sb=supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:false}});
+    sb=supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true, autoRefreshToken:true, storageKey:'sf_admin_auth'}});
     console.log('Supabase ready');
   }catch(e){ console.warn('Supabase init failed:', e); }
 })();
@@ -3251,6 +3355,303 @@ window.addEventListener('DOMContentLoaded', function(){
   }
 })();
 
+
+// ════════════════════════════════════════════════
+// ── PROJECT SHOWCASE ("Our Work Near You") ───────
+// ════════════════════════════════════════════════
+var _projectsCache = [];
+var _projFilter = 'all';
+var _projUserPin = '';
+var _apFilesData = []; // {file, dataUrl, type}
+
+// Extend admin guard to cover the admin projects screen
+(function(){
+  var origGuard = window.guardAdminScreen;
+  window.guardAdminScreen = function(id){
+    if(typeof origGuard==='function') origGuard(id);
+    if(id==='adminprojects' && !window.isAdmin){ goScreen('admin'); }
+  };
+})();
+
+// Load projects when customer opens the gallery / admin opens manager
+(function(){
+  var origGo = window.goScreen;
+  if(typeof origGo==='function'){
+    window.goScreen = function(id, isBack){
+      origGo(id, isBack);
+      if(id==='adminprojects') guardAdminScreen(id);
+      if(id==='projects') setTimeout(loadProjectsGallery, 60);
+      if(id==='adminprojects') setTimeout(apLoadList, 200);
+    };
+  }
+})();
+
+// ─── Distance helpers ───
+function haversine(lat1,lng1,lat2,lng2){
+  function r(d){return d*Math.PI/180;}
+  var R=6371, dLat=r(lat2-lat1), dLng=r(lng2-lng1);
+  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(r(lat1))*Math.cos(r(lat2))*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+// Proximity score: lower = closer. Uses pincode similarity + city when no coords.
+function proximityScore(project, userPin, userCoords){
+  if(userCoords && project.lat && project.lng){
+    return haversine(userCoords.lat,userCoords.lng,project.lat,project.lng);
+  }
+  if(userPin && project.pincode){
+    if(project.pincode===userPin) return 0;
+    // Same first 3 digits ≈ same sorting region
+    var common=0;
+    for(var i=0;i<6 && i<project.pincode.length;i++){ if(project.pincode[i]===userPin[i]) common++; else break; }
+    return 100 - common*15; // 0 common→100, 3 common→55, 6→10
+  }
+  return 999; // unknown distance sinks to bottom
+}
+
+async function loadProjectsGallery(){
+  var loading=document.getElementById('projLoading');
+  var grid=document.getElementById('projGrid');
+  var empty=document.getElementById('projEmpty');
+  if(!grid) return;
+  if(loading) loading.style.display='block';
+  if(empty) empty.style.display='none';
+  if(_projectsCache.length){ if(loading) loading.style.display='none'; renderProjects(); return; }
+  if(!sb){ setTimeout(loadProjectsGallery, 500); return; }
+  try{
+    var res=await sb.from('projects').select('*').eq('published',true).order('created_at',{ascending:false});
+    if(res.error){ throw res.error; }
+    _projectsCache = res.data||[];
+  }catch(e){ _projectsCache=[]; }
+  if(loading) loading.style.display='none';
+  renderProjects();
+}
+
+function renderProjects(){
+  var grid=document.getElementById('projGrid');
+  var empty=document.getElementById('projEmpty');
+  if(!grid) return;
+  var list=_projectsCache.slice();
+  if(_projFilter!=='all') list=list.filter(function(p){return (p.category||'')===_projFilter;});
+  // Sort by proximity if user gave a pincode
+  if(_projUserPin && _projUserPin.length===6){
+    list.sort(function(a,b){ return proximityScore(a,_projUserPin)-proximityScore(b,_projUserPin); });
+  }
+  if(!list.length){ grid.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  grid.innerHTML=list.map(function(p,i){
+    var media=Array.isArray(p.media)?p.media:[];
+    var cover=p.cover || (media[0]&&media[0].url) || '';
+    var count=media.length;
+    var loc=[p.area,p.city].filter(Boolean).join(', ')||p.pincode||'';
+    var near='';
+    if(_projUserPin && p.pincode){
+      var sc=proximityScore(p,_projUserPin);
+      if(sc===0) near='<span style="color:var(--success);font-weight:700;">📍 In your area</span>';
+      else if(sc<=55) near='<span style="color:var(--sun);font-weight:600;">📍 Near you</span>';
+    }
+    var catBadge = p.category?('<span style="background:rgba(245,166,35,0.15);color:var(--sun);font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;text-transform:capitalize;">'+escapeHTML(p.category)+'</span>'):'';
+    return '<div class="proj-card" onclick="openProject('+i+')" data-i="'+i+'">'+
+      '<div class="proj-cover">'+(cover?'<img src="'+escapeHTML(cover)+'" loading="lazy" alt="'+escapeHTML(p.title||'')+'">':'<div class="proj-cover-ph">☀️</div>')+
+        (count>1?'<div class="proj-count">📷 '+count+'</div>':'')+'</div>'+
+      '<div class="proj-body">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">'+catBadge+(p.system_size?'<span style="font-size:11px;color:var(--soft);">'+escapeHTML(p.system_size)+'</span>':'')+'</div>'+
+        '<div class="proj-title">'+escapeHTML(p.title||'Solar Project')+'</div>'+
+        '<div class="proj-loc">📍 '+escapeHTML(loc)+(p.pincode?' · '+escapeHTML(p.pincode):'')+'</div>'+
+        (near?'<div style="font-size:12px;margin-top:4px;">'+near+'</div>':'')+
+      '</div></div>';
+  }).join('');
+  // Store filtered list for lightbox indexing
+  _projRendered = list;
+}
+var _projRendered = [];
+
+function filterProjects(cat, btn){
+  _projFilter=cat;
+  document.querySelectorAll('#projFilterRow .cat-pill').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+  renderProjects();
+}
+
+function onProjPinInput(v){
+  var pin=String(v||'').replace(/\D/g,'');
+  _projUserPin=pin;
+  var st=document.getElementById('projPinStatus');
+  if(pin.length===6){
+    if(st){ st.className='pin-status ok'; st.textContent='✓ Showing projects nearest to '+pin+' first'; }
+    renderProjects();
+  }else{
+    if(st){ st.className='pin-status'; st.textContent=pin.length?'Enter all 6 digits':''; }
+    if(pin.length===0) renderProjects();
+  }
+}
+
+// ─── Lightbox ───
+function openProject(i){
+  var p=_projRendered[i]; if(!p) return;
+  var media=Array.isArray(p.media)?p.media:[];
+  if(!media.length && p.cover) media=[{type:'image',url:p.cover}];
+  var lb=document.getElementById('projLightbox');
+  document.getElementById('lbTitle').textContent=p.title||'Project';
+  var loc=[p.area,p.city,p.state].filter(Boolean).join(', ');
+  document.getElementById('lbMeta').innerHTML=
+    (p.description?'<div style="margin-bottom:6px;">'+escapeHTML(p.description)+'</div>':'')+
+    '📍 '+escapeHTML(loc||p.pincode||'')+(p.system_size?' · ☀️ '+escapeHTML(p.system_size):'');
+  window._lbMedia=media; showLbMedia(0);
+  var strip=document.getElementById('lbStrip');
+  strip.innerHTML=media.map(function(m,idx){
+    var thumb = m.type==='video'
+      ? '<div style="width:56px;height:56px;border-radius:8px;background:#222;display:flex;align-items:center;justify-content:center;font-size:20px;">▶️</div>'
+      : '<img src="'+escapeHTML(m.url)+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">';
+    return '<div onclick="showLbMedia('+idx+')" style="flex-shrink:0;cursor:pointer;opacity:0.7;" data-lb="'+idx+'">'+thumb+'</div>';
+  }).join('');
+  lb.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function showLbMedia(idx){
+  var media=window._lbMedia||[]; var m=media[idx]; if(!m) return;
+  var box=document.getElementById('lbMedia');
+  box.innerHTML = m.type==='video'
+    ? '<video src="'+escapeHTML(m.url)+'" controls autoplay style="max-width:100%;max-height:100%;"></video>'
+    : '<img src="'+escapeHTML(m.url)+'" style="max-width:100%;max-height:100%;object-fit:contain;">';
+  document.querySelectorAll('#lbStrip [data-lb]').forEach(function(el){
+    el.style.opacity = (parseInt(el.getAttribute('data-lb'),10)===idx)?'1':'0.7';
+  });
+}
+function closeLightbox(){
+  document.getElementById('projLightbox').style.display='none';
+  document.body.style.overflow='';
+  var v=document.querySelector('#lbMedia video'); if(v) v.pause();
+}
+
+// ─── Admin: pincode lookup autofill ───
+function apPinLookup(v){
+  var pin=String(v||'').replace(/\D/g,'');
+  var st=document.getElementById('apPinStatus');
+  if(pin.length!==6){ if(st){st.className='pin-status';st.textContent='';} return; }
+  if(st){ st.className='pin-status'; st.textContent='Looking up…'; }
+  fetch('https://api.postalpincode.in/pincode/'+pin).then(function(r){return r.json();}).then(function(j){
+    if(j&&j[0]&&j[0].Status==='Success'&&j[0].PostOffice&&j[0].PostOffice.length){
+      var po=j[0].PostOffice[0];
+      if(!document.getElementById('apCity').value) document.getElementById('apCity').value=po.District||'';
+      if(!document.getElementById('apState').value) document.getElementById('apState').value=po.State||'';
+      if(!document.getElementById('apArea').value && po.Block && po.Block!=='NA') document.getElementById('apArea').value=po.Block;
+      if(st){ st.className='pin-status ok'; st.textContent='✓ '+(po.District||'')+', '+(po.State||''); }
+    }else if(st){ st.className='pin-status err'; st.textContent='Invalid pincode'; }
+  }).catch(function(){ if(st){st.className='pin-status err';st.textContent='Lookup failed';} });
+}
+
+// ─── Admin: file preview ───
+function apPreview(files){
+  _apFilesData=[];
+  var wrap=document.getElementById('apPreview');
+  wrap.innerHTML='';
+  Array.prototype.forEach.call(files, function(file){
+    var isVideo=/^video\//.test(file.type);
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var idx=_apFilesData.length;
+      _apFilesData.push({file:file, dataUrl:e.target.result, type:isVideo?'video':'image'});
+      var cell=document.createElement('div');
+      cell.style.cssText='position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;';
+      cell.innerHTML=(isVideo
+        ? '<div style="width:100%;height:100%;background:#222;display:flex;align-items:center;justify-content:center;font-size:24px;">🎬</div>'
+        : '<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;">')+
+        '<div onclick="apRemoveFile('+idx+',this)" style="position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.6);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;">✕</div>';
+      wrap.appendChild(cell);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function apRemoveFile(idx, btn){
+  _apFilesData[idx]=null;
+  btn.parentElement.remove();
+}
+
+// ─── Admin: save project (uploads media to Supabase Storage) ───
+async function saveProject(){
+  var st=document.getElementById('apSaveStatus');
+  var btn=document.getElementById('apSaveBtn');
+  function setStatus(cls,msg){ if(st){ st.className='pin-status '+cls; st.textContent=msg; } }
+  if(!sb){ setStatus('err','Supabase not ready. Try again.'); return; }
+  if(!window.isAdmin){ setStatus('err','Please sign in as admin.'); return; }
+  var title=document.getElementById('apTitle').value.trim();
+  var pin=document.getElementById('apPin').value.trim();
+  var files=_apFilesData.filter(Boolean);
+  if(!title){ setStatus('err','Enter a project title'); return; }
+  if(!pin || pin.length!==6){ setStatus('err','Enter a valid 6-digit pincode'); return; }
+  if(!files.length){ setStatus('err','Add at least one photo'); return; }
+  btn.disabled=true; btn.textContent='Uploading…';
+  try{
+    var media=[];
+    for(var i=0;i<files.length;i++){
+      var f=files[i];
+      setStatus('', 'Uploading '+(i+1)+'/'+files.length+'…');
+      var ext=(f.file.name.split('.').pop()||'jpg').toLowerCase();
+      var path='projects/'+Date.now()+'_'+i+'.'+ext;
+      var up=await sb.storage.from('project-media').upload(path, f.file, {cacheControl:'3600', upsert:false});
+      if(up.error){ throw up.error; }
+      var pub=sb.storage.from('project-media').getPublicUrl(path);
+      media.push({type:f.type, url:pub.data.publicUrl});
+    }
+    var row={
+      title:title,
+      description:document.getElementById('apDesc').value.trim()||null,
+      category:document.getElementById('apCat').value,
+      system_size:document.getElementById('apSize').value.trim()||null,
+      area:document.getElementById('apArea').value.trim()||null,
+      city:document.getElementById('apCity').value.trim()||null,
+      state:document.getElementById('apState').value.trim()||null,
+      pincode:pin,
+      media:media,
+      cover:media[0]?media[0].url:null,
+      published:true
+    };
+    var ins=await sb.from('projects').insert(row);
+    if(ins.error){ throw ins.error; }
+    setStatus('ok','✅ Project published!');
+    // Reset form
+    ['apTitle','apSize','apPin','apArea','apCity','apState','apDesc'].forEach(function(id){document.getElementById(id).value='';});
+    _apFilesData=[]; document.getElementById('apPreview').innerHTML=''; document.getElementById('apFiles').value='';
+    _projectsCache=[]; // force gallery reload
+    apLoadList();
+  }catch(e){
+    setStatus('err','Failed: '+(e.message||e));
+  }finally{
+    btn.disabled=false; btn.textContent='➕ Publish Project';
+  }
+}
+
+async function apLoadList(){
+  var el=document.getElementById('apList');
+  if(!el) return;
+  if(!sb){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">Supabase not ready…</div>'; return; }
+  el.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
+  try{
+    var res=await sb.from('projects').select('*').order('created_at',{ascending:false});
+    if(res.error) throw res.error;
+    var rows=res.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">No projects yet.</div>'; return; }
+    el.innerHTML=rows.map(function(p){
+      var count=Array.isArray(p.media)?p.media.length:0;
+      var loc=[p.area,p.city].filter(Boolean).join(', ')||p.pincode||'';
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;gap:10px;align-items:center;">'+
+        (p.cover?'<img src="'+escapeHTML(p.cover)+'" style="width:46px;height:46px;border-radius:8px;object-fit:cover;flex-shrink:0;">':'<div style="width:46px;height:46px;border-radius:8px;background:rgba(245,166,35,0.15);display:flex;align-items:center;justify-content:center;">☀️</div>')+
+        '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+escapeHTML(p.title||'')+'</div>'+
+        '<div style="font-size:11px;color:var(--soft);">📍 '+escapeHTML(loc)+' · '+count+' media</div></div>'+
+        '<button onclick="apDeleteProject(\''+p.id+'\')" style="padding:6px 10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:7px;color:#FF6B6B;font-size:11px;cursor:pointer;flex-shrink:0;">Delete</button>'+
+        '</div>';
+    }).join('');
+  }catch(e){ el.innerHTML='<div style="color:#FF6B6B;font-size:12px;">'+escapeHTML(e.message||'Error')+'</div>'; }
+}
+async function apDeleteProject(id){
+  if(!confirm('Delete this project?')) return;
+  try{
+    var res=await sb.from('projects').delete().eq('id',id);
+    if(res.error) throw res.error;
+    _projectsCache=[];
+    apLoadList();
+  }catch(e){ alert('Delete failed: '+(e.message||e)); }
+}
 
 if ('serviceWorker' in navigator && location.hostname !== 'www.claudeusercontent.com') {
   navigator.serviceWorker.register('/skyflies/sw.js', { scope: '/skyflies/' })
