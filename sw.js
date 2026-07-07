@@ -3,7 +3,7 @@
 // Enables offline support & install as app
 // ══════════════════════════════════════════════
 
-var CACHE_NAME = 'skyflies-v13';
+var CACHE_NAME = 'skyflies-v15';
 var URLS_TO_CACHE = [
   '/skyflies/',
   '/skyflies/index.html',
