@@ -1938,6 +1938,23 @@ function logoTapSecret(){
   }
 }
 
+// Reliable admin door for staff: open the app URL with ?admin=1
+// e.g. https://skyfliessolar.github.io/skyflies/?admin=1
+// (Login is still required — this only reveals the sign-in screen.)
+(function(){
+  try{
+    var p=new URLSearchParams(window.location.search);
+    if(p.get('admin')==='1'){
+      var openLogin=function(){
+        if(typeof goScreen==='function' && document.getElementById('screen-admin')){ goScreen('admin'); }
+        else setTimeout(openLogin, 300);
+      };
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(openLogin, 400); });
+      else setTimeout(openLogin, 400);
+    }
+  }catch(e){}
+})();
+
 async function adminLogin(){
   var emailEl = document.getElementById('adminEmail');
   var pwdInput = document.getElementById('adminPwd');
