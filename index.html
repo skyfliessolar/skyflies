@@ -444,6 +444,8 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 .proj-body{padding:12px 14px;}
 .proj-title{font-size:15px;font-weight:700;color:var(--text);margin-top:6px;line-height:1.3;}
 .proj-loc{font-size:12px;color:var(--soft);margin-top:4px;}
+.svc-tab{padding:11px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;color:var(--soft);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.18s;}
+.svc-tab.on{background:linear-gradient(135deg,var(--sun),#FF6B00);border-color:var(--sun);color:#080F1E;}
 .tst-wrap{margin-bottom:20px;}
 .tst-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .tst-track::-webkit-scrollbar{display:none;}
@@ -557,6 +559,16 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="trust-badge"><div class="ti">🛡️</div><div class="tn">BIS</div><div class="td">Certified Panels</div></div>
     <div class="trust-badge"><div class="ti">📜</div><div class="tn">GST</div><div class="td">Registered</div></div>
     <div class="trust-badge"><div class="ti">⚡</div><div class="tn">25 YR</div><div class="td">Panel Warranty</div></div>
+  </div>
+
+  <div class="sec-head" style="margin-top:18px;"><div class="sec-title">Service & Support</div></div>
+  <div onclick="goScreen('service')" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(29,78,216,0.08));border:1px solid rgba(59,130,246,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🔧</div>
+    <div style="flex:1;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);">Book & Track Service</div>
+      <div style="font-size:12px;color:var(--soft);margin-top:2px;">Cleaning, repair, warranty — track your request live.</div>
+    </div>
+    <div style="font-size:18px;color:#60A5FA;">›</div>
   </div>
 
   <div class="sec-head" style="margin-top:18px;"><div class="sec-title">See Our Work</div></div>
@@ -1444,6 +1456,64 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div><!-- /apAdminContent -->
 </div>
 
+<!-- ══ SERVICE REQUEST & TRACKING ══ -->
+<div class="screen" id="screen-service">
+  <div class="tag">🔧 Service</div>
+  <div class="screen-title">Book & Track Service</div>
+  <div class="screen-sub">Request cleaning, repair or warranty service — then track it live with your ticket code.</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+    <button class="svc-tab on" id="svcTabBook" onclick="svcTab('book')">📅 Book Service</button>
+    <button class="svc-tab" id="svcTabTrack" onclick="svcTab('track')">🔍 Track Request</button>
+  </div>
+
+  <!-- BOOK -->
+  <div id="svcBookPane">
+    <div class="form-card">
+      <div class="row2">
+        <div class="field"><label>Your Name *</label><input type="text" id="svcName" placeholder="Full name"><div class="field-err"></div></div>
+        <div class="field"><label>Phone *</label><input type="tel" id="svcPhone" placeholder="+91 XXXXX"><div class="field-err"></div></div>
+      </div>
+      <div class="field"><label>Service Type *</label>
+        <select id="svcType">
+          <option value="cleaning">🧽 Panel Cleaning</option>
+          <option value="repair">🔧 Repair / Fault</option>
+          <option value="warranty">🛡️ Warranty Claim</option>
+          <option value="inspection">🔍 System Inspection</option>
+          <option value="other">📋 Other</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Pincode</label><input type="tel" id="svcPin" maxlength="6" inputmode="numeric" placeholder="600001"></div>
+        <div class="field"><label>City</label><input type="text" id="svcCity" placeholder="Chennai"></div>
+      </div>
+      <div class="field"><label>Describe the issue</label><textarea id="svcDesc" placeholder="e.g. Inverter showing error code, panels need cleaning after storm..." style="min-height:70px;"></textarea></div>
+      <button class="submit-btn" id="svcSubmitBtn" onclick="submitServiceRequest()">🔧 Submit Service Request</button>
+      <div class="pin-status" id="svcStatus" style="margin-top:8px;"></div>
+    </div>
+    <div id="svcTicketResult" style="display:none;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:20px;text-align:center;margin-top:14px;">
+      <div style="font-size:32px;">✅</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin:8px 0 4px;">Request received!</div>
+      <div style="font-size:12px;color:var(--soft);">Your tracking code:</div>
+      <div id="svcTicketCode" style="font-size:28px;font-weight:800;color:var(--success);letter-spacing:3px;font-family:monospace;margin:8px 0;">SF-XXXXXX</div>
+      <div style="font-size:12px;color:var(--soft);line-height:1.5;">Save this code to track your request. Our team will call you within 24 hours.</div>
+      <button class="submit-btn" onclick="copyTicketCode()" style="background:rgba(255,255,255,0.08);color:var(--text);margin-top:12px;">📋 Copy Code</button>
+    </div>
+  </div>
+
+  <!-- TRACK -->
+  <div id="svcTrackPane" style="display:none;">
+    <div class="form-card">
+      <div class="field"><label>Enter your ticket code</label>
+        <input type="text" id="trackCode" placeholder="SF-XXXXXX" style="text-transform:uppercase;font-family:monospace;letter-spacing:2px;" onkeydown="if(event.key==='Enter')trackTicket()">
+      </div>
+      <button class="submit-btn" id="trackBtn" onclick="trackTicket()">🔍 Track</button>
+      <div class="pin-status" id="trackStatus" style="margin-top:8px;"></div>
+    </div>
+    <div id="trackResult" style="display:none;margin-top:14px;"></div>
+  </div>
+</div>
+
 <!-- ══ SOCIAL ══ -->
 <div class="screen" id="screen-social">
   <div class="tag">📱 Social Media</div>
@@ -1759,6 +1829,9 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
     <div style="font-size:12px;font-weight:600;color:var(--soft);margin:12px 0 8px;">📁 Uploaded Media</div>
     <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
   </div>
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🔧 Service Requests</div>
+  <div id="admTicketList"><button onclick="admLoadTickets()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load Requests</button></div>
+
   <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">⭐ Manage Testimonials</div>
   <div class="form-card">
     <div class="row2">
@@ -1828,7 +1901,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -3700,6 +3773,152 @@ async function apDeleteProject(id){
     _projectsCache=[];
     apLoadList();
   }catch(e){ alert('Delete failed: '+(e.message||e)); }
+}
+
+// ════════════════════════════════════════════════
+// ── SERVICE REQUESTS & TRACKING ──────────────────
+// ════════════════════════════════════════════════
+function svcTab(which){
+  document.getElementById('svcBookPane').style.display = which==='book'?'block':'none';
+  document.getElementById('svcTrackPane').style.display = which==='track'?'block':'none';
+  document.getElementById('svcTabBook').classList.toggle('on', which==='book');
+  document.getElementById('svcTabTrack').classList.toggle('on', which==='track');
+}
+
+function genTicketCode(){
+  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var c='';
+  for(var i=0;i<6;i++) c+=chars.charAt(Math.floor(Math.random()*chars.length));
+  return 'SF-'+c;
+}
+
+async function submitServiceRequest(){
+  var st=document.getElementById('svcStatus');
+  var btn=document.getElementById('svcSubmitBtn');
+  function setS(cls,msg){ st.className='pin-status '+cls; st.textContent=msg; }
+  var nm=document.getElementById('svcName'), ph=document.getElementById('svcPhone');
+  [nm,ph].forEach(clearInvalid);
+  var ok=true;
+  if(!nm.value.trim()){ markInvalid(nm,'Enter your name'); ok=false; }
+  if(!isValidIndianPhone(ph.value)){ markInvalid(ph,'Enter a valid 10-digit mobile'); ok=false; }
+  if(!ok) return;
+  if(!sb){ setS('err','Connecting… try again in a moment.'); return; }
+  btn.disabled=true; btn.textContent='Submitting…';
+  var code=genTicketCode();
+  try{
+    var res=await sb.from('service_tickets').insert({
+      code:code,
+      name:nm.value.trim(),
+      phone:ph.value.trim(),
+      service_type:document.getElementById('svcType').value,
+      description:document.getElementById('svcDesc').value.trim()||null,
+      pincode:document.getElementById('svcPin').value.trim()||null,
+      city:document.getElementById('svcCity').value.trim()||null
+    });
+    if(res.error) throw res.error;
+    document.getElementById('svcTicketCode').textContent=code;
+    document.getElementById('svcTicketResult').style.display='block';
+    document.getElementById('svcTicketResult').scrollIntoView({behavior:'smooth',block:'center'});
+    setS('ok','');
+    // Also mirror to Sheets as backup lead
+    try{ sendLead('service', {name:nm.value.trim(), phone:ph.value.trim(), message:'['+code+'] '+document.getElementById('svcType').value+': '+(document.getElementById('svcDesc').value||'')}); }catch(e){}
+  }catch(e){
+    setS('err','Failed: '+(e.message||'network error')+'. Or call +91 93854 49167.');
+  }finally{
+    btn.disabled=false; btn.textContent='🔧 Submit Service Request';
+  }
+}
+
+function copyTicketCode(){
+  var code=document.getElementById('svcTicketCode').textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(code).then(function(){ if(typeof showToast==='function') showToast('✅ Code copied'); });
+}
+
+var SVC_STEPS=['pending','scheduled','in_progress','completed'];
+var SVC_LABELS={pending:'Request Received',scheduled:'Visit Scheduled',in_progress:'Work In Progress',completed:'Completed',cancelled:'Cancelled'};
+
+async function trackTicket(){
+  var st=document.getElementById('trackStatus');
+  var btn=document.getElementById('trackBtn');
+  var out=document.getElementById('trackResult');
+  var code=(document.getElementById('trackCode').value||'').trim().toUpperCase();
+  function setS(cls,msg){ st.className='pin-status '+cls; st.textContent=msg; }
+  out.style.display='none';
+  if(!/^SF-[A-Z0-9]{6}$/.test(code)){ setS('err','Enter a valid code like SF-8K3N2P'); return; }
+  if(!sb){ setS('err','Connecting… try again.'); return; }
+  btn.disabled=true; btn.textContent='Checking…';
+  try{
+    var res=await sb.rpc('track_ticket',{p_code:code});
+    if(res.error) throw res.error;
+    var t=(res.data&&res.data[0])||null;
+    if(!t){ setS('err','No request found with that code.'); return; }
+    setS('','');
+    var curIdx = t.status==='cancelled' ? -1 : SVC_STEPS.indexOf(t.status);
+    var steps = t.status==='cancelled'
+      ? '<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px;color:#FF6B6B;font-weight:700;text-align:center;">This request was cancelled. Call us to rebook.</div>'
+      : SVC_STEPS.map(function(s,i){
+          var done=i<=curIdx;
+          return '<div style="display:flex;gap:12px;align-items:flex-start;">'+
+            '<div style="display:flex;flex-direction:column;align-items:center;">'+
+              '<div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;'+
+                (done?'background:var(--success);color:#fff;':'background:rgba(255,255,255,0.08);color:var(--soft);')+'">'+(done?'✓':(i+1))+'</div>'+
+              (i<SVC_STEPS.length-1?'<div style="width:2px;height:26px;'+(i<curIdx?'background:var(--success);':'background:rgba(255,255,255,0.1);')+'"></div>':'')+
+            '</div>'+
+            '<div style="padding-top:3px;"><div style="font-size:13px;font-weight:700;color:'+(done?'var(--text)':'var(--soft)')+';">'+SVC_LABELS[s]+'</div>'+
+            (i===curIdx?'<div style="font-size:11px;color:var(--success);">● Current status</div>':'')+'</div>'+
+          '</div>';
+        }).join('');
+    out.innerHTML='<div class="form-card">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
+        '<div><div style="font-size:11px;color:var(--soft);letter-spacing:1px;">TICKET</div>'+
+        '<div style="font-family:monospace;font-weight:800;color:var(--sun);font-size:16px;">'+escapeHTML(t.code)+'</div></div>'+
+        '<div style="text-align:right;"><div style="font-size:11px;color:var(--soft);letter-spacing:1px;">SERVICE</div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text);text-transform:capitalize;">'+escapeHTML(String(t.service_type||'').replace('_',' '))+'</div></div>'+
+      '</div>'+steps+
+      (t.scheduled_date?'<div style="margin-top:12px;background:rgba(245,166,35,0.08);border-radius:9px;padding:10px;font-size:12px;color:var(--sun);">📅 Scheduled: '+escapeHTML(t.scheduled_date)+'</div>':'')+
+      '</div>';
+    out.style.display='block';
+  }catch(e){
+    setS('err','Lookup failed: '+(e.message||'network error'));
+  }finally{
+    btn.disabled=false; btn.textContent='🔍 Track';
+  }
+}
+
+// ─── Admin: ticket management (list + update status) ───
+async function admLoadTickets(){
+  var el=document.getElementById('admTicketList');
+  if(!el) return;
+  if(!sb || !window.isAdmin){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">Sign in as admin first.</div>'; return; }
+  el.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
+  try{
+    var res=await sb.from('service_tickets').select('*').order('created_at',{ascending:false}).limit(50);
+    if(res.error) throw res.error;
+    var rows=res.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">No service requests yet.</div>'; return; }
+    el.innerHTML=rows.map(function(t){
+      var opts=['pending','scheduled','in_progress','completed','cancelled'].map(function(s){
+        return '<option value="'+s+'"'+(t.status===s?' selected':'')+'>'+SVC_LABELS[s]+'</option>';
+      }).join('');
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+        '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">'+
+          '<div style="font-family:monospace;font-weight:800;color:var(--sun);">'+escapeHTML(t.code)+'</div>'+
+          '<div style="font-size:11px;color:var(--soft);text-transform:capitalize;">'+escapeHTML(t.service_type||'')+'</div>'+
+        '</div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text);margin-top:4px;">'+escapeHTML(t.name||'')+' · <a href="tel:'+escapeHTML(t.phone||'')+'" style="color:var(--info);">'+escapeHTML(t.phone||'')+'</a></div>'+
+        (t.description?'<div style="font-size:12px;color:var(--soft);margin-top:3px;">'+escapeHTML(t.description)+'</div>':'')+
+        '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">'+
+          '<select onchange="admUpdateTicket(\''+t.id+'\',this.value)" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border2);border-radius:8px;padding:8px;color:var(--text);font-size:12px;">'+opts+'</select>'+
+        '</div></div>';
+    }).join('');
+  }catch(e){ el.innerHTML='<div style="color:#FF6B6B;font-size:12px;">'+escapeHTML(e.message||'Error')+'</div>'; }
+}
+async function admUpdateTicket(id,status){
+  try{
+    var res=await sb.from('service_tickets').update({status:status}).eq('id',id);
+    if(res.error) throw res.error;
+    if(typeof showToast==='function') showToast('✅ Status updated');
+  }catch(e){ alert('Update failed: '+(e.message||e)); }
 }
 
 if ('serviceWorker' in navigator && location.hostname !== 'www.claudeusercontent.com') {
