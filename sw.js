@@ -4,7 +4,7 @@
 // latest app after one reload. Cache = offline only.
 // ══════════════════════════════════════════════
 
-var CACHE_NAME = 'skyflies-v16';
+var CACHE_NAME = 'skyflies-v17';
 var URLS_TO_CACHE = [
   '/skyflies/',
   '/skyflies/index.html',
