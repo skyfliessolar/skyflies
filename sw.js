@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════
-// SKYFLIES SOLAR – SERVICE WORKER
-// Enables offline support & install as app
+// SKYFLIES SOLAR – SERVICE WORKER (v16)
+// Network-first for pages: users ALWAYS get the
+// latest app after one reload. Cache = offline only.
 // ══════════════════════════════════════════════
 
-var CACHE_NAME = 'skyflies-v15';
+var CACHE_NAME = 'skyflies-v16';
 var URLS_TO_CACHE = [
   '/skyflies/',
   '/skyflies/index.html',
@@ -13,7 +14,6 @@ var URLS_TO_CACHE = [
   'https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png'
 ];
 
-// Install — cache all essential files
 self.addEventListener('install', function(e){
   e.waitUntil(
     caches.open(CACHE_NAME).then(function(cache){
@@ -23,7 +23,6 @@ self.addEventListener('install', function(e){
   self.skipWaiting();
 });
 
-// Activate — clean old caches
 self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(keys){
@@ -36,28 +35,48 @@ self.addEventListener('activate', function(e){
   self.clients.claim();
 });
 
-// Fetch — serve from cache, fallback to network
 self.addEventListener('fetch', function(e){
-  // Don't cache Google Apps Script requests
-  if(e.request.url.includes('script.google.com')){
+  var url = e.request.url;
+
+  // Never intercept backend/API calls
+  if(url.includes('script.google.com') || url.includes('supabase.co') || url.includes('postalpincode.in')){
     return;
   }
+
+  var isHTML = e.request.mode === 'navigate' ||
+               url.endsWith('/skyflies/') ||
+               url.indexOf('.html') !== -1;
+
+  if(isHTML){
+    // NETWORK-FIRST for pages: always try to get the freshest version.
+    e.respondWith(
+      fetch(e.request).then(function(response){
+        if(response && response.status === 200){
+          var clone = response.clone();
+          caches.open(CACHE_NAME).then(function(cache){ cache.put(e.request, clone); });
+        }
+        return response;
+      }).catch(function(){
+        // Offline: serve last cached copy
+        return caches.match(e.request).then(function(c){
+          return c || caches.match('/skyflies/index.html');
+        });
+      })
+    );
+    return;
+  }
+
+  // CACHE-FIRST for static assets (fonts, images) — fast + offline-friendly
   e.respondWith(
     caches.match(e.request).then(function(cached){
       if(cached) return cached;
       return fetch(e.request).then(function(response){
-        // Cache new pages
-        if(response && response.status === 200 && response.type === 'basic'){
+        if(response && response.status === 200 && (response.type === 'basic' || response.type === 'cors')){
           var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache){
-            cache.put(e.request, clone);
-          });
+          caches.open(CACHE_NAME).then(function(cache){ cache.put(e.request, clone); });
         }
         return response;
-      }).catch(function(){
-        // Offline fallback — return cached index
-        return caches.match('/skyflies/index.html');
-      });
+      }).catch(function(){ return cached; });
     })
   );
 });
