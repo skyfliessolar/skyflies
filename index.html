@@ -215,6 +215,8 @@ html.light .cmp-row span:first-child{color:var(--text);}
 .prod-img-wrap.gadgets{background:linear-gradient(135deg,#8B5CF6,#6D28D9);}
 .prod-img-wrap.accessories{background:linear-gradient(135deg,#EC4899,#BE185D);}
 .prod-img-wrap.appliances{background:linear-gradient(135deg,#06B6D4,#0E7490);}
+.prod-img-wrap.electrical{background:linear-gradient(135deg,#F59E0B,#B45309);}
+.prod-img-wrap.electronics{background:linear-gradient(135deg,#6366F1,#4338CA);}
 .prod-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .prod-img-emoji{position:relative;font-size:52px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.28));}
 .prod-info{padding:10px;flex:1;display:flex;flex-direction:column;}
@@ -429,6 +431,9 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 .trust-badge .tn{font-size:10px;color:var(--sun);font-weight:700;letter-spacing:1px;}
 .trust-badge .td{font-size:9px;color:var(--soft);margin-top:2px;}
 .wa-fab{position:fixed;bottom:78px;right:14px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);border:none;cursor:pointer;box-shadow:0 8px 20px rgba(37,211,102,0.45);z-index:90;font-size:24px;display:flex;align-items:center;justify-content:center;}
+.mic-fab{position:fixed;bottom:78px;left:14px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--sun),#FF6B00);border:none;cursor:pointer;box-shadow:0 8px 20px rgba(245,166,35,0.45);z-index:90;font-size:24px;display:flex;align-items:center;justify-content:center;}
+@keyframes voicePulse{0%,100%{transform:scale(1);box-shadow:0 0 60px rgba(245,166,35,0.5);}50%{transform:scale(1.08);box-shadow:0 0 90px rgba(245,166,35,0.8);}}
+#voiceOrb.listening{animation:voicePulse 1.2s ease-in-out infinite;}
 .field-err{font-size:11px;color:#FF6B6B;margin-top:4px;display:none;}
 .field-err.show{display:block;}
 .field input.invalid,.field select.invalid{border-color:#FF6B6B !important;}
@@ -532,6 +537,16 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
 <nav id="bottomnav"><button class="bnav-item on" id="bn-home" onclick="goScreen('home')"><div class="bnav-icon">🏠</div><div class="bnav-label">Home</div></button><button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')"><div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div></button><button class="bnav-item" id="bn-portal" onclick="goScreen('portal')"><div class="bnav-icon">👤</div><div class="bnav-label">Account</div></button><button class="bnav-item" id="bn-store" onclick="goScreen('store')"><div class="bnav-icon">🛒</div><div class="bnav-label">Store</div></button><button class="bnav-item" id="bn-more" onclick="goScreen('more')"><div class="bnav-icon">☰</div><div class="bnav-label">More</div><span class="bnav-badge" id="moreBadge" style="display:none;"></span></button></nav>
 <div id="installBanner" class="install-bar" style="display:none;"><div class="install-inner"><img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:32px;height:32px;border-radius:8px;" alt=""><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Install Skyflies Solar App</div><div style="font-size:11px;color:var(--soft);">Add to home screen</div></div><button onclick="installApp()" style="padding:7px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#0A0F1E;font-weight:700;font-size:12px;cursor:pointer;">Install</button><button onclick="dismissBanner()" style="padding:7px 10px;background:transparent;border:none;color:var(--soft);font-size:14px;cursor:pointer;">✕</button></div></div>
 <button class="wa-fab" onclick="whatsappQuickShare()" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">💬</button>
+<button class="mic-fab" id="micFab" onclick="startVoice()" aria-label="Voice assistant" title="Voice assistant">🎙️</button>
+
+<!-- Voice assistant overlay -->
+<div id="voicePanel" style="display:none;position:fixed;inset:0;z-index:210;background:rgba(8,15,30,0.92);backdrop-filter:blur(6px);flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+  <div id="voiceOrb" style="width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,var(--sun),#FF6B00);display:flex;align-items:center;justify-content:center;font-size:44px;box-shadow:0 0 60px rgba(245,166,35,0.5);">🎙️</div>
+  <div id="voiceState" style="color:#fff;font-weight:700;font-size:17px;margin-top:22px;">Listening…</div>
+  <div id="voiceTranscript" style="color:#cbd5e1;font-size:14px;margin-top:8px;text-align:center;min-height:20px;"></div>
+  <div style="color:#64748b;font-size:12px;margin-top:20px;text-align:center;line-height:1.7;">Try saying:<br>"Get me a solar quote" · "Open store" · "Track my service"<br>"EMI calculator" · "Call Skyflies" · "Show your work"</div>
+  <button onclick="stopVoice()" style="margin-top:26px;padding:12px 28px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;color:#fff;font-weight:700;cursor:pointer;">✕ Close</button>
+</div>
 <div id="screen-area">
 
 
@@ -560,6 +575,8 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="trust-badge"><div class="ti">📜</div><div class="tn">GST</div><div class="td">Registered</div></div>
     <div class="trust-badge"><div class="ti">⚡</div><div class="tn">25 YR</div><div class="td">Panel Warranty</div></div>
   </div>
+
+  <div id="promoBanner" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:16px;"></div>
 
   <div class="sec-head" style="margin-top:18px;"><div class="sec-title">Service & Support</div></div>
   <div onclick="goScreen('service')" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(29,78,216,0.08));border:1px solid rgba(59,130,246,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
@@ -1088,6 +1105,10 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <button class="cat-pill" onclick="filterCat('inverters',this)">⚡ Inverters</button>
     <button class="cat-pill" onclick="filterCat('batteries',this)">🔋 Batteries</button>
     <button class="cat-pill" onclick="filterCat('appliances',this)">🏠 Appliances</button>
+    <button class="cat-pill" onclick="filterCat('lighting',this)">💡 Lighting</button>
+    <button class="cat-pill" onclick="filterCat('gadgets',this)">📱 Gadgets</button>
+    <button class="cat-pill" onclick="filterCat('electrical',this)">🔌 Electrical</button>
+    <button class="cat-pill" onclick="filterCat('electronics',this)">📺 Electronics</button>
     <button class="cat-pill" onclick="filterCat('accessories',this)">🔧 Accessories</button>
   </div>
 
@@ -3776,8 +3797,142 @@ async function apDeleteProject(id){
 }
 
 // ════════════════════════════════════════════════
-// ── SERVICE REQUESTS & TRACKING ──────────────────
+// ── VOICE ASSISTANT ──────────────────────────────
 // ════════════════════════════════════════════════
+var _voiceRec=null, _voiceActive=false;
+
+function voiceSpeak(text){
+  try{
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text);
+    u.lang='en-IN'; u.rate=1.02;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function startVoice(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var panel=document.getElementById('voicePanel');
+  var state=document.getElementById('voiceState');
+  var trans=document.getElementById('voiceTranscript');
+  var orb=document.getElementById('voiceOrb');
+  panel.style.display='flex';
+  trans.textContent='';
+  if(!SR){
+    state.textContent='Voice not supported on this browser';
+    trans.textContent='Try Chrome on Android for voice commands.';
+    orb.classList.remove('listening');
+    return;
+  }
+  state.textContent='Listening…';
+  orb.classList.add('listening');
+  try{
+    _voiceRec=new SR();
+    _voiceRec.lang='en-IN';
+    _voiceRec.interimResults=true;
+    _voiceRec.maxAlternatives=1;
+    _voiceActive=true;
+    _voiceRec.onresult=function(e){
+      var txt='';
+      for(var i=0;i<e.results.length;i++) txt+=e.results[i][0].transcript;
+      trans.textContent='"'+txt+'"';
+      if(e.results[e.results.length-1].isFinal){
+        handleVoiceCommand(txt);
+      }
+    };
+    _voiceRec.onerror=function(e){
+      orb.classList.remove('listening');
+      state.textContent = e.error==='not-allowed' ? 'Microphone permission needed' : 'Didn\'t catch that';
+      if(e.error==='not-allowed') trans.textContent='Allow microphone access in your browser settings.';
+    };
+    _voiceRec.onend=function(){ orb.classList.remove('listening'); if(_voiceActive) state.textContent='Tap Close or try again'; };
+    _voiceRec.start();
+  }catch(e){
+    state.textContent='Could not start voice';
+  }
+}
+
+function stopVoice(){
+  _voiceActive=false;
+  try{ if(_voiceRec) _voiceRec.stop(); }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  document.getElementById('voicePanel').style.display='none';
+}
+
+function handleVoiceCommand(raw){
+  var t=String(raw||'').toLowerCase();
+  var state=document.getElementById('voiceState');
+  function go(screen,say){
+    state.textContent='✅ '+say;
+    voiceSpeak(say);
+    setTimeout(function(){ stopVoice(); goScreen(screen); }, 700);
+  }
+  // Intent matching — most specific first
+  if(/track|status|ticket/.test(t) && /service|request|repair|complaint/.test(t) || /track/.test(t)){
+    state.textContent='✅ Opening service tracking';
+    voiceSpeak('Opening service tracking');
+    setTimeout(function(){ stopVoice(); goScreen('service'); setTimeout(function(){svcTab('track');},300); },700);
+  }
+  else if(/service|repair|clean|complain|fix|fault|warranty/.test(t)) go('service','Opening service booking');
+  else if(/quote|quotation|price|cost|estimate|kitna|how much/.test(t)) go('calculator','Opening the quote calculator');
+  else if(/emi|loan|finance|installment|monthly payment/.test(t)) go('emi','Opening the EMI calculator');
+  else if(/store|shop|buy|product|purchase|fan|battery|panel|inverter|tv|light/.test(t)){
+    // If they named a product, prefill store search
+    var q='';
+    ['fan','battery','panel','inverter','tv','light','cable','switch','camera','pump'].forEach(function(w){ if(t.indexOf(w)>=0) q=w; });
+    state.textContent='✅ Opening store'+(q?' — '+q:'');
+    voiceSpeak('Opening the store'+(q?' and searching '+q:''));
+    setTimeout(function(){
+      stopVoice(); goScreen('store');
+      if(q) setTimeout(function(){ var s=document.getElementById('storeSearch'); if(s){ s.value=q; if(typeof filterProducts==='function') filterProducts(q); } },400);
+    },700);
+  }
+  else if(/cart|checkout|order/.test(t)) go('cart','Opening your cart');
+  else if(/work|project|gallery|installation|photos/.test(t)) go('projects','Showing our completed projects');
+  else if(/refer|earn|reward|invite/.test(t)) go('refer','Opening refer and earn');
+  else if(/plan|amc|maintenance|subscription/.test(t)) go('plans','Opening maintenance plans');
+  else if(/call|phone|talk|speak/.test(t)){
+    state.textContent='✅ Calling Skyflies';
+    voiceSpeak('Calling Skyflies Solar');
+    setTimeout(function(){ stopVoice(); window.location.href='tel:+919385449167'; },800);
+  }
+  else if(/whatsapp|message|chat/.test(t)){
+    state.textContent='✅ Opening WhatsApp';
+    voiceSpeak('Opening WhatsApp');
+    setTimeout(function(){ stopVoice(); whatsappQuickShare(); },800);
+  }
+  else if(/home|main|start/.test(t)) go('home','Going home');
+  else if(/subsidy|surya ghar|government/.test(t)) go('calculator','The quote calculator includes subsidy details');
+  else{
+    state.textContent='🤔 Didn\'t understand — try again';
+    document.getElementById('voiceTranscript').textContent='Heard: "'+raw+'"';
+    voiceSpeak('Sorry, I did not understand. Try saying, get me a quote.');
+  }
+}
+
+// ── PROMO BANNER (rotating, home screen) ─────────
+var _promoIdx=0;
+var PROMOS=[
+  {icon:'🎁', text:'Refer a friend — earn ₹2,000 when they install!', action:'refer', cta:'Refer now'},
+  {icon:'💳', text:'Solar on EMI from ₹2,499/month — 0% options available', action:'emi', cta:'Check EMI'},
+  {icon:'🏛️', text:'Up to ₹78,000 PM Surya Ghar subsidy + ₹20,000/kW TN incentive', action:'calculator', cta:'Get quote'},
+  {icon:'🔧', text:'Book panel cleaning or repair — track it live', action:'service', cta:'Book now'}
+];
+function rotatePromo(){
+  var el=document.getElementById('promoBanner');
+  if(!el) return;
+  var p=PROMOS[_promoIdx%PROMOS.length];
+  el.innerHTML='<span style="font-size:20px;flex-shrink:0;">'+p.icon+'</span>'+
+    '<span style="flex:1;font-size:12px;color:var(--text);line-height:1.4;">'+p.text+'</span>'+
+    '<button onclick="goScreen(\''+p.action+'\')" style="flex-shrink:0;padding:7px 12px;background:linear-gradient(135deg,var(--sun),#FF6B00);border:none;border-radius:8px;color:#080F1E;font-weight:700;font-size:11px;cursor:pointer;">'+p.cta+'</button>';
+  _promoIdx++;
+}
+setInterval(rotatePromo, 6000);
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', rotatePromo);
+else setTimeout(rotatePromo, 500);
+
+
 function svcTab(which){
   document.getElementById('svcBookPane').style.display = which==='book'?'block':'none';
   document.getElementById('svcTrackPane').style.display = which==='track'?'block':'none';
@@ -4583,7 +4738,7 @@ function renderProducts(products) {
     return;
   }
   if(none) none.style.display = 'none';
-  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱'};
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱',electrical:'🔌',electronics:'📺'};
   grid.innerHTML = '';
   products.forEach(function(p) {
     var discount = p.origPrice && p.origPrice > p.price
@@ -4708,7 +4863,7 @@ function renderCart() {
   var empty   = document.getElementById('cartEmpty');
   var summary = document.getElementById('cartSummary');
   if (!items) return;
-  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱'};
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱',electrical:'🔌',electronics:'📺'};
   if (!cart.length) {
     items.innerHTML = '';
     if(empty)   empty.style.display   = 'block';
@@ -4861,7 +5016,7 @@ function renderAdminProducts() {
   var products = getProducts();
   if(count) count.textContent = products.length;
 
-  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱'};
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱',electrical:'🔌',electronics:'📺'};
   list.innerHTML = products.map(function(p) {
     return '<div style="background:var(--card);border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;">' +
       '<div style="width:44px;height:44px;border-radius:10px;background:rgba(245,166,35,0.1);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">'+(catIcons[p.cat]||'📦')+'</div>' +
@@ -4883,7 +5038,7 @@ function showProductDetail(id) {
   var products = getProducts();
   var p = products.find(function(x){ return x.id===id; });
   if (!p) return;
-  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱'};
+  var catIcons = {panels:'☀️',inverters:'⚡',batteries:'🔋',appliances:'🏠',accessories:'🔧',lighting:'💡',gadgets:'📱',electrical:'🔌',electronics:'📺'};
   var icon     = catIcons[p.cat] || '📦';
   var discount = p.origPrice && p.origPrice>p.price ? Math.round((1-p.price/p.origPrice)*100)+'% off' : '';
 
