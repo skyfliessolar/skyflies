@@ -432,6 +432,13 @@ pre{font-family:monospace;font-size:10px;color:#a8d8a8;white-space:pre-wrap;line
 .trust-badge .td{font-size:9px;color:var(--soft);margin-top:2px;}
 .wa-fab{position:fixed;bottom:78px;right:14px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);border:none;cursor:pointer;box-shadow:0 8px 20px rgba(37,211,102,0.45);z-index:90;font-size:24px;display:flex;align-items:center;justify-content:center;}
 .mic-fab{position:fixed;bottom:78px;left:14px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--sun),#FF6B00);border:none;cursor:pointer;box-shadow:0 8px 20px rgba(245,166,35,0.45);z-index:90;font-size:24px;display:flex;align-items:center;justify-content:center;}
+/* ── ADMIN LOCKDOWN: admin content is hidden at CSS level; only body.is-admin reveals it ── */
+.admin-only{display:none !important;}
+body.is-admin .admin-only{display:block !important;}
+#adminMenuSection{display:none !important;}
+body.is-admin #adminMenuSection{display:block !important;}
+#apLockNotice{display:block;}
+body.is-admin #apLockNotice{display:none !important;}
 @keyframes voicePulse{0%,100%{transform:scale(1);box-shadow:0 0 60px rgba(245,166,35,0.5);}50%{transform:scale(1.08);box-shadow:0 0 90px rgba(245,166,35,0.8);}}
 #voiceOrb.listening{animation:voicePulse 1.2s ease-in-out infinite;}
 .field-err{font-size:11px;color:#FF6B6B;margin-top:4px;display:none;}
@@ -968,7 +975,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('privacy')"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('terms')"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></div>
   </div>
-  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v19 · Made in Tamil Nadu 🇮🇳</div>
+  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v20 · Made in Tamil Nadu 🇮🇳</div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -2142,17 +2149,10 @@ function adminLogout(){ adminSignOut(); }
 
 // Show/hide all admin-only UI based on isAdmin
 function applyAdminVisibility(){
-  var menu=document.getElementById('adminMenuSection');
-  if(menu) menu.style.display = isAdmin ? 'block' : 'none';
-  // adminEntrySection stays hidden from customers always (access is via secret logo tap)
+  // Single source of truth: CSS rules keyed off body.is-admin do the hiding/showing.
+  document.body.classList.toggle('is-admin', !!isAdmin);
   var entry=document.getElementById('adminEntrySection');
   if(entry) entry.style.display = 'none';
-  document.querySelectorAll('.admin-only').forEach(function(el){
-    el.style.display = isAdmin ? '' : 'none';
-  });
-  // Project upload lock notice (shown only to non-admins who reach the screen)
-  var lock=document.getElementById('apLockNotice');
-  if(lock) lock.style.display = isAdmin ? 'none' : 'block';
   var badge=document.getElementById('adminModeBadge');
   if(badge) badge.style.display = isAdmin ? 'inline-block' : 'none';
 }
