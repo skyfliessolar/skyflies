@@ -533,7 +533,7 @@ async function fbGet(c,i){if(!db)return null;try{var d=await db.collection(c).do
 async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).where(f,"==",v).get();var r=[];s.forEach(function(d){r.push(Object.assign({id:d.id},d.data()));});return r;}catch(e){return[];}}
 </script>
 <div id="app">
-<div id="topbar"><img src="logo.png" class="tb-logo" alt="Skyflies" onclick="logoTapSecret()" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;"><div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div><button class="tb-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme" aria-label="Toggle light/dark theme">🌙</button><button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button><button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button><button class="tb-btn" onclick="goScreen('social')">📱</button><button class="tb-btn" onclick="installApp()">📲</button></div>
+<div id="topbar"><img src="logo.png" class="tb-logo" alt="Skyflies" onclick="logoTapSecret()" onerror="this.src='https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png';this.onerror=null;"><div class="tb-title"><div class="tb-nm" id="tbTitle">Skyflies Solar</div><div class="tb-sub">Tamil Nadu's Solar Partner</div></div><span id="adminModeBadge" style="display:none;background:rgba(239,68,68,0.9);color:#fff;font-size:9px;font-weight:800;letter-spacing:1px;padding:3px 8px;border-radius:6px;margin-right:4px;">ADMIN</span><button class="tb-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme" aria-label="Toggle light/dark theme">🌙</button><button class="tb-btn" onclick="showNotifPanel()" id="notifBtn" style="position:relative;">🔔<span class="notif-dot" id="notifDot" style="display:none;"></span></button><button class="tb-btn" id="backBtn" onclick="goBack()" style="display:none;">←</button><button class="tb-btn" onclick="goScreen('social')">📱</button><button class="tb-btn" onclick="installApp()">📲</button></div>
 <nav id="bottomnav"><button class="bnav-item on" id="bn-home" onclick="goScreen('home')"><div class="bnav-icon">🏠</div><div class="bnav-label">Home</div></button><button class="bnav-item" id="bn-calculator" onclick="goScreen('calculator')"><div class="bnav-icon">🧮</div><div class="bnav-label">Quote</div></button><button class="bnav-item" id="bn-portal" onclick="goScreen('portal')"><div class="bnav-icon">👤</div><div class="bnav-label">Account</div></button><button class="bnav-item" id="bn-store" onclick="goScreen('store')"><div class="bnav-icon">🛒</div><div class="bnav-label">Store</div></button><button class="bnav-item" id="bn-more" onclick="goScreen('more')"><div class="bnav-icon">☰</div><div class="bnav-label">More</div><span class="bnav-badge" id="moreBadge" style="display:none;"></span></button></nav>
 <div id="installBanner" class="install-bar" style="display:none;"><div class="install-inner"><img src="https://skyflies.in/wp-content/uploads/2025/12/Sky-Flies-Solar.png" style="width:32px;height:32px;border-radius:8px;" alt=""><div style="flex:1;"><div style="font-size:13px;font-weight:700;">Install Skyflies Solar App</div><div style="font-size:11px;color:var(--soft);">Add to home screen</div></div><button onclick="installApp()" style="padding:7px 14px;background:linear-gradient(135deg,var(--sun),var(--solar));border:none;border-radius:8px;color:#0A0F1E;font-weight:700;font-size:12px;cursor:pointer;">Install</button><button onclick="dismissBanner()" style="padding:7px 10px;background:transparent;border:none;color:var(--soft);font-size:14px;cursor:pointer;">✕</button></div></div>
 <button class="wa-fab" onclick="whatsappQuickShare()" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">💬</button>
@@ -965,9 +965,10 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
 
   <div class="sec-head"><div class="sec-title">Legal</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-    <a class="social-link-card" href="privacy.html" target="_blank" style="text-decoration:none;"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></a>
-    <a class="social-link-card" href="terms.html" target="_blank" style="text-decoration:none;"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></a>
+    <div class="social-link-card" onclick="goScreen('privacy')"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></div>
+    <div class="social-link-card" onclick="goScreen('terms')"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></div>
   </div>
+  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v19 · Made in Tamil Nadu 🇮🇳</div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -1431,14 +1432,14 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   <div class="screen-title">Manage Projects</div>
   <div class="screen-sub">Upload completed project photos with location. Customers see these as "Our Work Near You".</div>
 
-  <div id="apLockNotice" style="display:none;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:20px;text-align:center;">
+  <div id="apLockNotice" style="display:block;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:20px;text-align:center;">
     <div style="font-size:32px;margin-bottom:8px;">🔒</div>
     <div style="font-size:14px;font-weight:700;color:var(--text);">Admin access required</div>
     <div style="font-size:12px;color:var(--soft);margin:6px 0 14px;">Please sign in to upload and manage projects.</div>
     <button class="submit-btn" onclick="goScreen('admin')" style="max-width:200px;margin:0 auto;">Go to Admin Sign In →</button>
   </div>
 
-  <div class="admin-only" id="apAdminContent">
+  <div class="admin-only" id="apAdminContent" style="display:none;">
   <div class="form-card">
     <div class="form-title">Add New Project</div>
     <div class="field"><label>Project Title *</label><input type="text" id="apTitle" placeholder="e.g. 5kW Rooftop — Anna Nagar"></div>
@@ -1532,6 +1533,38 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
       <div class="pin-status" id="trackStatus" style="margin-top:8px;"></div>
     </div>
     <div id="trackResult" style="display:none;margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- ══ PRIVACY (in-app) ══ -->
+<div class="screen" id="screen-privacy">
+  <div class="tag">🔒 Privacy</div>
+  <div class="screen-title">Privacy Policy</div>
+  <div class="screen-sub">Last updated: 05 July 2026</div>
+  <div class="form-card" style="font-size:13px;line-height:1.7;color:var(--text);">
+    <p><strong>What we collect:</strong> When you request a quote, book a service, apply for EMI, place an order, or use referrals, we collect the details you provide — name, phone, email, location (country, city, pincode), system preferences, and order details.</p>
+    <p><strong>How we use it:</strong> To prepare quotations, respond to enquiries, process orders and service requests, forward financing applications to partners at your request, run the referral programme, and contact you (phone, email, or WhatsApp).</p>
+    <p><strong>Storage &amp; protection:</strong> Data is stored on Supabase and Google backends with access controls — only authorised staff can read submissions.</p>
+    <p><strong>Sharing:</strong> We never sell your data. It is shared only with finance partners when you request financing, with service providers that run our infrastructure, or when required by law.</p>
+    <p><strong>Your rights:</strong> Ask us anytime to access, correct, or delete your information.</p>
+    <p><strong>Contact:</strong> info@skyflies.in · +91 93854 49167 · Skyflies Solar Solutions, Tamil Nadu.</p>
+  </div>
+</div>
+
+<!-- ══ TERMS (in-app) ══ -->
+<div class="screen" id="screen-terms">
+  <div class="tag">📄 Terms</div>
+  <div class="screen-title">Terms &amp; Conditions</div>
+  <div class="screen-sub">Last updated: 05 July 2026</div>
+  <div class="form-card" style="font-size:13px;line-height:1.7;color:var(--text);">
+    <p><strong>Estimates only:</strong> All prices, savings, EMI, subsidy and ROI figures in this app are indicative. Final pricing is confirmed only after a free site survey and written quotation.</p>
+    <p><strong>Subsidies:</strong> PM Surya Ghar and state incentive figures are subject to eligibility, government approval, and policy changes. No specific amount is guaranteed.</p>
+    <p><strong>Financing:</strong> EMI options are provided by third-party banks/NBFCs. We facilitate applications but do not lend; approval and rates are decided by the lender.</p>
+    <p><strong>Store orders:</strong> Availability and prices may change; warranties are provided by manufacturers. Delivery timelines are estimates.</p>
+    <p><strong>Referrals:</strong> Rewards apply after the referred customer completes a paid installation; the programme may change at any time.</p>
+    <p><strong>Liability:</strong> The app is provided "as is". To the extent permitted by law, we are not liable for indirect losses from reliance on in-app estimates.</p>
+    <p><strong>Law:</strong> Governed by the laws of India; courts of Tamil Nadu have jurisdiction.</p>
+    <p><strong>Contact:</strong> info@skyflies.in · +91 93854 49167.</p>
   </div>
 </div>
 
@@ -1922,7 +1955,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service','privacy','terms'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -2120,6 +2153,8 @@ function applyAdminVisibility(){
   // Project upload lock notice (shown only to non-admins who reach the screen)
   var lock=document.getElementById('apLockNotice');
   if(lock) lock.style.display = isAdmin ? 'none' : 'block';
+  var badge=document.getElementById('adminModeBadge');
+  if(badge) badge.style.display = isAdmin ? 'inline-block' : 'none';
 }
 
 // Restore session on load (stay logged in across app restarts)
