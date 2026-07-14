@@ -1,0 +1,59 @@
+// ═══════════════════════════════════════════════════════════════
+// SKYFLIES AI ASSISTANT — Supabase Edge Function (Deno)
+// Securely proxies the app's AI chat to Anthropic. Your API key
+// stays server-side as a secret — never exposed in the app.
+//
+// SETUP (one time, ~5 minutes):
+// 1. Get an Anthropic API key: console.anthropic.com → API Keys
+// 2. Supabase Dashboard → Edge Functions → Deploy new function
+//    Name: skyflies-ai   → paste this entire file → Deploy
+// 3. Edge Functions → skyflies-ai → Secrets → add:
+//      ANTHROPIC_API_KEY = sk-ant-...
+// 4. In index.html set:
+//      var AI_ENDPOINT='https://fcwozkqxpmkbczrnjpqx.supabase.co/functions/v1/skyflies-ai';
+// ═══════════════════════════════════════════════════════════════
+
+Deno.serve(async (req) => {
+  const cors = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "authorization, content-type, apikey",
+  };
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+
+  try {
+    const { message, history = [] } = await req.json();
+    if (!message || String(message).length > 1000) {
+      return new Response(JSON.stringify({ error: "Invalid message" }),
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } });
+    }
+
+    const system = `You are the Skyflies Solar assistant inside their mobile app (Tamil Nadu, India).
+Be brief (2-4 sentences), warm, and practical. You help with: solar quotes, PM Surya Ghar subsidy
+(₹30k/kW first 2kW, ₹18k 3rd kW, cap ₹78k) + TN ₹20k/kW incentive, EMI (banks from 8.5%),
+panel cleaning/repair booking, the solar & electronics store, and referral rewards (₹2000/referral).
+Never invent prices — direct users to the in-app quote calculator for numbers.
+For service issues tell them to use Book & Track Service in the app. Contact: +91 93854 49167.`;
+
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": Deno.env.get("ANTHROPIC_API_KEY") ?? "",
+        "anthropic-version": "2023-06-01",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 300,
+        system,
+        messages: [...history.slice(-6), { role: "user", content: message }],
+      }),
+    });
+    const data = await r.json();
+    const reply = data?.content?.[0]?.text ?? "Sorry, I couldn't process that. Please call +91 93854 49167.";
+    return new Response(JSON.stringify({ reply }),
+      { headers: { ...cors, "Content-Type": "application/json" } });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: String(e) }),
+      { status: 500, headers: { ...cors, "Content-Type": "application/json" } });
+  }
+});
