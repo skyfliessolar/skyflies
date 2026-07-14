@@ -458,6 +458,10 @@ body.is-admin #apLockNotice{display:none !important;}
 .proj-loc{font-size:12px;color:var(--soft);margin-top:4px;}
 .svc-tab{padding:11px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:10px;color:var(--soft);font-weight:700;font-size:13px;cursor:pointer;transition:all 0.18s;}
 .svc-tab.on{background:linear-gradient(135deg,var(--sun),#FF6B00);border-color:var(--sun);color:#080F1E;}
+.pay-opt{padding:12px 6px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:11px;color:var(--soft);font-weight:600;font-size:11px;cursor:pointer;line-height:1.7;transition:all 0.18s;}
+.pay-opt.on{background:rgba(245,166,35,0.13);border-color:var(--sun);color:var(--sun);}
+@keyframes shimmer{0%{background-position:-400px 0;}100%{background-position:400px 0;}}
+.skel{background:linear-gradient(90deg,rgba(255,255,255,0.05) 25%,rgba(255,255,255,0.12) 50%,rgba(255,255,255,0.05) 75%);background-size:800px 100%;animation:shimmer 1.4s infinite linear;border-radius:14px;}
 .tst-wrap{margin-bottom:20px;}
 .tst-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .tst-track::-webkit-scrollbar{display:none;}
@@ -975,7 +979,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('privacy')"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('terms')"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></div>
   </div>
-  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v21 · Made in Tamil Nadu 🇮🇳</div>
+  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v22 · Made in Tamil Nadu 🇮🇳</div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -1150,16 +1154,53 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
       <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--soft);">
         <span>Subtotal</span><span id="summarySubtotal">₹0</span>
       </div>
+      <div id="rowDiscount" style="display:none;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--success);">
+        <span>Promo discount</span><span id="summaryDiscount">−₹0</span>
+      </div>
       <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--soft);">
         <span>GST (18%)</span><span id="summaryGst">₹0</span>
+      </div>
+      <div id="rowPoints" style="display:none;justify-content:space-between;margin-bottom:8px;font-size:13px;color:var(--success);">
+        <span>Points redeemed</span><span id="summaryPoints">−₹0</span>
       </div>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 0;"></div>
       <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;">
         <span>Total</span><span style="color:var(--sun);" id="summaryTotal">₹0</span>
       </div>
     </div>
+    <!-- Promo code -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input type="text" id="promoInput" placeholder="Promo code (e.g. WELCOME10)" style="flex:1;background:var(--card);border:1px solid var(--border2);border-radius:11px;padding:12px 14px;color:var(--text);font-size:13px;outline:none;text-transform:uppercase;">
+      <button onclick="applyPromo()" id="promoBtn" style="padding:12px 18px;background:rgba(245,166,35,0.15);border:1px solid var(--border);border-radius:11px;color:var(--sun);font-weight:700;font-size:13px;cursor:pointer;">Apply</button>
+    </div>
+    <div class="pin-status" id="promoStatus" style="margin-top:-6px;margin-bottom:10px;"></div>
+
+    <div class="field"><label>Phone * <span style="font-weight:400;color:var(--soft);">(loads your reward points)</span></label><input type="tel" id="cartPhone" placeholder="+91 XXXXX" onblur="loadPointsBalance()"></div>
+
+    <!-- Points -->
+    <div id="pointsBox" style="display:none;background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:12px;color:var(--soft);">Reward Points</div>
+          <div style="font-size:15px;font-weight:800;color:var(--success);" id="pointsBalTxt">0 pts (₹0)</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);cursor:pointer;">
+          <input type="checkbox" id="redeemToggle" onchange="renderCart()" style="width:18px;height:18px;accent-color:var(--success);"> Redeem
+        </label>
+      </div>
+      <div style="font-size:10px;color:var(--soft);margin-top:6px;">10 points = ₹1 · redeem up to 50% of your bill · earn 1 pt per ₹10 spent</div>
+    </div>
+
     <div class="field"><label>Delivery Address *</label><textarea id="cartAddress" placeholder="Full delivery address..." style="min-height:70px;"></textarea></div>
-    <div class="field"><label>Phone *</label><input type="tel" id="cartPhone" placeholder="+91 XXXXX"></div>
+
+    <!-- Payment method -->
+    <div class="field"><label>Payment Method</label>
+      <div id="payMethods" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <button type="button" class="pay-opt on" data-pay="cod" onclick="selectPay('cod',this)">💵<br>Cash on Delivery</button>
+        <button type="button" class="pay-opt" data-pay="upi" id="payUpi" onclick="selectPay('upi',this)" style="display:none;">📲<br>UPI</button>
+        <button type="button" class="pay-opt" data-pay="card" id="payCard" onclick="selectPay('card',this)" style="display:none;">💳<br>Card / Net-banking</button>
+      </div>
+    </div>
     <button onclick="placeOrder()" class="submit-btn" id="placeOrderBtn">
       <span id="placeOrderTxt">🛒 Place Order</span>
       <div class="spin" id="placeOrderLoader" style="display:none;"></div>
@@ -3939,6 +3980,22 @@ function handleVoiceCommand(raw){
   }
   else if(/home|main|start/.test(t)) go('home','Going home');
   else if(/subsidy|surya ghar|government/.test(t)) go('calculator','The quote calculator includes subsidy details');
+  else if(typeof AI_ENDPOINT!=='undefined' && AI_ENDPOINT){
+    state.textContent='🤖 Thinking…';
+    fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:raw})})
+      .then(function(r){return r.json();})
+      .then(function(j){
+        var reply=j.reply||'Please call +91 93854 49167 for help.';
+        state.textContent='🤖 Skyflies AI';
+        document.getElementById('voiceTranscript').textContent=reply;
+        voiceSpeak(reply);
+      })
+      .catch(function(){
+        state.textContent='🤔 Didn\'t understand — try again';
+        voiceSpeak('Sorry, I did not understand.');
+      });
+  }
   else{
     state.textContent='🤔 Didn\'t understand — try again';
     document.getElementById('voiceTranscript').textContent='Heard: "'+raw+'"';
@@ -4933,58 +4990,168 @@ function renderCart() {
     row.querySelector('.cart-del').onclick  = function(){ removeFromCart(this.getAttribute('data-id')); };
     items.appendChild(row);
   });
-  var subtotal = cart.reduce(function(s,c){ return s+c.price*c.qty; }, 0);
-  var gst      = Math.round(subtotal * 0.18);
-  var total    = subtotal + gst;
-  var sub = document.getElementById('summarySubtotal');
-  var gs  = document.getElementById('summaryGst');
-  var tot = document.getElementById('summaryTotal');
-  if(sub) sub.textContent = '₹' + subtotal.toLocaleString('en-IN');
-  if(gs)  gs.textContent  = '₹' + gst.toLocaleString('en-IN');
-  if(tot) tot.textContent = '₹' + total.toLocaleString('en-IN');
+  var t = computeCartTotals();
+  var set=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v;};
+  set('summarySubtotal','₹'+t.subtotal.toLocaleString('en-IN'));
+  set('summaryGst','₹'+t.gst.toLocaleString('en-IN'));
+  set('summaryTotal','₹'+t.total.toLocaleString('en-IN'));
+  var rd=document.getElementById('rowDiscount');
+  if(rd){ rd.style.display=t.discount>0?'flex':'none'; set('summaryDiscount','−₹'+t.discount.toLocaleString('en-IN')); }
+  var rp=document.getElementById('rowPoints');
+  if(rp){ rp.style.display=t.pointsValue>0?'flex':'none'; set('summaryPoints','−₹'+t.pointsValue.toLocaleString('en-IN')+' ('+t.pointsRedeemed+' pts)'); }
 }
+
+// ── Commerce state & display math (server re-verifies everything) ──
+var _promo=null;            // {code,kind,value,discount}
+var _pointsBalance=0;
+var UPI_VPA='';             // ← set to your business UPI ID (e.g. skyflies@ybl) to enable UPI
+var RAZORPAY_KEY='';        // ← set your Razorpay key_id (rzp_live_… after KYC) to enable cards
+var _payMode='cod';
+var AI_ENDPOINT='';        // ← set after deploying the skyflies-ai Edge Function to enable AI answers
+
+function computeCartTotals(){
+  var subtotal=cart.reduce(function(s,c){return s+c.price*c.qty;},0);
+  var discount=0;
+  if(_promo){
+    if(subtotal>= (_promo.min_order||0)){ discount=Math.min(_promo.discount||0, subtotal); }
+    else { discount=0; }
+  }
+  var gst=Math.round((subtotal-discount)*0.18);
+  var after=subtotal-discount+gst;
+  var redeemToggle=document.getElementById('redeemToggle');
+  var pointsRedeemed=0, pointsValue=0;
+  if(redeemToggle && redeemToggle.checked && _pointsBalance>0){
+    pointsRedeemed=Math.min(_pointsBalance, Math.floor(after*0.5*10));
+    pointsValue=Math.round(pointsRedeemed/10);
+  }
+  return {subtotal:subtotal,discount:discount,gst:gst,pointsRedeemed:pointsRedeemed,pointsValue:pointsValue,total:Math.max(after-pointsValue,0)};
+}
+
+async function applyPromo(){
+  var inp=document.getElementById('promoInput');
+  var st=document.getElementById('promoStatus');
+  var code=(inp.value||'').trim().toUpperCase();
+  function S(cls,m){st.className='pin-status '+cls;st.textContent=m;}
+  if(!code){ _promo=null; S('',''); renderCart(); return; }
+  if(!sb){ S('err','Connecting… try again'); return; }
+  var subtotal=cart.reduce(function(s,c){return s+c.price*c.qty;},0);
+  try{
+    var r=await sb.rpc('validate_promo',{p_code:code,p_subtotal:subtotal});
+    if(r.error) throw r.error;
+    var row=(r.data&&r.data[0])||null;
+    if(!row){ _promo=null; S('err','Invalid, expired, or below minimum order'); renderCart(); return; }
+    _promo=row;
+    S('ok','✓ '+row.code+' applied — you save ₹'+Number(row.discount).toLocaleString('en-IN'));
+    if(navigator.vibrate) navigator.vibrate(20);
+  }catch(e){ _promo=null; S('err','Could not verify code'); }
+  renderCart();
+}
+
+async function loadPointsBalance(){
+  var ph=(document.getElementById('cartPhone')||{}).value||'';
+  var box=document.getElementById('pointsBox');
+  if(!isValidIndianPhone(ph) || !sb){ if(box) box.style.display='none'; _pointsBalance=0; return; }
+  try{
+    var r=await sb.rpc('points_balance',{p_phone:ph});
+    _pointsBalance=(!r.error && typeof r.data==='number')?r.data:0;
+  }catch(e){ _pointsBalance=0; }
+  if(box){
+    box.style.display=_pointsBalance>0?'block':'none';
+    var t=document.getElementById('pointsBalTxt');
+    if(t) t.textContent=_pointsBalance+' pts (₹'+Math.floor(_pointsBalance/10)+')';
+  }
+  renderCart();
+}
+
+function selectPay(mode,btn){
+  _payMode=mode;
+  document.querySelectorAll('#payMethods .pay-opt').forEach(function(b){b.classList.remove('on');});
+  if(btn) btn.classList.add('on');
+}
+// Reveal configured payment options
+(function(){
+  function initPay(){
+    if(UPI_VPA){ var u=document.getElementById('payUpi'); if(u) u.style.display='block'; }
+    if(RAZORPAY_KEY){ var k=document.getElementById('payCard'); if(k) k.style.display='block'; }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initPay); else initPay();
+})();
 
 
 async function placeOrder() {
   var address = (document.getElementById('cartAddress')||{}).value||'';
   var phone   = (document.getElementById('cartPhone')||{}).value||'';
   if (!address.trim()) { showToast('Please enter delivery address'); return; }
-  if (!phone.trim())   { showToast('Please enter your phone number'); return; }
-  var btnTxt = document.getElementById('placeOrderTxt');
-  var loader = document.getElementById('placeOrderLoader');
-  var ok     = document.getElementById('orderOk');
-  var er     = document.getElementById('orderEr');
-  if(btnTxt) btnTxt.style.display='none';
-  if(loader) loader.style.display='block';
-  var subtotal = cart.reduce(function(s,c){ return s+c.price*c.qty; },0);
-  var gst      = Math.round(subtotal*0.18);
-  var total    = subtotal+gst;
-  var itemList = cart.map(function(c){ return c.name+' x'+c.qty+' = Rs.'+c.price*c.qty; }).join(', ');
-  var msg = '🛒 STORE ORDER | '+itemList+' | Subtotal: Rs.'+subtotal+' | GST: Rs.'+gst+' | TOTAL: Rs.'+total+' | Address: '+address+' | Phone: '+phone;
-  var orderData = {
-    formType: 'enquiry',
-    name:     currentCustomer ? currentCustomer.name : 'Customer',
-    phone:    phone,
-    email:    currentCustomer ? currentCustomer.email : '',
-    city:     currentCustomer ? currentCustomer.city  : '',
-    source:   'Store Order',
-    message:  msg
-  };
-  var success = await sendToSheet(orderData);
-  if(btnTxt) btnTxt.style.display='';
-  if(loader) loader.style.display='none';
-  if(success){
-    if(ok){ ok.classList.add('show'); ok.style.display='flex'; }
-    cart=[];
-    localStorage.setItem('sf_cart',JSON.stringify(cart));
-    updateCartBar();
-    if(document.getElementById('cartAddress')) document.getElementById('cartAddress').value='';
-    if(document.getElementById('cartPhone'))   document.getElementById('cartPhone').value='';
-    setTimeout(function(){ if(ok){ok.classList.remove('show');ok.style.display='none';} goScreen('store'); },3000);
-  } else {
-    if(er){ er.textContent='❌ Failed. Please call +91 93854 49167'; er.classList.add('show'); er.style.display='flex'; }
-    setTimeout(function(){ if(er){er.classList.remove('show');er.style.display='none';} },4000);
+  if (!isValidIndianPhone(phone)) { showToast('Enter a valid 10-digit mobile'); return; }
+  var btnTxt=document.getElementById('placeOrderTxt'), loader=document.getElementById('placeOrderLoader');
+  var ok=document.getElementById('orderOk'), er=document.getElementById('orderEr');
+  if(btnTxt) btnTxt.style.display='none'; if(loader) loader.style.display='block';
+  function fail(msg){
+    if(btnTxt) btnTxt.style.display=''; if(loader) loader.style.display='none';
+    if(er){ er.textContent='❌ '+msg; er.classList.add('show'); er.style.display='flex';
+      setTimeout(function(){er.classList.remove('show');er.style.display='none';},5000); }
   }
+  var t=computeCartTotals();
+  var items=cart.map(function(cItem){return {id:cItem.id, qty:cItem.qty};});
+  var payload={
+    p_items:items, p_phone:phone,
+    p_name: (typeof currentCustomer!=='undefined'&&currentCustomer)?currentCustomer.name:'Customer',
+    p_address:address, p_pincode:'', p_promo:_promo?_promo.code:null,
+    p_redeem_points:t.pointsRedeemed||0, p_payment_mode:_payMode,
+    p_referred_by:(typeof getReferredBy==='function'?getReferredBy():'')||''
+  };
+  var result=null;
+  if(sb){
+    try{
+      var r=await sb.rpc('create_order', payload);
+      if(r.error) return fail(r.error.message||'Order failed');
+      if(r.data && r.data.error) return fail(r.data.error);
+      result=r.data;
+    }catch(e){ return fail('Network error — please try again or call +91 93854 49167'); }
+  } else {
+    return fail('Connecting to server — try again in a moment');
+  }
+  // Backup mirror to Sheets (non-blocking)
+  try{
+    sendToSheet({formType:'enquiry',name:payload.p_name,phone:phone,source:'Store Order',
+      message:'🛒 '+result.order_code+' | Total ₹'+result.total+' | '+_payMode.toUpperCase()+' | '+address});
+  }catch(e){}
+
+  // Payment handoff
+  if(_payMode==='upi' && UPI_VPA){
+    var upi='upi://pay?pa='+encodeURIComponent(UPI_VPA)+'&pn='+encodeURIComponent('Skyflies Solar')+
+      '&am='+result.total+'&cu=INR&tn='+encodeURIComponent(result.order_code);
+    window.location.href=upi;
+  } else if(_payMode==='card' && RAZORPAY_KEY){
+    try{
+      await new Promise(function(res,rej){
+        if(window.Razorpay) return res();
+        var s=document.createElement('script'); s.src='https://checkout.razorpay.com/v1/checkout.js';
+        s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      });
+      var rz=new Razorpay({key:RAZORPAY_KEY, amount:Math.round(result.total*100), currency:'INR',
+        name:'Skyflies Solar', description:result.order_code, prefill:{contact:phone},
+        handler:function(resp){
+          if(sb) sb.from('orders').update({payment_status:'paid',payment_ref:resp.razorpay_payment_id}).eq('id',result.order_id).then(function(){});
+          showToast('✅ Payment successful!');
+        }});
+      rz.open();
+    }catch(e){ showToast('Card checkout unavailable — order saved as COD'); }
+  }
+
+  if(btnTxt) btnTxt.style.display=''; if(loader) loader.style.display='none';
+  if(ok){
+    ok.innerHTML='✅ Order <b>'+result.order_code+'</b> placed!'+
+      (result.points_earned?' You earned <b>'+result.points_earned+' points</b> 🎉':'')+
+      (result.discount>0?' Saved ₹'+result.discount+' with '+result.promo+'.':'');
+    ok.classList.add('show'); ok.style.display='flex';
+  }
+  if(navigator.vibrate) navigator.vibrate([30,50,30]);
+  cart=[]; localStorage.setItem('sf_cart',JSON.stringify(cart));
+  _promo=null; var pi=document.getElementById('promoInput'); if(pi) pi.value='';
+  updateCartBar();
+  document.getElementById('cartAddress').value='';
+  setTimeout(function(){ if(ok){ok.classList.remove('show');ok.style.display='none';} goScreen('store'); },4500);
 }
 
 // ── ADMIN PRODUCT MANAGEMENT ─────────────────────────────────────
