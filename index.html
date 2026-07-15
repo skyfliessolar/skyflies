@@ -599,6 +599,15 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div style="font-size:18px;color:#60A5FA;">›</div>
   </div>
 
+  <div onclick="goScreen('delivery')" style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.08));border:1px solid rgba(16,185,129,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
+    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#10B981,#059669);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🛵</div>
+    <div style="flex:1;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);">Order Anything, Delivered</div>
+      <div style="font-size:12px;color:var(--soft);margin-top:2px;">Groceries, medicines, parcels — to your door.</div>
+    </div>
+    <div style="font-size:18px;color:#34D399;">›</div>
+  </div>
+
   <div class="sec-head" style="margin-top:18px;"><div class="sec-title">See Our Work</div></div>
   <div onclick="goScreen('projects')" style="background:linear-gradient(135deg,rgba(245,166,35,0.18),rgba(255,107,0,0.10));border:1px solid rgba(245,166,35,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
     <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--sun),#FF6B00);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">📸</div>
@@ -979,7 +988,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('privacy')"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('terms')"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></div>
   </div>
-  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v22 · Made in Tamil Nadu 🇮🇳</div>
+  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v23 · Made in Tamil Nadu 🇮🇳</div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -1616,6 +1625,59 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div>
 </div>
 
+<!-- ══ DELIVERY (Order Anything) ══ -->
+<div class="screen" id="screen-delivery">
+  <div class="tag">🛵 Delivery</div>
+  <div class="screen-title">Order Anything, Delivered</div>
+  <div class="screen-sub">Groceries, medicines, hardware, parcels — our partner picks it up and brings it to your door.</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+    <button class="svc-tab on" id="dlvTabOrder" onclick="dlvTab('order')">🛍️ Order Anything</button>
+    <button class="svc-tab" id="dlvTabTrack" onclick="dlvTab('track')">🔍 Track Order</button>
+  </div>
+
+  <div id="dlvOrderPane">
+    <div class="form-card">
+      <div class="field"><label>Your Pincode *</label>
+        <input type="tel" id="dlvPin" maxlength="6" inputmode="numeric" placeholder="632401" oninput="checkServiceability(this.value)">
+      </div>
+      <div id="dlvZoneCard" style="display:none;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:11px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:var(--text);"></div>
+      <div id="dlvNoZone" style="display:none;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.25);border-radius:11px;padding:11px 13px;margin-bottom:12px;font-size:12px;color:#FF8A8A;">😔 Sorry, we don't deliver to this pincode yet. We're expanding — check back soon!</div>
+      <div class="pin-status" id="dlvPinStatus" style="margin-top:-6px;margin-bottom:8px;"></div>
+
+      <div id="dlvForm" style="display:none;">
+        <div class="row2">
+          <div class="field"><label>Your Name *</label><input type="text" id="dlvName" placeholder="Full name"></div>
+          <div class="field"><label>Phone *</label><input type="tel" id="dlvPhone" placeholder="+91 XXXXX"></div>
+        </div>
+        <div class="field"><label>What do you need? *</label><textarea id="dlvItems" placeholder="e.g. 1kg tomatoes + 2 packets milk from Amma Stores, or: pick up my parcel from SR Couriers" style="min-height:80px;"></textarea></div>
+        <div class="field"><label>Pickup shop / point <span style="font-weight:400;color:var(--soft);">(optional)</span></label><input type="text" id="dlvPickup" placeholder="Shop name or area — or leave blank, we'll choose nearest"></div>
+        <div class="field"><label>Delivery Address *</label><textarea id="dlvDrop" placeholder="House/flat, street, landmark..." style="min-height:64px;"></textarea></div>
+        <button class="submit-btn" id="dlvSubmitBtn" onclick="submitDelivery()">🛵 Place Delivery Request</button>
+        <div class="pin-status" id="dlvStatus" style="margin-top:8px;"></div>
+      </div>
+    </div>
+    <div id="dlvResult" style="display:none;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:20px;text-align:center;margin-top:14px;">
+      <div style="font-size:32px;">🛵</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin:8px 0 4px;">Request placed!</div>
+      <div style="font-size:12px;color:var(--soft);">Your tracking code:</div>
+      <div id="dlvCode" style="font-size:28px;font-weight:800;color:var(--success);letter-spacing:3px;font-family:monospace;margin:8px 0;">DL-XXXXXX</div>
+      <div style="font-size:12px;color:var(--soft);line-height:1.5;">We'll call to confirm items &amp; price, then accept your order. Track it anytime with this code.</div>
+    </div>
+  </div>
+
+  <div id="dlvTrackPane" style="display:none;">
+    <div class="form-card">
+      <div class="field"><label>Enter your delivery code</label>
+        <input type="text" id="dlvTrackCode" placeholder="DL-XXXXXX" style="text-transform:uppercase;font-family:monospace;letter-spacing:2px;" onkeydown="if(event.key==='Enter')trackDelivery()">
+      </div>
+      <button class="submit-btn" id="dlvTrackBtn" onclick="trackDelivery()">🔍 Track</button>
+      <div class="pin-status" id="dlvTrackStatus" style="margin-top:8px;"></div>
+    </div>
+    <div id="dlvTrackResult" style="display:none;margin-top:14px;"></div>
+  </div>
+</div>
+
 <!-- ══ SOCIAL ══ -->
 <div class="screen" id="screen-social">
   <div class="tag">📱 Social Media</div>
@@ -1931,7 +1993,25 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
     <div style="font-size:12px;font-weight:600;color:var(--soft);margin:12px 0 8px;">📁 Uploaded Media</div>
     <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
   </div>
-  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🔧 Service Requests</div>
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🛵 Delivery — Zones &amp; Orders</div>
+  <div class="form-card" style="margin-bottom:10px;">
+    <div style="font-size:12px;font-weight:700;color:var(--soft);margin-bottom:8px;">ADD DELIVERY ZONE</div>
+    <div class="row2">
+      <div class="field"><label>Zone Name *</label><input type="text" id="dzName" placeholder="Ranipet Town"></div>
+      <div class="field"><label>Base Pincode *</label><input type="tel" id="dzPin" maxlength="6" inputmode="numeric" placeholder="632401"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Radius (km) *</label><input type="number" id="dzKm" value="5" min="1" max="50"></div>
+      <div class="field"><label>Delivery Fee (₹)</label><input type="number" id="dzFee" value="30" min="0"></div>
+    </div>
+    <button class="submit-btn" onclick="admAddZone()" style="background:linear-gradient(135deg,var(--success),#059669);color:#fff;">➕ Add Zone</button>
+    <div class="pin-status" id="dzStatus" style="margin-top:6px;"></div>
+  </div>
+  <div id="admZoneList"><button onclick="admLoadZones()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load Zones</button></div>
+  <div style="font-size:12px;font-weight:700;color:var(--soft);margin:12px 0 6px;">DELIVERY ORDERS</div>
+  <div id="admDlvList"><button onclick="admLoadDeliveries()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load Orders</button></div>
+
+    <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🔧 Service Requests</div>
   <div id="admTicketList"><button onclick="admLoadTickets()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load Requests</button></div>
 
   <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">⭐ Manage Testimonials</div>
@@ -2003,7 +2083,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service','privacy','terms'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service','privacy','terms','delivery'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -3964,7 +4044,8 @@ function handleVoiceCommand(raw){
       if(q) setTimeout(function(){ var s=document.getElementById('storeSearch'); if(s){ s.value=q; if(typeof filterProducts==='function') filterProducts(q); } },400);
     },700);
   }
-  else if(/cart|checkout|order/.test(t)) go('cart','Opening your cart');
+  else if(/deliver|bring|pick up|parcel|grocery|groceries|medicine/.test(t)) go('delivery','Opening delivery');
+  else if(/cart|checkout/.test(t)) go('cart','Opening your cart');
   else if(/work|project|gallery|installation|photos/.test(t)) go('projects','Showing our completed projects');
   else if(/refer|earn|reward|invite/.test(t)) go('refer','Opening refer and earn');
   else if(/plan|amc|maintenance|subscription/.test(t)) go('plans','Opening maintenance plans');
@@ -4024,6 +4105,248 @@ setInterval(rotatePromo, 6000);
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', rotatePromo);
 else setTimeout(rotatePromo, 500);
 
+
+// ════════════════════════════════════════════════
+// ── HYPERLOCAL DELIVERY (Uber-Eats-style) ────────
+// ════════════════════════════════════════════════
+var _dlvZones=null, _dlvZone=null;
+var DLV_STEPS=['placed','accepted','picked_up','on_the_way','delivered'];
+var DLV_LABELS={placed:'Request Placed',accepted:'Accepted — partner assigned',picked_up:'Items Picked Up',on_the_way:'On the Way to You',delivered:'Delivered',rejected:'Not Accepted'};
+
+function dlvTab(which){
+  document.getElementById('dlvOrderPane').style.display = which==='order'?'block':'none';
+  document.getElementById('dlvTrackPane').style.display = which==='track'?'block':'none';
+  document.getElementById('dlvTabOrder').classList.toggle('on', which==='order');
+  document.getElementById('dlvTabTrack').classList.toggle('on', which==='track');
+}
+
+async function loadZones(){
+  if(_dlvZones) return _dlvZones;
+  if(!sb) return [];
+  try{
+    var r=await sb.from('delivery_zones').select('*').eq('active',true);
+    _dlvZones=(!r.error && r.data)?r.data:[];
+  }catch(e){ _dlvZones=[]; }
+  return _dlvZones;
+}
+
+async function geocodePin(pin){
+  try{
+    var r=await fetch('https://nominatim.openstreetmap.org/search?postalcode='+pin+'&country=India&format=json&limit=1');
+    var j=await r.json();
+    if(j && j[0]) return {lat:parseFloat(j[0].lat), lng:parseFloat(j[0].lon)};
+  }catch(e){}
+  return null;
+}
+
+async function checkServiceability(v){
+  var pin=String(v||'').replace(/\D/g,'');
+  var card=document.getElementById('dlvZoneCard'), no=document.getElementById('dlvNoZone');
+  var form=document.getElementById('dlvForm'), st=document.getElementById('dlvPinStatus');
+  card.style.display='none'; no.style.display='none'; form.style.display='none'; _dlvZone=null;
+  if(pin.length!==6){ st.className='pin-status'; st.textContent=pin.length?'Enter all 6 digits':''; return; }
+  st.className='pin-status'; st.textContent='Checking coverage…';
+  var zones=await loadZones();
+  if(!zones.length){ st.textContent=''; no.style.display='block'; return; }
+  // 1) exact pincode match wins
+  var z=zones.find(function(x){return x.pincode===pin;});
+  // 2) else distance vs zone radius (geocode customer pin)
+  if(!z){
+    var pt=await geocodePin(pin);
+    if(pt){
+      var best=null,bestD=1e9;
+      zones.forEach(function(x){
+        if(x.lat==null||x.lng==null) return;
+        var d=haversine(pt.lat,pt.lng,x.lat,x.lng);
+        if(d<bestD){bestD=d;best=x;}
+      });
+      if(best && bestD<=Number(best.radius_km||0)) { z=best; z._dist=bestD; }
+    }
+  }
+  st.textContent='';
+  if(z){
+    _dlvZone=z;
+    card.innerHTML='✅ <b>We deliver here!</b> Zone: '+escapeHTML(z.name)+
+      (z._dist!=null?' ('+z._dist.toFixed(1)+' km away)':'')+
+      ' · Delivery fee ₹'+Number(z.fee||0).toLocaleString('en-IN')+
+      (Number(z.min_order||0)>0?' · Min order ₹'+Number(z.min_order):'');
+    card.style.display='block'; form.style.display='block';
+    if(navigator.vibrate) navigator.vibrate(15);
+  }else{
+    no.style.display='block';
+  }
+}
+
+function genDlvCode(){
+  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s='';
+  for(var i=0;i<6;i++) s+=chars.charAt(Math.floor(Math.random()*chars.length));
+  return 'DL-'+s;
+}
+
+async function submitDelivery(){
+  var st=document.getElementById('dlvStatus'), btn=document.getElementById('dlvSubmitBtn');
+  function S(cls,m){st.className='pin-status '+cls;st.textContent=m;}
+  var nm=document.getElementById('dlvName'), ph=document.getElementById('dlvPhone');
+  var items=document.getElementById('dlvItems'), drop=document.getElementById('dlvDrop');
+  if(!_dlvZone){ S('err','Enter a serviceable pincode first'); return; }
+  if(!nm.value.trim()){ S('err','Enter your name'); return; }
+  if(!isValidIndianPhone(ph.value)){ S('err','Enter a valid 10-digit mobile'); return; }
+  if(!items.value.trim()){ S('err','Tell us what you need'); return; }
+  if(!drop.value.trim()){ S('err','Enter your delivery address'); return; }
+  if(!sb){ S('err','Connecting… try again'); return; }
+  btn.disabled=true; btn.textContent='Placing…';
+  var code=genDlvCode();
+  try{
+    var r=await sb.from('delivery_requests').insert({
+      code:code, zone_id:_dlvZone.id, name:nm.value.trim(), phone:ph.value.trim(),
+      items:items.value.trim(), pickup:document.getElementById('dlvPickup').value.trim()||null,
+      drop_address:drop.value.trim(), pincode:document.getElementById('dlvPin').value.trim(),
+      fee:_dlvZone.fee||0
+    });
+    if(r.error) throw r.error;
+    document.getElementById('dlvCode').textContent=code;
+    document.getElementById('dlvResult').style.display='block';
+    document.getElementById('dlvResult').scrollIntoView({behavior:'smooth',block:'center'});
+    S('ok','');
+    if(navigator.vibrate) navigator.vibrate([30,50,30]);
+    try{ sendLead('service',{name:nm.value.trim(),phone:ph.value.trim(),message:'[DELIVERY '+code+'] '+items.value.trim().slice(0,140)}); }catch(e){}
+  }catch(e){ S('err','Failed: '+(e.message||'network error')); }
+  finally{ btn.disabled=false; btn.textContent='🛵 Place Delivery Request'; }
+}
+
+async function trackDelivery(){
+  var st=document.getElementById('dlvTrackStatus'), btn=document.getElementById('dlvTrackBtn');
+  var out=document.getElementById('dlvTrackResult');
+  var code=(document.getElementById('dlvTrackCode').value||'').trim().toUpperCase();
+  function S(cls,m){st.className='pin-status '+cls;st.textContent=m;}
+  out.style.display='none';
+  if(!/^DL-[A-Z0-9]{6}$/.test(code)){ S('err','Enter a valid code like DL-8K3N2P'); return; }
+  if(!sb){ S('err','Connecting… try again'); return; }
+  btn.disabled=true; btn.textContent='Checking…';
+  try{
+    var r=await sb.rpc('track_delivery',{p_code:code});
+    if(r.error) throw r.error;
+    var t=(r.data&&r.data[0])||null;
+    if(!t){ S('err','No delivery found with that code.'); return; }
+    S('','');
+    var curIdx = t.status==='rejected' ? -1 : DLV_STEPS.indexOf(t.status);
+    var steps = t.status==='rejected'
+      ? '<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:12px;color:#FF6B6B;font-weight:700;text-align:center;">We couldn\'t accept this request. Call +91 93854 49167 to discuss.</div>'
+      : DLV_STEPS.map(function(s,i){
+          var done=i<=curIdx;
+          return '<div style="display:flex;gap:12px;align-items:flex-start;">'+
+            '<div style="display:flex;flex-direction:column;align-items:center;">'+
+              '<div style="width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;'+
+                (done?'background:var(--success);color:#fff;':'background:rgba(255,255,255,0.08);color:var(--soft);')+'">'+(done?'✓':(i+1))+'</div>'+
+              (i<DLV_STEPS.length-1?'<div style="width:2px;height:26px;'+(i<curIdx?'background:var(--success);':'background:rgba(255,255,255,0.1);')+'"></div>':'')+
+            '</div>'+
+            '<div style="padding-top:3px;"><div style="font-size:13px;font-weight:700;color:'+(done?'var(--text)':'var(--soft)')+';">'+DLV_LABELS[s]+'</div>'+
+            (i===curIdx?'<div style="font-size:11px;color:var(--success);">● Current status</div>':'')+'</div>'+
+          '</div>';
+        }).join('');
+    out.innerHTML='<div class="form-card">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
+        '<div><div style="font-size:11px;color:var(--soft);letter-spacing:1px;">DELIVERY</div>'+
+        '<div style="font-family:monospace;font-weight:800;color:var(--sun);font-size:16px;">'+escapeHTML(t.code)+'</div></div>'+
+        (t.eta_minutes?'<div style="text-align:right;"><div style="font-size:11px;color:var(--soft);letter-spacing:1px;">ETA</div>'+
+        '<div style="font-size:15px;font-weight:800;color:var(--success);">~'+t.eta_minutes+' min</div></div>':'')+
+      '</div>'+steps+
+      '<div style="margin-top:12px;font-size:12px;color:var(--soft);">Delivery fee: ₹'+Number(t.fee||0).toLocaleString('en-IN')+'</div>'+
+      '</div>';
+    out.style.display='block';
+  }catch(e){ S('err','Lookup failed: '+(e.message||'network error')); }
+  finally{ btn.disabled=false; btn.textContent='🔍 Track'; }
+}
+
+// ─── Admin: zones CRUD ───
+async function admAddZone(){
+  var st=document.getElementById('dzStatus');
+  function S(cls,m){st.className='pin-status '+cls;st.textContent=m;}
+  if(!sb||!window.isAdmin){ S('err','Sign in as admin first'); return; }
+  var name=document.getElementById('dzName').value.trim();
+  var pin=document.getElementById('dzPin').value.trim();
+  var km=parseFloat(document.getElementById('dzKm').value)||5;
+  var fee=parseFloat(document.getElementById('dzFee').value)||0;
+  if(!name){ S('err','Enter zone name'); return; }
+  if(!/^\d{6}$/.test(pin)){ S('err','Enter a 6-digit pincode'); return; }
+  S('','Locating pincode…');
+  var pt=await geocodePin(pin);
+  try{
+    var r=await sb.from('delivery_zones').insert({name:name,pincode:pin,lat:pt?pt.lat:null,lng:pt?pt.lng:null,radius_km:km,fee:fee});
+    if(r.error) throw r.error;
+    S('ok','✅ Zone added'+(pt?'':' (no map point found — exact-pincode matching only)'));
+    document.getElementById('dzName').value=''; document.getElementById('dzPin').value='';
+    _dlvZones=null; admLoadZones();
+  }catch(e){ S('err','Failed: '+(e.message||e)); }
+}
+
+async function admLoadZones(){
+  var el=document.getElementById('admZoneList'); if(!el) return;
+  if(!sb||!window.isAdmin){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">Sign in as admin first.</div>'; return; }
+  el.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
+  try{
+    var r=await sb.from('delivery_zones').select('*').order('created_at',{ascending:false});
+    if(r.error) throw r.error;
+    var rows=r.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">No zones yet — add one above.</div>'; return; }
+    el.innerHTML=rows.map(function(z){
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px;">'+
+        '<div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text);">'+escapeHTML(z.name)+' · '+escapeHTML(z.pincode)+'</div>'+
+        '<div style="font-size:11px;color:var(--soft);">'+z.radius_km+' km · ₹'+z.fee+' fee'+(z.lat?' · 📍 mapped':' · ⚠️ pincode-match only')+(z.active?'':' · INACTIVE')+'</div></div>'+
+        '<button onclick="admDelZone(\''+z.id+'\')" style="padding:6px 10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:7px;color:#FF6B6B;font-size:11px;cursor:pointer;">Delete</button></div>';
+    }).join('');
+  }catch(e){ el.innerHTML='<div style="color:#FF6B6B;font-size:12px;">'+escapeHTML(e.message||'Error')+'</div>'; }
+}
+async function admDelZone(id){
+  if(!confirm('Delete this zone?')) return;
+  try{ var r=await sb.from('delivery_zones').delete().eq('id',id); if(r.error) throw r.error; _dlvZones=null; admLoadZones(); }
+  catch(e){ alert('Failed: '+(e.message||e)); }
+}
+
+// ─── Admin: delivery orders inbox (Uber-Eats accept flow) ───
+var DLV_NEXT={placed:['accepted','rejected'],accepted:['picked_up'],picked_up:['on_the_way'],on_the_way:['delivered']};
+async function admLoadDeliveries(){
+  var el=document.getElementById('admDlvList'); if(!el) return;
+  if(!sb||!window.isAdmin){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">Sign in as admin first.</div>'; return; }
+  el.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
+  try{
+    var r=await sb.from('delivery_requests').select('*').order('created_at',{ascending:false}).limit(50);
+    if(r.error) throw r.error;
+    var rows=r.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">No delivery orders yet.</div>'; return; }
+    el.innerHTML=rows.map(function(d){
+      var nexts=DLV_NEXT[d.status]||[];
+      var btns=nexts.map(function(n){
+        var lbl={accepted:'✅ Accept',rejected:'✕ Reject',picked_up:'📦 Picked Up',on_the_way:'🛵 On the Way',delivered:'🏁 Delivered'}[n];
+        var color=n==='rejected'?'background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#FF6B6B;':'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--success);';
+        return '<button onclick="admSetDelivery(\''+d.id+'\',\''+n+'\')" style="padding:7px 11px;'+color+'border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">'+lbl+'</button>';
+      }).join('');
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;">'+
+          '<div style="font-family:monospace;font-weight:800;color:var(--sun);">'+escapeHTML(d.code)+'</div>'+
+          '<div style="font-size:11px;font-weight:700;color:var(--success);text-transform:uppercase;">'+escapeHTML(d.status.replace('_',' '))+'</div></div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text);margin-top:4px;">'+escapeHTML(d.name)+' · <a href="tel:'+escapeHTML(d.phone)+'" style="color:var(--info);">'+escapeHTML(d.phone)+'</a></div>'+
+        '<div style="font-size:12px;color:var(--text);margin-top:4px;">🛍️ '+escapeHTML(d.items)+'</div>'+
+        (d.pickup?'<div style="font-size:11px;color:var(--soft);margin-top:2px;">Pickup: '+escapeHTML(d.pickup)+'</div>':'')+
+        '<div style="font-size:11px;color:var(--soft);margin-top:2px;">Drop: '+escapeHTML(d.drop_address)+'</div>'+
+        (btns?'<div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;">'+btns+'</div>':'')+
+        '</div>';
+    }).join('');
+  }catch(e){ el.innerHTML='<div style="color:#FF6B6B;font-size:12px;">'+escapeHTML(e.message||'Error')+'</div>'; }
+}
+async function admSetDelivery(id,status){
+  var upd={status:status};
+  if(status==='accepted'){
+    var eta=prompt('ETA in minutes (customer will see this):','45');
+    if(eta && !isNaN(parseInt(eta,10))) upd.eta_minutes=parseInt(eta,10);
+  }
+  try{
+    var r=await sb.from('delivery_requests').update(upd).eq('id',id);
+    if(r.error) throw r.error;
+    if(typeof showToast==='function') showToast('✅ Updated');
+    admLoadDeliveries();
+  }catch(e){ alert('Failed: '+(e.message||e)); }
+}
 
 function svcTab(which){
   document.getElementById('svcBookPane').style.display = which==='book'?'block':'none';
