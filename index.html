@@ -599,6 +599,12 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div style="font-size:18px;color:#60A5FA;">›</div>
   </div>
 
+  <div onclick="goScreen('wallet')" style="background:linear-gradient(135deg,rgba(245,166,35,0.13),rgba(255,107,0,0.06));border:1px solid rgba(245,166,35,0.3);border-radius:14px;padding:13px 16px;margin-bottom:12px;cursor:pointer;display:flex;align-items:center;gap:12px;">
+    <div style="font-size:22px;">⭐</div>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:var(--text);">My Orders &amp; Points</div>
+    <div style="font-size:11px;color:var(--soft);">Track orders · check reward balance</div></div>
+    <div style="font-size:16px;color:var(--sun);">›</div>
+  </div>
   <div onclick="goScreen('delivery')" style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.08));border:1px solid rgba(16,185,129,0.35);border-radius:14px;padding:16px;margin-bottom:20px;cursor:pointer;display:flex;align-items:center;gap:14px;">
     <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#10B981,#059669);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">🛵</div>
     <div style="flex:1;">
@@ -988,7 +994,7 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
     <div class="social-link-card" onclick="goScreen('privacy')"><div class="soc-ico" style="background:rgba(59,130,246,0.12);">🔒</div><div><div class="soc-info-name">Privacy Policy</div><div class="soc-info-sub">How we handle your data</div></div><div class="soc-arrow">›</div></div>
     <div class="social-link-card" onclick="goScreen('terms')"><div class="soc-ico" style="background:rgba(139,92,246,0.12);">📄</div><div><div class="soc-info-name">Terms &amp; Conditions</div><div class="soc-info-sub">Terms of use</div></div><div class="soc-arrow">›</div></div>
   </div>
-  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v23 · Made in Tamil Nadu 🇮🇳</div>
+  <div onclick="logoTapSecret()" style="text-align:center;color:var(--soft);font-size:11px;padding:8px 0 4px;cursor:default;">Skyflies Solar · App v24 · Made in Tamil Nadu 🇮🇳</div>
 
   <div class="sec-head"><div class="sec-title">Follow Us</div></div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -1678,6 +1684,33 @@ async function fbQuery(c,f,v){if(!db)return[];try{var s=await db.collection(c).w
   </div>
 </div>
 
+<!-- ══ MY ORDERS & POINTS (wallet) ══ -->
+<div class="screen" id="screen-wallet">
+  <div class="tag">⭐ My Activity</div>
+  <div class="screen-title">My Orders &amp; Points</div>
+  <div class="screen-sub">Enter your mobile number to see your reward points, store orders and deliveries.</div>
+  <div class="form-card">
+    <div class="field"><label>Your Phone *</label>
+      <input type="tel" id="wPhone" placeholder="+91 XXXXX" onkeydown="if(event.key==='Enter')loadWallet()">
+    </div>
+    <button class="submit-btn" id="wBtn" onclick="loadWallet()">🔎 Show My Activity</button>
+    <div class="pin-status" id="wStatus" style="margin-top:8px;"></div>
+  </div>
+  <div id="wResult" style="display:none;">
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.06));border:1px solid rgba(16,185,129,0.35);border-radius:14px;padding:18px;text-align:center;margin:14px 0;">
+      <div style="font-size:12px;color:var(--soft);letter-spacing:1px;">REWARD POINTS</div>
+      <div id="wPoints" style="font-size:34px;font-weight:800;color:var(--success);">0</div>
+      <div id="wPointsVal" style="font-size:12px;color:var(--soft);">worth ₹0 · 10 pts = ₹1</div>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:var(--soft);margin:12px 0 8px;">🛒 Store Orders</div>
+    <div id="wOrders"></div>
+    <div style="font-size:13px;font-weight:700;color:var(--soft);margin:14px 0 8px;">🛵 Deliveries</div>
+    <div id="wDlv"></div>
+    <div style="font-size:13px;font-weight:700;color:var(--soft);margin:14px 0 8px;">⭐ Points History</div>
+    <div id="wHist"></div>
+  </div>
+</div>
+
 <!-- ══ SOCIAL ══ -->
 <div class="screen" id="screen-social">
   <div class="tag">📱 Social Media</div>
@@ -1993,7 +2026,10 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
     <div style="font-size:12px;font-weight:600;color:var(--soft);margin:12px 0 8px;">📁 Uploaded Media</div>
     <div id="adminMediaList"><div style="text-align:center;padding:14px;color:var(--soft);font-size:12px;">No media yet.</div></div>
   </div>
-  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🛵 Delivery — Zones &amp; Orders</div>
+  <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🛒 Store Orders</div>
+  <div id="admOrderList"><button onclick="admLoadOrders()" style="padding:8px 12px;background:rgba(245,166,35,0.1);border:1px solid var(--border);border-radius:8px;color:var(--sun);font-size:12px;cursor:pointer;">🔄 Load Store Orders</button></div>
+
+    <div style="font-size:15px;font-weight:700;margin:14px 0 10px;">🛵 Delivery — Zones &amp; Orders</div>
   <div class="form-card" style="margin-bottom:10px;">
     <div style="font-size:12px;font-weight:700;color:var(--soft);margin-bottom:8px;">ADD DELIVERY ZONE</div>
     <div class="row2">
@@ -2083,7 +2119,7 @@ function sendAdminAlert(data){try{MailApp.sendEmail(ADMIN_EMAIL,data.subject||'S
 
 
 // ── APP NAVIGATION ──────────────────────────────
-var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service','privacy','terms','delivery'];
+var SCREENS = ['home','calculator','portal','plans','more','enquiry','quotation','subscribe','emi','refer','social','admin','setup','store','cart','adminstore','projects','adminprojects','service','privacy','terms','delivery','wallet'];
 var currentScreen = 'home';
 
 var screenHistory = ['home'];
@@ -4107,6 +4143,97 @@ else setTimeout(rotatePromo, 500);
 
 
 // ════════════════════════════════════════════════
+// ── MY ORDERS & POINTS (wallet) ──────────────────
+// ════════════════════════════════════════════════
+async function loadWallet(){
+  var ph=(document.getElementById('wPhone')||{}).value||'';
+  var st=document.getElementById('wStatus'), btn=document.getElementById('wBtn');
+  var out=document.getElementById('wResult');
+  function S(cls,m){st.className='pin-status '+cls;st.textContent=m;}
+  if(!isValidIndianPhone(ph)){ S('err','Enter a valid 10-digit mobile'); return; }
+  if(!sb){ S('err','Connecting… try again'); return; }
+  btn.disabled=true; btn.textContent='Loading…'; S('','');
+  try{
+    var pts=await sb.rpc('points_balance',{p_phone:ph});
+    var ords=await sb.rpc('my_orders',{p_phone:ph});
+    var dlvs=await sb.rpc('my_deliveries',{p_phone:ph});
+    var hist=await sb.rpc('my_points_history',{p_phone:ph});
+    var bal=(!pts.error&&typeof pts.data==='number')?pts.data:0;
+    document.getElementById('wPoints').textContent=bal.toLocaleString('en-IN');
+    document.getElementById('wPointsVal').textContent='worth ₹'+Math.floor(bal/10).toLocaleString('en-IN')+' · 10 pts = ₹1';
+    var STATUS_ICON={pending:'🕐',confirmed:'✅',shipped:'🚚',delivered:'🏁',cancelled:'✕',placed:'🕐',accepted:'✅',picked_up:'📦',on_the_way:'🛵',rejected:'✕'};
+    var oRows=(ords.data||[]);
+    document.getElementById('wOrders').innerHTML = oRows.length? oRows.map(function(o){
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:11px 13px;margin-bottom:7px;">'+
+        '<div style="display:flex;justify-content:space-between;"><span style="font-family:monospace;font-weight:800;color:var(--sun);">'+escapeHTML(o.order_code||'')+'</span>'+
+        '<span style="font-size:12px;font-weight:700;color:var(--success);">'+(STATUS_ICON[o.status]||'')+' '+escapeHTML((o.status||'').replace('_',' '))+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between;margin-top:4px;font-size:12px;color:var(--soft);">'+
+        '<span>₹'+Number(o.total||0).toLocaleString('en-IN')+' · '+escapeHTML((o.payment_mode||'cod').toUpperCase())+'</span>'+
+        '<span style="color:var(--success);">+'+(o.points_earned||0)+' pts</span></div></div>';
+    }).join('') : '<div style="color:var(--soft);font-size:12px;">No store orders yet.</div>';
+    var dRows=(dlvs.data||[]);
+    document.getElementById('wDlv').innerHTML = dRows.length? dRows.map(function(d){
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:11px 13px;margin-bottom:7px;">'+
+        '<div style="display:flex;justify-content:space-between;"><span style="font-family:monospace;font-weight:800;color:var(--sun);">'+escapeHTML(d.code||'')+'</span>'+
+        '<span style="font-size:12px;font-weight:700;color:var(--success);">'+(STATUS_ICON[d.status]||'')+' '+escapeHTML((d.status||'').replace('_',' '))+'</span></div>'+
+        '<div style="font-size:12px;color:var(--soft);margin-top:4px;">'+escapeHTML((d.items||'').slice(0,60))+(d.eta_minutes?' · ETA ~'+d.eta_minutes+' min':'')+'</div></div>';
+    }).join('') : '<div style="color:var(--soft);font-size:12px;">No deliveries yet.</div>';
+    var hRows=(hist.data||[]);
+    document.getElementById('wHist').innerHTML = hRows.length? hRows.map(function(h){
+      var pos=h.delta>0;
+      return '<div style="display:flex;justify-content:space-between;padding:8px 4px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px;">'+
+        '<span style="color:var(--soft);">'+escapeHTML(h.reason||'')+'</span>'+
+        '<span style="font-weight:800;color:'+(pos?'var(--success)':'#FF8A8A')+';">'+(pos?'+':'')+h.delta+'</span></div>';
+    }).join('') : '<div style="color:var(--soft);font-size:12px;">No points activity yet.</div>';
+    out.style.display='block';
+  }catch(e){ S('err','Could not load: '+(e.message||'network error')); }
+  finally{ btn.disabled=false; btn.textContent='🔎 Show My Activity'; }
+}
+
+// ─── Admin: store orders inbox ───
+var ORD_NEXT={pending:['confirmed','cancelled'],confirmed:['shipped'],shipped:['delivered']};
+async function admLoadOrders(){
+  var el=document.getElementById('admOrderList'); if(!el) return;
+  if(!sb||!window.isAdmin){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">Sign in as admin first.</div>'; return; }
+  el.innerHTML='<div style="color:var(--soft);font-size:12px;">Loading…</div>';
+  try{
+    var r=await sb.from('orders').select('*').order('created_at',{ascending:false}).limit(50);
+    if(r.error) throw r.error;
+    var rows=r.data||[];
+    if(!rows.length){ el.innerHTML='<div style="color:var(--soft);font-size:12px;">No store orders yet. If a customer just ordered, tap Load again.</div>'; return; }
+    el.innerHTML=rows.map(function(o){
+      var items='';
+      try{ items=(Array.isArray(o.items)?o.items:JSON.parse(o.items||'[]')).map(function(i){return i.qty+'× '+i.id;}).join(', '); }catch(e){}
+      var nexts=ORD_NEXT[o.status]||[];
+      var btns=nexts.map(function(n){
+        var lbl={confirmed:'✅ Confirm',cancelled:'✕ Cancel',shipped:'🚚 Shipped',delivered:'🏁 Delivered'}[n];
+        var col=n==='cancelled'?'background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#FF6B6B;':'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--success);';
+        return '<button onclick="admSetOrder(\''+o.id+'\',\''+n+'\')" style="padding:7px 11px;'+col+'border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">'+lbl+'</button>';
+      }).join('');
+      return '<div style="background:rgba(255,255,255,0.04);border-radius:10px;padding:12px;margin-bottom:8px;">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;">'+
+          '<span style="font-family:monospace;font-weight:800;color:var(--sun);">'+escapeHTML(o.order_code||o.id.slice(0,8))+'</span>'+
+          '<span style="font-size:11px;font-weight:700;color:var(--success);text-transform:uppercase;">'+escapeHTML(o.status||'')+'</span></div>'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text);margin-top:4px;">'+escapeHTML(o.customer_name||'Customer')+' · <a href="tel:'+escapeHTML(o.phone||'')+'" style="color:var(--info);">'+escapeHTML(o.phone||'')+'</a></div>'+
+        '<div style="font-size:12px;color:var(--soft);margin-top:3px;">'+escapeHTML(items)+'</div>'+
+        '<div style="font-size:12px;color:var(--text);margin-top:4px;">₹'+Number(o.total||0).toLocaleString('en-IN')+' · '+escapeHTML((o.payment_mode||'cod').toUpperCase())+' · '+escapeHTML(o.payment_status||'')+
+        (o.promo_code?' · '+escapeHTML(o.promo_code):'')+'</div>'+
+        (o.address?'<div style="font-size:11px;color:var(--soft);margin-top:2px;">📍 '+escapeHTML(o.address)+'</div>':'')+
+        (btns?'<div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;">'+btns+'</div>':'')+
+        '</div>';
+    }).join('');
+  }catch(e){ el.innerHTML='<div style="color:#FF6B6B;font-size:12px;">'+escapeHTML(e.message||'Error')+'</div>'; }
+}
+async function admSetOrder(id,status){
+  try{
+    var r=await sb.from('orders').update({status:status}).eq('id',id);
+    if(r.error) throw r.error;
+    if(typeof showToast==='function') showToast('✅ Order updated');
+    admLoadOrders();
+  }catch(e){ alert('Failed: '+(e.message||e)); }
+}
+
+// ════════════════════════════════════════════════
 // ── HYPERLOCAL DELIVERY (Uber-Eats-style) ────────
 // ════════════════════════════════════════════════
 var _dlvZones=null, _dlvZone=null;
@@ -4251,6 +4378,11 @@ async function trackDelivery(){
         (t.eta_minutes?'<div style="text-align:right;"><div style="font-size:11px;color:var(--soft);letter-spacing:1px;">ETA</div>'+
         '<div style="font-size:15px;font-weight:800;color:var(--success);">~'+t.eta_minutes+' min</div></div>':'')+
       '</div>'+steps+
+      (t.agent_name?'<div style="margin-top:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:10px;">'+
+        '<div style="font-size:22px;">🛵</div><div style="flex:1;"><div style="font-size:12px;color:var(--soft);">Your delivery partner</div>'+
+        '<div style="font-size:14px;font-weight:800;color:var(--text);">'+escapeHTML(t.agent_name)+'</div></div>'+
+        (t.agent_phone?'<a href="tel:'+escapeHTML(t.agent_phone)+'" style="padding:9px 14px;background:linear-gradient(135deg,var(--success),#059669);border-radius:9px;color:#fff;font-weight:800;font-size:12px;text-decoration:none;">📞 Call</a>':'')+
+        '</div>':'')+
       '<div style="margin-top:12px;font-size:12px;color:var(--soft);">Delivery fee: ₹'+Number(t.fee||0).toLocaleString('en-IN')+'</div>'+
       '</div>';
     out.style.display='block';
@@ -4339,6 +4471,10 @@ async function admSetDelivery(id,status){
   if(status==='accepted'){
     var eta=prompt('ETA in minutes (customer will see this):','45');
     if(eta && !isNaN(parseInt(eta,10))) upd.eta_minutes=parseInt(eta,10);
+    var an=prompt('Delivery agent name (customer will see this):','');
+    if(an && an.trim()) upd.agent_name=an.trim();
+    var ap=prompt('Agent phone (customer can call):','');
+    if(ap && ap.trim()) upd.agent_phone=ap.trim();
   }
   try{
     var r=await sb.from('delivery_requests').update(upd).eq('id',id);
